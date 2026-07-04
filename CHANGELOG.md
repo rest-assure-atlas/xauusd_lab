@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.11
+
+- Added `data_quality.py` for pure raw CSV provenance, structural validation, and conservative quality classification.
+- Added `data_manifest.py` for inclusive date-range data quality manifests in `reports/`.
+- Added file statuses for missing, empty, parse-failed, no-active-candle, and processed raw files.
+- Added quality statuses and deterministic reason codes for source-contract defects, missing minutes, and internal flat zero-volume rows.
+- Added day-boundary coverage fields and `PARTIAL_DAY_COVERAGE` warnings for processed files whose timestamps do not cover the requested UTC day.
+- Enforced the exact `YYYY-MM-DD HH:MM:SS` timestamp text format, with fractional-second timestamp text counted as invalid.
+- Defined first and last manifest timestamps as chronological minimum and maximum parsed timestamps.
+- Added SHA-256 source checksums and source byte-size fields for readable raw files.
+- Added documentation for the data quality manifest contract, CLI, statuses, reason codes, validation definitions, and limitations.
+- Added self-contained synthetic tests for manifest output, validation rules, deterministic output, status reconciliation, and raw-file immutability.
+
 ## v0.10.1
 
 - Made the automated test suite independent of ignored local `data_raw/` CSV files.

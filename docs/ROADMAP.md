@@ -1,6 +1,6 @@
 # Roadmap
 
-Current confirmed milestone: **v0.10.1**.
+Current confirmed milestone: **v0.11**.
 
 Completed milestones are reconstructed from `CHANGELOG.md`, the current repository, and Git history.
 
@@ -89,6 +89,17 @@ Completed milestones are reconstructed from `CHANGELOG.md`, the current reposito
 - Preserved report, chart, session, and placeholder coverage with temporary fixtures.
 - Kept production runtime behaviour unchanged.
 
+### v0.11
+
+- Added pure raw CSV validation and classification logic in `data_quality.py`.
+- Added `data_manifest.py` for deterministic data quality and provenance manifests.
+- Added source file size and SHA-256 checksum provenance for readable raw files.
+- Added conservative file and quality statuses with stable reason codes.
+- Counted timestamp, continuity, day-boundary coverage, numeric, OHLC, volume, and inactive-placeholder conditions without editing raw CSV files.
+- Enforced exact raw timestamp text format and chronological first/last timestamp definitions.
+- Documented the manifest contract in `docs/DATA_QUALITY_MANIFEST.md`.
+- Added self-contained synthetic tests for data quality rules, manifest output, deterministic rewriting, status reconciliation, CLI errors, and raw immutability.
+
 ## Proposed Future Work
 
 Everything in this section is proposed only. It is not approved or implemented unless a future user request explicitly says so.
@@ -96,7 +107,7 @@ Everything in this section is proposed only. It is not approved or implemented u
 - Aggregate multi-day session analysis.
 - Weekday and distribution analysis.
 - Carefully defined range and breakout relationships.
-- Expanded data validation.
+- Additional data-quality review tools beyond the current raw manifest.
 - ASK data and spread data.
 - Execution-cost modelling.
 - Chart interaction and annotation.

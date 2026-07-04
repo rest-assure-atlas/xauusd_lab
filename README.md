@@ -4,7 +4,7 @@ XAUUSD Lab is a long-term Python research project for studying XAU/USD, which is
 
 The project will grow step by step into a research platform for downloading historical market data, storing it cleanly, analysing price behaviour, testing trading strategies, and eventually building a desktop research application.
 
-Current version: **v0.10.1**
+Current version: **v0.11**
 
 ## Project Documentation
 
@@ -14,6 +14,7 @@ Current version: **v0.10.1**
 - [Roadmap](docs/ROADMAP.md)
 - [Workflow](docs/WORKFLOW.md)
 - [Changelog](CHANGELOG.md)
+- [Data quality manifest](docs/DATA_QUALITY_MANIFEST.md)
 
 ## Current Features
 
@@ -108,6 +109,28 @@ reports/session_report_2024-01-01_to_2024-01-31.csv
 
 The report includes daily active-candle statistics, inactive placeholder counts, and one set of Tokyo, London, and New York session statistics per date. Missing daily CSV files are kept in the report with `missing_file` status instead of stopping the run.
 
+### Data Quality Manifest
+
+Use `data_manifest.py` to create one derived provenance and validation row per requested date.
+
+```powershell
+python data_manifest.py 2024-01-01 2024-01-31
+```
+
+You can also choose a raw data folder explicitly:
+
+```powershell
+python data_manifest.py 2024-01-01 2024-01-31 --data-dir data_raw
+```
+
+For that command, the manifest is saved to:
+
+```text
+reports/data_manifest_2024-01-01_to_2024-01-31.csv
+```
+
+The manifest records expected raw filenames, file size, SHA-256 checksums, row-level validation counts, UTC day-boundary coverage, file status, quality status, and stable reason codes. Timestamp text must match `YYYY-MM-DD HH:MM:SS` exactly. The manifest does not edit, repair, reorder, or normalize raw CSV files.
+
 ### Chart Viewer
 
 Use `chart.py` to display a candlestick chart for one downloaded CSV file.
@@ -178,6 +201,8 @@ data_raw/XAUUSD_2024-01-02_1min_BID_UTC.csv
 If a CSV file already exists, the downloader skips that day instead of downloading it again.
 
 Generated research reports are saved in the `reports/` folder.
+
+Data quality manifests are also saved in the `reports/` folder.
 
 ## Failed Downloads
 
