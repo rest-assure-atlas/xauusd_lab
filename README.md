@@ -131,6 +131,34 @@ reports/data_manifest_2024-01-01_to_2024-01-31.csv
 
 The manifest records expected raw filenames, file size, SHA-256 checksums, row-level validation counts, UTC day-boundary coverage, file status, quality status, and stable reason codes. Timestamp text must match `YYYY-MM-DD HH:MM:SS` exactly. The manifest does not edit, repair, reorder, or normalize raw CSV files.
 
+### Linked Observation Report
+
+Use `linked_observation_report.py` to create a separate, non-canonical
+provenance-linking report for daily and configured-session observations.
+
+```powershell
+python linked_observation_report.py 2024-01-01 2024-01-31
+```
+
+You can also choose a raw data folder explicitly:
+
+```powershell
+python linked_observation_report.py 2024-01-01 2024-01-31 --data-dir data_raw
+```
+
+For that command, the linked report is saved to:
+
+```text
+reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
+```
+
+The linked report runs the existing manifest assessment and existing
+session-calculation logic against the same verified raw source bytes during one
+controlled operation. It keeps session status, manifest file status, and
+manifest quality status separate, retains warning rows for review, and excludes
+warnings from the strict-valid subset by default. It does not replace the
+session report or data quality manifest.
+
 ### Chart Viewer
 
 Use `chart.py` to display a candlestick chart for one downloaded CSV file.
@@ -203,6 +231,9 @@ If a CSV file already exists, the downloader skips that day instead of downloadi
 Generated research reports are saved in the `reports/` folder.
 
 Data quality manifests are also saved in the `reports/` folder.
+
+Linked observation reports are saved in the `reports/` folder as separate
+non-canonical reconciliation artifacts.
 
 ## Failed Downloads
 

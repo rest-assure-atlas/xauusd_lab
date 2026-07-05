@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Added `linked_observation_report.py` for orchestrated, provenance-linked
+  daily/session observation reports without changing the existing session-report
+  or data-manifest schemas.
+- Added linked-output schema versioning, active-filter rule identity,
+  deterministic session-definition checksums, software revision recording,
+  separate source/status fields, linkage reason codes, and quality tiers.
+- Added same-source tests that verify linked rows are produced from one
+  controlled raw-byte operation rather than from independently generated CSVs.
+
 ## v0.11
 
 - Added `data_quality.py` for pure raw CSV provenance, structural validation, and conservative quality classification.

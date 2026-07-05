@@ -8,6 +8,7 @@ Usage:
 from __future__ import annotations
 
 import csv
+import io
 import sys
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta
@@ -157,6 +158,13 @@ def load_raw_rows(csv_path: Path) -> list[dict[str, str]]:
         return list(reader)
 
 
+def load_raw_rows_from_bytes(raw_bytes: bytes) -> list[dict[str, str]]:
+    """Load raw CSV rows from already verified source bytes."""
+    csv_text = raw_bytes.decode("utf-8")
+    reader = csv.DictReader(io.StringIO(csv_text))
+    return list(reader)
+
+
 def is_inactive_placeholder_row(row: dict[str, str]) -> bool:
     """Return True if one raw CSV row is a flat, zero-volume placeholder."""
     return is_flat_zero_volume_candle(
@@ -249,44 +257,7 @@ def process_one_day(day: date, columns: list[str]) -> DailyReportResult:
 
     try:
         raw_rows = load_raw_rows(csv_path)
-        active_result = remove_edge_inactive_placeholders(
-            raw_rows,
-            is_inactive_placeholder_row,
-        )
-        active_candles = [
-            row_to_candle_data(row)
-            for row in active_result.active_rows
-        ]
-
-        status = "complete" if active_candles else "no_active_candles"
-        row = empty_report_row(day, columns, status)
-        row["total_csv_rows"] = str(len(raw_rows))
-        row["active_candle_count"] = str(len(active_candles))
-        row["inactive_placeholder_count"] = str(active_result.inactive_count)
-
-        if not active_candles:
-            return DailyReportResult(
-                row=row,
-                completed=False,
-                missing_file=False,
-                failed=False,
-            )
-
-        add_daily_statistics(row, active_candles)
-
-        for session_window in get_session_windows(day):
-            session_statistics = calculate_session_statistics(
-                active_candles,
-                session_window,
-            )
-            add_session_statistics(row, session_statistics)
-
-        return DailyReportResult(
-            row=row,
-            completed=True,
-            missing_file=False,
-            failed=False,
-        )
+        return process_raw_rows_for_day(day, columns, raw_rows)
 
     except (ValueError, KeyError, OSError) as error:
         print(f"Failed {day:%Y-%m-%d}: {error}")
@@ -296,6 +267,71 @@ def process_one_day(day: date, columns: list[str]) -> DailyReportResult:
             missing_file=False,
             failed=True,
         )
+
+
+def process_raw_bytes_for_day(
+    day: date,
+    columns: list[str],
+    raw_bytes: bytes,
+) -> DailyReportResult:
+    """Process one day from verified source bytes instead of a file path."""
+    try:
+        raw_rows = load_raw_rows_from_bytes(raw_bytes)
+        return process_raw_rows_for_day(day, columns, raw_rows)
+    except (ValueError, KeyError, OSError) as error:
+        print(f"Failed {day:%Y-%m-%d}: {error}")
+        return DailyReportResult(
+            row=empty_report_row(day, columns, "failed"),
+            completed=False,
+            missing_file=False,
+            failed=True,
+        )
+
+
+def process_raw_rows_for_day(
+    day: date,
+    columns: list[str],
+    raw_rows: list[dict[str, str]],
+) -> DailyReportResult:
+    """Process already loaded raw CSV rows into one session report row."""
+    active_result = remove_edge_inactive_placeholders(
+        raw_rows,
+        is_inactive_placeholder_row,
+    )
+    active_candles = [
+        row_to_candle_data(row)
+        for row in active_result.active_rows
+    ]
+
+    status = "complete" if active_candles else "no_active_candles"
+    row = empty_report_row(day, columns, status)
+    row["total_csv_rows"] = str(len(raw_rows))
+    row["active_candle_count"] = str(len(active_candles))
+    row["inactive_placeholder_count"] = str(active_result.inactive_count)
+
+    if not active_candles:
+        return DailyReportResult(
+            row=row,
+            completed=False,
+            missing_file=False,
+            failed=False,
+        )
+
+    add_daily_statistics(row, active_candles)
+
+    for session_window in get_session_windows(day):
+        session_statistics = calculate_session_statistics(
+            active_candles,
+            session_window,
+        )
+        add_session_statistics(row, session_statistics)
+
+    return DailyReportResult(
+        row=row,
+        completed=True,
+        missing_file=False,
+        failed=False,
+    )
 
 
 def write_report(rows: list[dict[str, str]], columns: list[str], output_path: Path) -> None:

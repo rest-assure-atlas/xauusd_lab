@@ -1,8 +1,8 @@
 # Current State
 
-Verified milestone: **v0.11**.
+Verified committed milestone: **v0.11**.
 
-XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, and creating data quality manifests for raw CSV provenance and validation.
+XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, and producing a separate non-canonical linked observation report.
 
 ## Repository Structure
 
@@ -19,6 +19,7 @@ data_manifest.py
 data_quality.py
 data_downloader.py
 explorer.py
+linked_observation_report.py
 requirements.txt
 session_report.py
 session_tools.py
@@ -47,6 +48,8 @@ The local `data_raw/` folder may contain ignored downloaded XAUUSD CSV files on 
 `data_quality.py` provides pure raw CSV validation and classification logic. It records readable file provenance, validates the expected source contract, counts row-level defects, checks internal timestamp gaps and UTC day-boundary coverage, reuses shared edge-placeholder filtering, and returns deterministic manifest fields without modifying raw files.
 
 `data_manifest.py` creates one data quality and provenance row per requested calendar date. It supports inclusive date ranges, optional `--data-dir`, deterministic output under `reports/`, and terminal summaries whose file-status and quality-status counts reconcile to the requested date count.
+
+`linked_observation_report.py` creates one non-canonical provenance-linked observation row per requested calendar date. It reads each expected raw file into verified bytes, runs the existing manifest assessment and existing session-calculation logic from those same bytes, re-checks source identity after processing, and writes a separate linked report under `reports/` without changing the v0.10 session-report or v0.11 manifest schemas.
 
 `explorer.py` loads one daily CSV from `data_raw/` and prints daily statistics. With `--sessions`, it also prints Tokyo, London, and New York research-session statistics. It uses active candles only, after excluding leading and trailing inactive placeholder rows.
 
@@ -154,6 +157,18 @@ Create a manifest from an explicit raw data folder:
 python data_manifest.py 2024-01-01 2024-01-31 --data-dir data_raw
 ```
 
+Create a provenance-linked daily/session observation report:
+
+```powershell
+python linked_observation_report.py 2024-01-01 2024-01-31
+```
+
+Create a linked report from an explicit raw data folder:
+
+```powershell
+python linked_observation_report.py 2024-01-01 2024-01-31 --data-dir data_raw
+```
+
 Run the full automated test suite:
 
 ```powershell
@@ -190,6 +205,7 @@ Generated reports are saved in `reports/` with filenames like:
 ```text
 reports/session_report_2024-01-01_to_2024-01-31.csv
 reports/data_manifest_2024-01-01_to_2024-01-31.csv
+reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
 ```
 
 `reports/.gitkeep` keeps the report folder present in Git. Generated report CSV files are ignored.
@@ -210,7 +226,7 @@ Source code, tests, documentation, JSON configuration, and `requirements.txt` ar
 
 ## Automated Test Status
 
-The current v0.11 test suite contains 67 tests and currently passes with:
+The current automated test suite contains 106 tests and currently passes with:
 
 ```powershell
 python -m unittest discover -s tests
@@ -332,6 +348,162 @@ Verified January 2024 result:
 - 0 missing files
 - 0 failed dates
 
+## Linked Observation Report Behaviour
+
+`linked_observation_report.py` creates one separate non-canonical linked row per
+requested calendar date. It is a provenance-linking and reconciliation artifact,
+not a replacement for the v0.10 session report or the v0.11 data quality
+manifest.
+
+The physical linkage inside the controlled operation is the requested `date`.
+The logical observation identity is:
+
+```text
+date + provider + instrument + quote_side + timeframe
+```
+
+Source filename, file size, checksum, rule identities, software revision, and
+linked schema version are provenance and validation fields rather than join
+keys.
+
+For each existing raw file, the linked report:
+
+1. derives the expected raw filename;
+2. reads the raw file into bytes;
+3. records file size and SHA-256 checksum for those bytes;
+4. runs the existing manifest assessment from those same bytes;
+5. runs the existing session-calculation logic from those same bytes;
+6. re-reads the source identity afterward and flags source mutation.
+
+The tool does not accept arbitrary pre-existing session-report or manifest CSVs
+as provenance-linked evidence.
+
+Quality tiers are:
+
+- `strict_valid`: session status is `complete`, manifest file status is
+  `processed`, manifest quality status is `valid`, and no linkage contradiction
+  exists.
+- `warning_review`: session status is `complete`, manifest file status is
+  `processed`, manifest quality status is `warning`, and no linkage
+  contradiction exists. Individual manifest reason codes are retained and the
+  row is excluded from the strict-valid subset by default.
+- `excluded_unusable`: invalid quality states, processing failures,
+  source-contract failures, source identity changes, or linkage contradictions.
+- `calendar_only`: missing-file or no-active-candle calendar rows with no
+  linkage contradiction.
+
+Linked schema version `1` uses this exact column order:
+
+```text
+linked_schema_version
+date
+weekday
+provider
+instrument
+quote_side
+timeframe
+source_filename
+source_file_size_bytes
+source_checksum_algorithm
+source_checksum
+manifest_schema_version
+validation_rule_version
+active_filter_rule_identity
+session_definition_checksum
+software_revision
+session_status
+manifest_file_status
+manifest_quality_status
+manifest_quality_reasons
+linkage_status
+linkage_reasons
+quality_tier
+manifest_total_row_count
+manifest_active_row_count
+session_total_csv_rows
+session_active_candle_count
+session_inactive_placeholder_count
+daily_open
+daily_high
+daily_low
+daily_close
+daily_range
+time_of_daily_high_utc
+time_of_daily_low_utc
+tokyo_open
+tokyo_high
+tokyo_low
+tokyo_close
+tokyo_range
+tokyo_time_of_high_utc
+tokyo_time_of_low_utc
+tokyo_active_candle_count
+london_open
+london_high
+london_low
+london_close
+london_range
+london_time_of_high_utc
+london_time_of_low_utc
+london_active_candle_count
+new_york_open
+new_york_high
+new_york_low
+new_york_close
+new_york_range
+new_york_time_of_high_utc
+new_york_time_of_low_utc
+new_york_active_candle_count
+```
+
+Linked status values are:
+
+- `linked`
+- `calendar_only`
+- `contradiction`
+- `source_changed`
+- `source_unavailable`
+
+Linkage reason codes are machine-readable and separated by semicolons:
+
+```text
+DATE_COVERAGE_MISMATCH
+DUPLICATE_DATE
+PROVIDER_MISMATCH
+INSTRUMENT_MISMATCH
+QUOTE_SIDE_MISMATCH
+TIMEFRAME_MISMATCH
+SOURCE_FILENAME_MISMATCH
+SOURCE_SIZE_MISMATCH
+SOURCE_CHECKSUM_MISMATCH
+SOURCE_CHECKSUM_UNAVAILABLE
+SOURCE_IDENTITY_CHANGED
+ROW_COUNT_MISMATCH
+ACTIVE_COUNT_MISMATCH
+STATUS_DISAGREEMENT
+SESSION_VALUES_WITH_MANIFEST_FAILURE
+MANIFEST_PROCESSED_SESSION_FAILED
+```
+
+Rule and run identity fields are:
+
+- `manifest_schema_version`: existing manifest schema version.
+- `validation_rule_version`: existing manifest validation-rule version.
+- `active_filter_rule_identity`: current edge flat zero-volume active-filter
+  identity, without changing filter behaviour.
+- `session_definition_checksum`: deterministic SHA-256 checksum of the parsed
+  session definitions.
+- `software_revision`: full Git commit when the working tree is clean; the same
+  commit with `-dirty` when tracked changes or non-ignored untracked files are
+  present; otherwise `unknown`. The `-dirty` suffix identifies the base commit
+  and warns that uncommitted changes were present. It does not uniquely identify
+  the exact uncommitted code state.
+- `linked_schema_version`: linked report schema version.
+
+The implementation validates the current expected session names, generated
+prefixes, calculation fields, and column order. A separate session-report schema
+version and stable session identifiers remain deferred.
+
 ## Known Limitations
 
 - The current research data is BID-only and does not include ASK prices or spread.
@@ -340,7 +512,10 @@ Verified January 2024 result:
 - There is no multi-year downloader orchestration yet.
 - `explorer.py`, `chart.py`, and `session_report.py` are currently built around XAUUSD one-minute BID CSV filenames.
 - `data_manifest.py` is also built around the current XAUUSD one-minute BID source contract.
+- `linked_observation_report.py` is also built around the current XAUUSD one-minute BID source contract and current Tokyo, London, and New York session column contract.
 - Generated reports are overwritten when the same date range is run again.
 - The data quality manifest is structural. It does not repair data or prove why flat zero-volume runs, missing minutes, or day-boundary gaps occurred.
+- The linked observation report is non-canonical and does not repair, interpolate,
+  or relabel raw data.
 - Session windows are configurable research windows, not proof of exchange opening hours.
 - The current project is a research platform, not evidence of a profitable trading system.

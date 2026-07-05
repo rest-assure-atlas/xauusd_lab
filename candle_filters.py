@@ -12,6 +12,9 @@ from dataclasses import dataclass
 from typing import Callable
 
 
+ACTIVE_FILTER_RULE_IDENTITY = "edge_flat_zero_volume_v1"
+
+
 @dataclass
 class ActiveCandleResult:
     """The result of removing only edge placeholder rows from a candle list."""

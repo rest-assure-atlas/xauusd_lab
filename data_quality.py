@@ -533,6 +533,11 @@ def assess_raw_csv_file(file_path: Path, requested_day: date) -> QualityAssessme
     except OSError:
         return parse_failed_assessment(None, READ_ERROR)
 
+    return assess_raw_csv_bytes(raw_bytes, requested_day)
+
+
+def assess_raw_csv_bytes(raw_bytes: bytes, requested_day: date) -> QualityAssessment:
+    """Assess raw CSV bytes without rereading or modifying the source file."""
     if len(raw_bytes) == 0:
         return empty_file_assessment(raw_bytes)
 
