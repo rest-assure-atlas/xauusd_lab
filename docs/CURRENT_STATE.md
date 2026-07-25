@@ -2,7 +2,7 @@
 
 Verified committed milestone: **v0.11**.
 
-XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, and producing a separate non-canonical linked observation report.
+XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, producing a separate non-canonical linked observation report, and creating a first descriptive historical baseline from an existing linked observation CSV.
 
 ## Repository Structure
 
@@ -19,6 +19,7 @@ data_manifest.py
 data_quality.py
 data_downloader.py
 explorer.py
+historical_baseline_report.py
 linked_observation_report.py
 requirements.txt
 session_report.py
@@ -50,6 +51,8 @@ The local `data_raw/` folder may contain ignored downloaded XAUUSD CSV files on 
 `data_manifest.py` creates one data quality and provenance row per requested calendar date. It supports inclusive date ranges, optional `--data-dir`, deterministic output under `reports/`, and terminal summaries whose file-status and quality-status counts reconcile to the requested date count.
 
 `linked_observation_report.py` creates one non-canonical provenance-linked observation row per requested calendar date. It reads each expected raw file into verified bytes, runs the existing manifest assessment and existing session-calculation logic from those same bytes, re-checks source identity after processing, and writes a separate linked report under `reports/` without changing the v0.10 session-report or v0.11 manifest schemas.
+
+`historical_baseline_report.py` reads one existing linked observation report CSV and writes a descriptive baseline report under `reports/`. It reports coverage, numeric availability, and daily/Tokyo/London/New York range summaries without reading raw data, regenerating producer outputs, or making strategy, prediction, execution, or profitability claims.
 
 `explorer.py` loads one daily CSV from `data_raw/` and prints daily statistics. With `--sessions`, it also prints Tokyo, London, and New York research-session statistics. It uses active candles only, after excluding leading and trailing inactive placeholder rows.
 
@@ -169,6 +172,12 @@ Create a linked report from an explicit raw data folder:
 python linked_observation_report.py 2024-01-01 2024-01-31 --data-dir data_raw
 ```
 
+Create a descriptive historical baseline from one existing linked report:
+
+```powershell
+python historical_baseline_report.py reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
+```
+
 Run the full automated test suite:
 
 ```powershell
@@ -206,6 +215,7 @@ Generated reports are saved in `reports/` with filenames like:
 reports/session_report_2024-01-01_to_2024-01-31.csv
 reports/data_manifest_2024-01-01_to_2024-01-31.csv
 reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
+reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv
 ```
 
 `reports/.gitkeep` keeps the report folder present in Git. Generated report CSV files are ignored.
@@ -226,7 +236,7 @@ Source code, tests, documentation, JSON configuration, and `requirements.txt` ar
 
 ## Automated Test Status
 
-The current automated test suite contains 106 tests and currently passes with:
+The current automated test suite contains 117 tests and currently passes with:
 
 ```powershell
 python -m unittest discover -s tests
@@ -504,6 +514,65 @@ The implementation validates the current expected session names, generated
 prefixes, calculation fields, and column order. A separate session-report schema
 version and stable session identifiers remain deferred.
 
+## Historical Baseline Report Behaviour
+
+`historical_baseline_report.py` reads one existing linked observation report CSV
+path directly:
+
+```powershell
+python historical_baseline_report.py reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
+```
+
+For that command, the output path is:
+
+```text
+reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv
+```
+
+The tool validates the linked schema version, required baseline columns,
+duplicate dates, `quality_tier`, and required identity/status fields before
+building metrics. It does not read raw data, regenerate linked reports,
+regenerate session reports, regenerate manifests, download data, or mutate
+existing source files.
+
+Baseline schema version `1` uses this exact column order:
+
+```text
+baseline_schema_version
+source_report
+metric_section
+metric_name
+observation_group
+reason_code
+field_name
+count
+min
+median
+mean
+max
+notes
+```
+
+The baseline report includes:
+
+- coverage counts by quality tier, linkage status, session status, manifest file
+  status, manifest quality status, manifest quality reasons, and linkage
+  reasons;
+- numeric availability counts for `daily_range`, `tokyo_range`, `london_range`,
+  and `new_york_range`;
+- descriptive range summaries for `daily_range`, `tokyo_range`, `london_range`,
+  and `new_york_range`.
+
+Strict-valid observations are the headline numeric baseline. Warning-review
+observations are reported separately and split by manifest warning reason code
+where available. Calendar-only and excluded/unusable rows appear in coverage and
+availability counts but are excluded from numeric range summaries. Blank session
+range values are unavailable values, not zeroes.
+
+The baseline is descriptive only. It is not a strategy, signal generator,
+backtest, prediction system, profitability analysis, support/resistance tool, or
+execution model.
+
 ## Known Limitations
 
 - The current research data is BID-only and does not include ASK prices or spread.
@@ -513,9 +582,13 @@ version and stable session identifiers remain deferred.
 - `explorer.py`, `chart.py`, and `session_report.py` are currently built around XAUUSD one-minute BID CSV filenames.
 - `data_manifest.py` is also built around the current XAUUSD one-minute BID source contract.
 - `linked_observation_report.py` is also built around the current XAUUSD one-minute BID source contract and current Tokyo, London, and New York session column contract.
+- `historical_baseline_report.py` is built around linked observation report
+  schema version `1` and the current daily/Tokyo/London/New York range fields.
 - Generated reports are overwritten when the same date range is run again.
 - The data quality manifest is structural. It does not repair data or prove why flat zero-volume runs, missing minutes, or day-boundary gaps occurred.
 - The linked observation report is non-canonical and does not repair, interpolate,
   or relabel raw data.
+- The historical baseline report is descriptive only and does not classify
+  warning reasons as harmless.
 - Session windows are configurable research windows, not proof of exchange opening hours.
 - The current project is a research platform, not evidence of a profitable trading system.

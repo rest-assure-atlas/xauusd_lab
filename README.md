@@ -159,6 +159,29 @@ manifest quality status separate, retains warning rows for review, and excludes
 warnings from the strict-valid subset by default. It does not replace the
 session report or data quality manifest.
 
+### Historical Baseline Report
+
+Use `historical_baseline_report.py` to create a descriptive baseline from one
+existing linked observation report CSV.
+
+```powershell
+python historical_baseline_report.py reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
+```
+
+For that command, the baseline report is saved to:
+
+```text
+reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv
+```
+
+The baseline report reads only the linked report. It does not read raw data,
+regenerate reports, download data, or change source files. It reports coverage
+counts, numeric availability counts, and descriptive daily/Tokyo/London/New York
+range summaries. Strict-valid observations are the headline numeric baseline;
+warning-review observations are shown separately and split by warning reason
+code where available. Calendar-only and excluded/unusable rows are included in
+coverage counts but excluded from numeric range summaries.
+
 ### Chart Viewer
 
 Use `chart.py` to display a candlestick chart for one downloaded CSV file.
@@ -234,6 +257,9 @@ Data quality manifests are also saved in the `reports/` folder.
 
 Linked observation reports are saved in the `reports/` folder as separate
 non-canonical reconciliation artifacts.
+
+Historical baseline reports are saved in the `reports/` folder as descriptive
+summaries of existing linked observation reports.
 
 ## Failed Downloads
 

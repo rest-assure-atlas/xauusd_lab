@@ -10,6 +10,9 @@
   separate source/status fields, linkage reason codes, and quality tiers.
 - Added same-source tests that verify linked rows are produced from one
   controlled raw-byte operation rather than from independently generated CSVs.
+- Added `historical_baseline_report.py` for the first descriptive baseline
+  report from an existing linked observation CSV, keeping strict-valid and
+  warning-review range summaries separate.
 
 ## v0.11
 
