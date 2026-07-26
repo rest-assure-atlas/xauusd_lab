@@ -2,7 +2,7 @@
 
 Verified committed milestone: **v0.11**.
 
-XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, producing a separate non-canonical linked observation report, and creating a first descriptive historical baseline from an existing linked observation CSV.
+XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, producing a separate non-canonical linked observation report, creating a first descriptive historical baseline from an existing linked observation CSV, and producing a narrow structural diagnostic for internal flat zero-volume runs.
 
 ## Repository Structure
 
@@ -20,6 +20,7 @@ data_quality.py
 data_downloader.py
 explorer.py
 historical_baseline_report.py
+internal_flat_zero_volume_diagnostic.py
 linked_observation_report.py
 requirements.txt
 session_report.py
@@ -53,6 +54,8 @@ The local `data_raw/` folder may contain ignored downloaded XAUUSD CSV files on 
 `linked_observation_report.py` creates one non-canonical provenance-linked observation row per requested calendar date. It reads each expected raw file into verified bytes, runs the existing manifest assessment and existing session-calculation logic from those same bytes, re-checks source identity after processing, and writes a separate linked report under `reports/` without changing the v0.10 session-report or v0.11 manifest schemas.
 
 `historical_baseline_report.py` reads one existing linked observation report CSV and writes a descriptive baseline report under `reports/`. It reports coverage, numeric availability, and daily/Tokyo/London/New York range summaries without reading raw data, regenerating producer outputs, or making strategy, prediction, execution, or profitability claims.
+
+`internal_flat_zero_volume_diagnostic.py` reads one existing data quality manifest, one existing linked observation report, and corresponding raw CSV files to write one structural diagnostic row per internal flat zero-volume run. It locates run start/end timestamps, counts run rows, counts Tokyo/London/New York session overlaps, counts rows outside configured sessions, and copies linked daily/session range context without changing raw data, filtering behaviour, warning policy, existing schemas, or historical-baseline behaviour.
 
 `explorer.py` loads one daily CSV from `data_raw/` and prints daily statistics. With `--sessions`, it also prints Tokyo, London, and New York research-session statistics. It uses active candles only, after excluding leading and trailing inactive placeholder rows.
 
@@ -178,6 +181,13 @@ Create a descriptive historical baseline from one existing linked report:
 python historical_baseline_report.py reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
 ```
 
+Create an internal flat zero-volume diagnostic from existing manifest, linked,
+and raw CSV files:
+
+```powershell
+python internal_flat_zero_volume_diagnostic.py reports/data_manifest_2024-01-01_to_2024-01-31.csv reports/linked_observation_report_2024-01-01_to_2024-01-31.csv --data-dir data_raw
+```
+
 Run the full automated test suite:
 
 ```powershell
@@ -216,6 +226,7 @@ reports/session_report_2024-01-01_to_2024-01-31.csv
 reports/data_manifest_2024-01-01_to_2024-01-31.csv
 reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
 reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv
+reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv
 ```
 
 `reports/.gitkeep` keeps the report folder present in Git. Generated report CSV files are ignored.
@@ -236,7 +247,7 @@ Source code, tests, documentation, JSON configuration, and `requirements.txt` ar
 
 ## Automated Test Status
 
-The current automated test suite contains 117 tests and currently passes with:
+The current automated test suite contains 136 tests and currently passes with:
 
 ```powershell
 python -m unittest discover -s tests
@@ -573,6 +584,73 @@ The baseline is descriptive only. It is not a strategy, signal generator,
 backtest, prediction system, profitability analysis, support/resistance tool, or
 execution model.
 
+## Internal Flat Zero-Volume Diagnostic Behaviour
+
+`internal_flat_zero_volume_diagnostic.py` reads one existing data quality
+manifest path, one existing linked observation report path, and raw CSV files
+from a selected data directory:
+
+```powershell
+python internal_flat_zero_volume_diagnostic.py reports/data_manifest_2024-01-01_to_2024-01-31.csv reports/linked_observation_report_2024-01-01_to_2024-01-31.csv --data-dir data_raw
+```
+
+For that command, the output path is:
+
+```text
+reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv
+```
+
+The tool validates that the manifest and linked report cover the same dates in
+the same order. It reads raw CSV files only for manifest rows whose
+`quality_reasons` include `INTERNAL_FLAT_ZERO_VOLUME`.
+
+In current software terms, an internal flat zero-volume row is a numeric-valid
+row where `volume == 0` and `open == high == low == close`, after contiguous
+leading and trailing flat zero-volume placeholders have been excluded by the
+active-candle filter. The diagnostic reconstructs contiguous internal runs,
+checks that detected run rows reconcile with the manifest
+`internal_inactive_row_count`, and writes one row per run.
+
+Diagnostic schema version `1` uses this exact column order:
+
+```text
+diagnostic_schema_version
+date
+weekday
+source_filename
+manifest_file_status
+manifest_quality_status
+manifest_quality_reasons
+total_row_count
+active_row_count
+leading_inactive_row_count
+trailing_inactive_row_count
+internal_inactive_row_count
+run_number
+run_start_utc
+run_end_utc
+run_row_count
+tokyo_overlap_rows
+london_overlap_rows
+new_york_overlap_rows
+outside_configured_session_rows
+linked_quality_tier
+linked_session_status
+daily_range
+tokyo_range
+london_range
+new_york_range
+tokyo_active_candle_count
+london_active_candle_count
+new_york_active_candle_count
+```
+
+The diagnostic does not regenerate manifests, linked reports, session reports,
+baselines, charts, downloads, or raw data. It does not infer market closure,
+provider outage, corruption, harmlessness, or market meaning. Filtering
+behaviour, warning policy, manifest schema, linked-report schema, and
+historical-baseline behaviour are unchanged.
+
 ## Known Limitations
 
 - The current research data is BID-only and does not include ASK prices or spread.
@@ -584,6 +662,9 @@ execution model.
 - `linked_observation_report.py` is also built around the current XAUUSD one-minute BID source contract and current Tokyo, London, and New York session column contract.
 - `historical_baseline_report.py` is built around linked observation report
   schema version `1` and the current daily/Tokyo/London/New York range fields.
+- `internal_flat_zero_volume_diagnostic.py` is built around the current manifest,
+  linked-report, raw XAUUSD one-minute BID, and Tokyo/London/New York session
+  contracts.
 - Generated reports are overwritten when the same date range is run again.
 - The data quality manifest is structural. It does not repair data or prove why flat zero-volume runs, missing minutes, or day-boundary gaps occurred.
 - The linked observation report is non-canonical and does not repair, interpolate,

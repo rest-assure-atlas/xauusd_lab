@@ -182,6 +182,37 @@ warning-review observations are shown separately and split by warning reason
 code where available. Calendar-only and excluded/unusable rows are included in
 coverage counts but excluded from numeric range summaries.
 
+### Internal Flat Zero-Volume Diagnostic
+
+Use `internal_flat_zero_volume_diagnostic.py` to create a small diagnostic CSV
+from one existing data quality manifest, one existing linked observation
+report, and the corresponding raw CSV files.
+
+```powershell
+python internal_flat_zero_volume_diagnostic.py reports/data_manifest_2024-01-01_to_2024-01-31.csv reports/linked_observation_report_2024-01-01_to_2024-01-31.csv --data-dir data_raw
+```
+
+For that command, the diagnostic report is saved to:
+
+```text
+reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv
+```
+
+The diagnostic reads existing files only. It does not regenerate manifests,
+linked reports, session reports, baselines, charts, downloads, or raw data. It
+uses the current software definition of `INTERNAL_FLAT_ZERO_VOLUME`: a
+numeric-valid flat zero-volume row that remains after leading and trailing
+contiguous flat zero-volume placeholders have been excluded by the active-candle
+filter. The output contains one row per internal flat run, including manifest
+row counts, run start/end timestamps, run row count, Tokyo/London/New York
+overlap counts, outside-configured-session row count, linked quality/session
+status, and daily/session range context.
+
+The diagnostic is structural only. It does not infer market closure, provider
+outage, corruption, harmlessness, or market meaning. Filtering behaviour,
+warning policy, existing schemas, and historical-baseline behaviour are
+unchanged.
+
 ### Chart Viewer
 
 Use `chart.py` to display a candlestick chart for one downloaded CSV file.
@@ -260,6 +291,10 @@ non-canonical reconciliation artifacts.
 
 Historical baseline reports are saved in the `reports/` folder as descriptive
 summaries of existing linked observation reports.
+
+Internal flat zero-volume diagnostic reports are saved in the `reports/` folder
+as structural run-location summaries from existing manifest, linked, and raw CSV
+files.
 
 ## Failed Downloads
 

@@ -13,6 +13,9 @@
 - Added `historical_baseline_report.py` for the first descriptive baseline
   report from an existing linked observation CSV, keeping strict-valid and
   warning-review range summaries separate.
+- Added `internal_flat_zero_volume_diagnostic.py` for deterministic structural
+  run-location reports from existing manifest, linked observation, and raw CSV
+  files without changing filtering or warning policy.
 
 ## v0.11
 
