@@ -53,6 +53,10 @@
   selectors, provenance preservation, blank-value semantics, and compatible
   multi-report loading. Existing producers and schemas were unchanged, no
   dependency was added, and no research result or market conclusion changed.
+- Recorded the January-March 2024 daily close-location descriptive finding
+  under `warning_treatment_v1` as the first completed analysis using
+  `research_observation_contract_v1`, with no source-code, schema, filtering,
+  classification, data, dependency, loader, or producer change.
 
 ## v0.11
 

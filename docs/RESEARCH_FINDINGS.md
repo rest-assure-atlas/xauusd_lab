@@ -593,3 +593,270 @@ normal or universal XAU/USD behaviour.
   unresolved.
 - No statistical testing or execution-context analysis was performed.
 - No next research task has been selected from this finding alone.
+
+## 2026-07-27 - January-March 2024 Daily Close Location
+
+Status: `descriptive finding`
+
+### Question
+
+For each validated month from January through March 2024, where did the
+recorded daily close occur within that day's recorded high-to-low range for
+`strict_valid` observations, with `warning_review` reported separately as a
+labelled sensitivity view and `calendar_only`/`excluded_unusable` retained only
+as coverage?
+
+### Evidence Scope
+
+- Provider: Dukascopy
+- Instrument: XAUUSD
+- Quote side: BID
+- Timeframe: 1 minute
+- Timezone: UTC
+- Calendar period: January-March 2024
+- Primary input: provenance-linked daily observation reports
+- Access contract: `research_observation_contract_v1`
+- Quality treatment: `warning_treatment_v1`
+
+This is not a universal XAU/USD market record.
+
+### Source Reports
+
+Primary row-level source reports loaded through
+`research_observations.load_linked_reports(...)`:
+
+- `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
+- `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
+- `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+
+Warning context reports:
+
+- `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
+- `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
+- `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+
+### Formula And Categories
+
+Linked fields used:
+
+- `date`
+- `quality_tier`
+- `daily_high`
+- `daily_low`
+- `daily_close`
+- `daily_range`
+
+For every eligible observation:
+
+```text
+close_location =
+    (daily_close - daily_low)
+    /
+    (daily_high - daily_low)
+```
+
+Interpretation:
+
+```text
+0.0 = close at recorded daily low
+0.5 = close at midpoint of recorded daily range
+1.0 = close at recorded daily high
+```
+
+Exact decimal arithmetic was used. The value was not calculated for
+zero-range observations, but no eligible zero-range observation occurred.
+
+Each eligible observation was assigned to exactly one category:
+
+- `lower_half`: `close_location < 0.5`
+- `exact_midpoint`: `close_location == 0.5`
+- `upper_half`: `close_location > 0.5`
+
+No thirds, quartiles, trading zones, or additional bands were used.
+
+### Coverage
+
+| Month | Requested | Strict valid | Warning review | Calendar only | Excluded/unusable |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| January | 31 | 9 | 18 | 4 | 0 |
+| February | 29 | 5 | 20 | 4 | 0 |
+| March | 31 | 9 | 16 | 6 | 0 |
+
+Eligible counts were identical to strict-valid and warning-review counts.
+Missing daily fields occurred only on `calendar_only` rows:
+
+| Month | Missing daily fields |
+| --- | ---: |
+| January | 4 |
+| February | 4 |
+| March | 6 |
+
+Calendar-only daily values remained unavailable rather than being interpreted
+as zero.
+
+### Primary Strict-Valid Result
+
+Primary descriptive result under `warning_treatment_v1`:
+
+| Month | N | Minimum | Median | Mean | Maximum | Lower half | Exact midpoint | Upper half |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| January | 9 | 0.081956 | 0.477497 | 0.381347 | 0.581287 | 5 (55.6%) | 0 (0.0%) | 4 (44.4%) |
+| February | 5 | 0.082075 | 0.582398 | 0.512864 | 0.898558 | 2 (40.0%) | 0 (0.0%) | 3 (60.0%) |
+| March | 9 | 0.029143 | 0.859838 | 0.650382 | 0.936246 | 3 (33.3%) | 0 (0.0%) | 6 (66.7%) |
+
+Strict-valid category dates:
+
+```text
+January lower_half:
+2024-01-01
+2024-01-19
+2024-01-21
+2024-01-26
+2024-01-28
+
+January exact_midpoint:
+none
+
+January upper_half:
+2024-01-05
+2024-01-07
+2024-01-12
+2024-01-14
+
+February lower_half:
+2024-02-02
+2024-02-04
+
+February exact_midpoint:
+none
+
+February upper_half:
+2024-02-11
+2024-02-16
+2024-02-25
+
+March lower_half:
+2024-03-03
+2024-03-15
+2024-03-22
+
+March exact_midpoint:
+none
+
+March upper_half:
+2024-03-01
+2024-03-10
+2024-03-17
+2024-03-24
+2024-03-28
+2024-03-31
+```
+
+Simple three-month strict-valid audit count, not a universal probability:
+
+```text
+eligible = 23
+lower_half = 10
+exact_midpoint = 0
+upper_half = 13
+```
+
+The per-month strict-valid results remain primary.
+
+### Warning-Review Sensitivity
+
+`warning-review sensitivity`:
+
+| Month | N | Minimum | Median | Mean | Maximum | Lower half | Exact midpoint | Upper half |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| January | 18 | 0.128180 | 0.366983 | 0.439384 | 0.953316 | 11 (61.1%) | 0 (0.0%) | 7 (38.9%) |
+| February | 20 | 0.033831 | 0.548991 | 0.523146 | 0.800620 | 9 (45.0%) | 0 (0.0%) | 11 (55.0%) |
+| March | 16 | 0.189285 | 0.627238 | 0.622303 | 0.918718 | 4 (25.0%) | 0 (0.0%) | 12 (75.0%) |
+
+Warning context:
+
+| Month | Warning reason | Affected dates | Diagnostic runs | Diagnostic run rows |
+| --- | --- | ---: | ---: | ---: |
+| January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
+| February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
+| March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+
+The warning context is separate from the close-location calculation. It does
+not show that `INTERNAL_FLAT_ZERO_VOLUME` caused any close-location difference.
+
+Simple warning-review audit count, not pooled with strict-valid:
+
+```text
+eligible = 54
+lower_half = 24
+exact_midpoint = 0
+upper_half = 30
+```
+
+### Loader Practicality Evidence
+
+- The three linked reports were loaded through
+  `research_observations.load_linked_reports(...)`.
+- 91 observations were loaded.
+- Chronological order was preserved.
+- Population counts were `23 / 54 / 14 / 0`.
+- Three compatible software revisions were retained.
+- No loader validation failed.
+- Direct linked-row CSV parsing was not needed for the primary analysis.
+- Remaining custom work was limited to the research-specific decimal
+  calculation, monthly grouping, range reconciliation, and separate
+  manifest/diagnostic context reads.
+
+This does not establish that every future analysis will require no additional
+work.
+
+### Reconciliation
+
+- Each requested date appeared exactly once.
+- All strict-valid and warning-review observations were eligible.
+- No eligible observation had a zero daily range.
+- Stored `daily_range` reconciled exactly with `daily_high - daily_low`.
+- Daily-range reconciliation mismatches: 0.
+- Calendar-only daily values remained unavailable.
+- Exact decimal arithmetic was used.
+- No repository file was changed during the preceding read-only execution.
+- No report was generated or regenerated during the preceding read-only
+  execution.
+
+Other raw-data quality dimensions were not revalidated during this
+close-location analysis.
+
+### Descriptive Conclusion
+
+In the strict-valid January-March 2024 observations, closes were more often in
+the lower half of the recorded daily range in January and more often in the
+upper half in February and March. The separately labelled warning-review
+sensitivity population had the same lower-half or upper-half majority in each
+corresponding month. No eligible observation closed at the exact recorded range
+midpoint.
+
+The two quality populations were broadly similar in their coarse lower-half
+versus upper-half category direction, but their medians and category
+proportions differed by month. The median difference was small in February and
+larger in January and March. This bounded comparison does not establish
+equivalence or a causal warning effect.
+
+This does not establish bullish or bearish bias, directional market tendency,
+an entry or exit rule, support or resistance, a setup or signal, momentum or
+reversal, prediction, trading edge, profitability, execution realism,
+statistical significance, the cause or harmlessness of
+`INTERNAL_FLAT_ZERO_VOLUME`, or normal or universal XAU/USD behaviour.
+
+### Unresolved Questions
+
+- Strict-valid samples were small, especially February with 5 observations.
+- Warning treatment remains observation-level under `warning_treatment_v1`.
+- Warning causes remain unresolved.
+- The sample covers one provider, quote side, timeframe, and three-month
+  period.
+- No statistical testing was performed.
+- No execution assumptions were included.
+- No next research task has been selected from this finding alone.
