@@ -2,7 +2,7 @@
 
 Verified committed milestone: **v0.11**.
 
-XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, producing a separate non-canonical linked observation report, creating a first descriptive historical baseline from an existing linked observation CSV, and producing a narrow structural diagnostic for internal flat zero-volume runs.
+XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, producing a separate non-canonical linked observation report, loading linked reports through an internal quality-aware research access layer, creating a first descriptive historical baseline from an existing linked observation CSV, and producing a narrow structural diagnostic for internal flat zero-volume runs.
 
 ## Repository Structure
 
@@ -22,6 +22,7 @@ explorer.py
 historical_baseline_report.py
 internal_flat_zero_volume_diagnostic.py
 linked_observation_report.py
+research_observations.py
 requirements.txt
 session_report.py
 session_tools.py
@@ -52,6 +53,13 @@ The local `data_raw/` folder may contain ignored downloaded XAUUSD CSV files on 
 `data_manifest.py` creates one data quality and provenance row per requested calendar date. It supports inclusive date ranges, optional `--data-dir`, deterministic output under `reports/`, and terminal summaries whose file-status and quality-status counts reconcile to the requested date count.
 
 `linked_observation_report.py` creates one non-canonical provenance-linked observation row per requested calendar date. It reads each expected raw file into verified bytes, runs the existing manifest assessment and existing session-calculation logic from those same bytes, re-checks source identity after processing, and writes a separate linked report under `reports/` without changing the v0.10 session-report or v0.11 manifest schemas.
+
+`research_observations.py` loads existing linked observation report CSVs through
+`research_observation_contract_v1`. It validates linked schema version and
+contract compatibility, preserves original row strings and source report path
+provenance, keeps blank values unavailable, provides named quality-tier
+populations, and supports compatible multi-month loading without reading raw
+data, generating outputs, or changing producer schemas.
 
 `historical_baseline_report.py` reads one existing linked observation report CSV and writes a descriptive baseline report under `reports/`. It reports coverage, numeric availability, and daily/Tokyo/London/New York range summaries without reading raw data, regenerating producer outputs, or making strategy, prediction, execution, or profitability claims.
 
@@ -620,6 +628,34 @@ minute, and the result was not changed by the known repeated-extremum ties. No
 production code, schema, filtering, classification, raw data, report artifact,
 dependency, or behaviour change was made. No pooled strict-valid/warning-review
 result was produced. The next research task has not yet been selected.
+
+## research_observation_contract_v1 Linked-Report Loader
+
+`research_observations.py` now provides the internal linked-report research
+loader for `research_observation_contract_v1`.
+
+The loader reads existing schema-v1 linked observation report CSVs and validates
+the proposed research observation unit identity, linked schema version, source
+contract, manifest schema, validation-rule identity, active-filter identity, and
+session-definition checksum. It rejects duplicate identities within or across
+loaded reports and orders observations chronologically after validation.
+
+The public access functions are `load_linked_report(path)` and
+`load_linked_reports(paths)`. They return a small collection with generic
+iteration, observation count, contract metadata, source report paths, exact
+population counts, and named selectors for `strict_valid`, `warning_review`,
+`calendar_only`, `excluded_unusable`, and coverage-only observations.
+
+The loader preserves original CSV field values as strings, preserves the source
+linked-report path and row `software_revision` as provenance, keeps blank values
+unavailable, and does not treat quality tier as field-level eligibility.
+Compatible mixed software revisions are allowed when the schema, source,
+validation, filtering, and session-definition contracts match.
+
+Manifest attachment, diagnostic attachment, baseline integration, raw-data
+access, report generation, report regeneration, research calculations, charts,
+and user-interface work remain deferred. Existing producers and report schemas
+are unchanged, and no analysis has been implied to have migrated to the loader.
 
 ## v0.11 Data Quality Manifest Behaviour
 

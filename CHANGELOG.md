@@ -48,6 +48,11 @@
 - Added dedicated `session_report.py` regression coverage for equal daily-high
   and equal daily-low ties, confirming the recorded UTC timing fields use the
   first active-candle occurrence after edge placeholder filtering.
+- Added `research_observations.py` as an internal linked-report research access
+  layer with portable fixture tests for contract compatibility, quality-tier
+  selectors, provenance preservation, blank-value semantics, and compatible
+  multi-report loading. Existing producers and schemas were unchanged, no
+  dependency was added, and no research result or market conclusion changed.
 
 ## v0.11
 

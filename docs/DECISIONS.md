@@ -146,6 +146,49 @@ Future version triggers:
   contract change requires compatibility review before reusing this treatment
   decision.
 
+## research_observation_contract_v1 Linked-Report Access
+
+Decision status: approved.
+
+Decision date: 2026-07-26.
+
+Problem governed: how future internal analyses should load existing
+linked-observation CSV reports without duplicating compatibility checks or
+silently mixing quality populations.
+
+This interface is internal and linked-report-only. It wraps existing schema-v1
+linked reports and is not a canonical dataset, a new report producer, or a
+replacement for existing producers. The producers remain authoritative and
+unchanged, and report schemas do not change.
+
+Adopted rules:
+
+- The proposed research observation unit is one linked-report row for one
+  requested UTC date under one compatible source contract.
+- Observation identity is `date`, `provider`, `instrument`, `quote_side`, and
+  `timeframe`.
+- The loader validates linked schema version, source contract, manifest schema,
+  validation rule, active-filter rule, and session-definition checksum
+  compatibility.
+- `strict_valid`, `warning_review`, `calendar_only`, and `excluded_unusable`
+  remain separate populations.
+- No silent strict-valid plus warning-review pooling is provided.
+- Blank values remain unavailable and are not converted to zero.
+- Field availability is independent of observation quality tier; a strict-valid
+  or warning-review observation may still contain blank session fields.
+- Compatible mixed `software_revision` values are allowed when the schema,
+  source, validation, filtering, and session-definition contracts match.
+- Manifest and diagnostic attachment are deferred.
+
+Consequences:
+
+- Future analysis code can use named quality-tier selectors instead of ad hoc
+  CSV filtering.
+- Row values remain the original CSV strings, with source linked-report path and
+  row software revision preserved as provenance.
+- Manifest detail lookup, diagnostic run lookup, baseline integration, raw-data
+  access, and research calculations require separate approval.
+
 ## Session Research
 
 - Session definitions come from `sessions.json`.
