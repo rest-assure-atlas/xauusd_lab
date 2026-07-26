@@ -599,7 +599,7 @@ closure, provider outage, corruption, universal XAU/USD behaviour, statistical
 significance, support or resistance, a setup or signal, prediction, trading
 edge, profitability, or execution realism.
 
-The first two bounded descriptive questions under `warning_treatment_v1` are
+The first three bounded descriptive questions under `warning_treatment_v1` are
 complete and recorded in [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md). For
 January through March 2024 Dukascopy XAUUSD one-minute BID linked observations,
 the daily-range finding showed higher warning-review sensitivity median and
@@ -612,10 +612,14 @@ materially dependent on the tested first-occurrence, last-occurrence, or
 date-weighted all-occurrence tie representations. Current first-occurrence
 semantics are now protected by dedicated `session_report.py` regression tests
 for equal daily-high and equal daily-low ties after edge flat zero-volume
-placeholder filtering. No production code, schema, filtering, classification,
-raw data, report artifact, or dependency change was made. No pooled
-strict-valid/warning-review result was produced. The next research task has not
-yet been selected.
+placeholder filtering. The daily-extrema ordering finding showed that
+`low_before_high` appeared more often than `high_before_low` in each
+strict-valid month, while the separately labelled warning-review comparison was
+mixed by month; no eligible observation had both recorded extrema in the same
+minute, and the result was not changed by the known repeated-extremum ties. No
+production code, schema, filtering, classification, raw data, report artifact,
+dependency, or behaviour change was made. No pooled strict-valid/warning-review
+result was produced. The next research task has not yet been selected.
 
 ## v0.11 Data Quality Manifest Behaviour
 
