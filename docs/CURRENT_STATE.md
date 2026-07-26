@@ -610,9 +610,12 @@ hour `23` in all three months and strict-valid recorded daily-low peak hours
 sensitivity differed visibly, and the principal timing result was not
 materially dependent on the tested first-occurrence, last-occurrence, or
 date-weighted all-occurrence tie representations. Current first-occurrence
-semantics are established by source behaviour but do not yet have a dedicated
-regression test. No pooled strict-valid/warning-review result was produced. The
-next research task has not yet been selected.
+semantics are now protected by dedicated `session_report.py` regression tests
+for equal daily-high and equal daily-low ties after edge flat zero-volume
+placeholder filtering. No production code, schema, filtering, classification,
+raw data, report artifact, or dependency change was made. No pooled
+strict-valid/warning-review result was produced. The next research task has not
+yet been selected.
 
 ## v0.11 Data Quality Manifest Behaviour
 

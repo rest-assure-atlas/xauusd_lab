@@ -41,6 +41,9 @@
   and tie-handling sensitivity result under `warning_treatment_v1` as a
   documentation and research-evidence milestone, with no source-code, schema,
   filtering, classification, data, or dependency change.
+- Added dedicated `session_report.py` regression coverage for equal daily-high
+  and equal daily-low ties, confirming the recorded UTC timing fields use the
+  first active-candle occurrence after edge placeholder filtering.
 
 ## v0.11
 

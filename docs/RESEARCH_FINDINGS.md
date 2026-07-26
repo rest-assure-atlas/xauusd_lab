@@ -194,8 +194,8 @@ Warning context reports:
 - Edge flat zero-volume placeholders are removed before extrema selection.
 - Current implementation records the first active-candle occurrence when equal
   extrema repeat.
-- The repository does not yet contain a dedicated regression test for this tie
-  behaviour.
+- Dedicated `session_report.py` regression tests now cover equal daily-high and
+  equal daily-low ties after edge flat zero-volume placeholders are removed.
 
 The timestamp fields record one occurrence. They do not represent all equal
 daily-high or daily-low occurrences.
@@ -355,11 +355,9 @@ universal or normal XAU/USD behaviour.
 
 ### Unresolved Questions
 
-- The first-occurrence tie convention is established by current source behaviour
-  but is not protected by a dedicated regression test.
-- A future bounded software-quality task may add dedicated equal-daily-high and
-  equal-daily-low tie tests and a concise public clarification of
-  first-occurrence semantics.
+- The first-occurrence tie convention is now protected by dedicated regression
+  tests, but no broader tie-handling policy change or universal recommendation
+  has been adopted.
 - The cause and practical meaning of `INTERNAL_FLAT_ZERO_VOLUME` remain
   unresolved.
 - No next research task has been selected from this finding alone.

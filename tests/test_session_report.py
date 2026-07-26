@@ -21,6 +21,40 @@ from fixture_helpers import (
 
 
 class SessionReportTest(unittest.TestCase):
+    def make_raw_row(
+        self,
+        day,
+        time_text,
+        open_price,
+        high_price,
+        low_price,
+        close_price,
+        volume,
+    ):
+        return {
+            "timestamp_utc": f"{day.isoformat()} {time_text}",
+            "open": f"{open_price:.3f}",
+            "high": f"{high_price:.3f}",
+            "low": f"{low_price:.3f}",
+            "close": f"{close_price:.3f}",
+            "volume": str(volume),
+        }
+
+    def run_single_day_report_from_rows(self, day, rows):
+        with TemporaryDirectory() as temp_root:
+            data_dir = Path(temp_root) / "data_raw"
+            reports_dir = Path(temp_root) / "reports"
+            write_daily_csv(data_dir, day, rows)
+
+            with (
+                patch("session_report.DATA_RAW_DIR", data_dir),
+                patch("session_report.REPORTS_DIR", reports_dir),
+            ):
+                summary = session_report.create_session_report(day, day)
+
+            with summary.output_path.open("r", newline="", encoding="utf-8") as report_file:
+                return next(csv.DictReader(report_file))
+
     def test_short_january_range_writes_one_row_per_date(self):
         start_day = date(2024, 1, 1)
         end_day = date(2024, 1, 3)
@@ -97,6 +131,62 @@ class SessionReportTest(unittest.TestCase):
         self.assertEqual(report_row["tokyo_active_candle_count"], "540")
 
         self.assertEqual(before_hash, after_hash)
+
+    def test_daily_high_tie_records_first_active_occurrence_after_edge_filtering(self):
+        day = date(2024, 1, 2)
+        active_rows = [
+            self.make_raw_row(day, "00:01:00", 2000.0, 2002.0, 1999.0, 2001.0, 10),
+            self.make_raw_row(day, "00:02:00", 2001.0, 2010.0, 2000.0, 2009.0, 12),
+            self.make_raw_row(day, "00:03:00", 2009.0, 2009.5, 2005.0, 2006.0, 11),
+            self.make_raw_row(day, "00:04:00", 2006.0, 2010.0, 2001.0, 2002.0, 13),
+            self.make_raw_row(day, "00:05:00", 2002.0, 2004.0, 1998.0, 2003.0, 9),
+        ]
+        rows = [
+            self.make_raw_row(day, "00:00:00", 2500.0, 2500.0, 2500.0, 2500.0, 0),
+            *active_rows,
+            self.make_raw_row(day, "00:06:00", 2600.0, 2600.0, 2600.0, 2600.0, 0),
+        ]
+
+        report_row = self.run_single_day_report_from_rows(day, rows)
+        tied_high_times = [
+            row["timestamp_utc"].split()[1]
+            for row in active_rows
+            if row["high"] == "2010.000"
+        ]
+
+        self.assertEqual(tied_high_times, ["00:02:00", "00:04:00"])
+        self.assertEqual(report_row["active_candle_count"], "5")
+        self.assertEqual(report_row["inactive_placeholder_count"], "2")
+        self.assertEqual(report_row["daily_high"], "2010.000")
+        self.assertEqual(report_row["time_of_daily_high_utc"], tied_high_times[0])
+
+    def test_daily_low_tie_records_first_active_occurrence_after_edge_filtering(self):
+        day = date(2024, 1, 3)
+        active_rows = [
+            self.make_raw_row(day, "00:01:00", 2000.0, 2004.0, 1998.0, 2002.0, 10),
+            self.make_raw_row(day, "00:02:00", 2002.0, 2003.0, 1980.0, 1985.0, 12),
+            self.make_raw_row(day, "00:03:00", 1985.0, 1995.0, 1984.0, 1992.0, 11),
+            self.make_raw_row(day, "00:04:00", 1992.0, 2000.0, 1980.0, 1999.0, 13),
+            self.make_raw_row(day, "00:05:00", 1999.0, 2001.0, 1995.0, 2000.0, 9),
+        ]
+        rows = [
+            self.make_raw_row(day, "00:00:00", 1000.0, 1000.0, 1000.0, 1000.0, 0),
+            *active_rows,
+            self.make_raw_row(day, "00:06:00", 900.0, 900.0, 900.0, 900.0, 0),
+        ]
+
+        report_row = self.run_single_day_report_from_rows(day, rows)
+        tied_low_times = [
+            row["timestamp_utc"].split()[1]
+            for row in active_rows
+            if row["low"] == "1980.000"
+        ]
+
+        self.assertEqual(tied_low_times, ["00:02:00", "00:04:00"])
+        self.assertEqual(report_row["active_candle_count"], "5")
+        self.assertEqual(report_row["inactive_placeholder_count"], "2")
+        self.assertEqual(report_row["daily_low"], "1980.000")
+        self.assertEqual(report_row["time_of_daily_low_utc"], tied_low_times[0])
 
     def test_summary_counts_reconcile_to_requested_dates_with_all_statuses(self):
         start_day = date(2024, 1, 1)
