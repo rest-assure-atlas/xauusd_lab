@@ -29,6 +29,10 @@
   runs, reconciled provenance/checksum and diagnostic arithmetic checks, and
   direct before-and-after hash verification that January and February files were
   unchanged.
+- Documented adoption of `warning_treatment_v1` as a research-governance
+  contract for warning-review observations, with no code, schema,
+  classification, filtering, report-generation, raw-data, or configuration
+  change.
 
 ## v0.11
 

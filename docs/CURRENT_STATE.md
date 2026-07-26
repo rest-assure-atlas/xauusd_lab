@@ -549,6 +549,61 @@ observations using the already generated January through March evidence.
 March remains one additional bounded descriptive month only. January,
 February, and March must not be treated as a universal market baseline.
 
+## warning_treatment_v1 Research Contract
+
+`warning_treatment_v1` is the approved research-treatment contract for
+`warning_review` observations after the January through March 2024 validation
+evidence. It is a documentation and research-governance decision only. It does
+not change raw data, filtering, manifest classifications, quality tiers, linked
+schemas, baseline calculations, diagnostics, session definitions, or current
+source-code behaviour.
+
+Primary or headline numeric results must use `strict_valid` observations only
+and must report the strict-valid observation count for every numeric result.
+Small strict-valid samples must be reported honestly and must not be used as a
+reason to weaken the quality rule.
+
+`warning_review` observations may be used only in separately labelled
+descriptive analysis or `warning-review sensitivity analysis`. Warning-review
+results must remain separate from strict-valid results, report available
+observation counts and warning-reason counts, remain traceable to the
+provenance-linked source report, and include diagnostic context when a diagnostic
+exists.
+
+`strict_valid` and `warning_review` observations must not be pooled into primary
+or headline research results. Combined counts may be shown only as clearly
+labelled coverage, not as a quality-homogeneous research sample. `calendar_only`
+and `excluded_unusable` observations remain coverage records for the current
+daily/session range research. Blank or unavailable numeric values remain
+unavailable and are not converted to zero.
+
+The treatment is observation-level in this version. A daily observation
+classified `warning_review` remains warning-review as a whole. Diagnostic
+session overlap can be reported descriptively, but it does not prove that a
+non-overlapped field is unaffected, that an overlapped field is invalid, that a
+run outside configured sessions is irrelevant to daily values, or that any field
+is harmless or reliable. Field-level eligibility and diagnostic thresholds are
+postponed until a separately approved specification.
+
+`historical_baseline_report.py` already follows the core strict-versus-warning
+separation. The provenance-linked report preserves quality tier and warning
+reason fields, and the diagnostic supplies descriptive warning context.
+`session_report.py`, `explorer.py`, and `chart.py` use edge filtering but are
+not independently quality-tier-aware, so their outputs must not be presented as
+quality-screened research evidence unless linked back to the applicable manifest
+or provenance-linked assessment.
+
+`warning_treatment_v1` does not establish the cause of
+`INTERNAL_FLAT_ZERO_VOLUME`, harmlessness, expected market behaviour, market
+closure, provider outage, corruption, universal XAU/USD behaviour, statistical
+significance, support or resistance, a setup or signal, prediction, trading
+edge, profitability, or execution realism.
+
+The next recommended bounded milestone is a descriptive research-question
+selection step using the existing January through March evidence under
+`warning_treatment_v1`. April downloading is not the next step until that
+question-selection milestone is approved.
+
 ## v0.11 Data Quality Manifest Behaviour
 
 `data_manifest.py` creates one CSV row per requested calendar date.
