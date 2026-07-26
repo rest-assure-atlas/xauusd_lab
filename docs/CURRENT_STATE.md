@@ -607,7 +607,7 @@ closure, provider outage, corruption, universal XAU/USD behaviour, statistical
 significance, support or resistance, a setup or signal, prediction, trading
 edge, profitability, or execution realism.
 
-The first four bounded descriptive questions under `warning_treatment_v1` are
+The first five bounded descriptive questions under `warning_treatment_v1` are
 complete and recorded in [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md). For
 January through March 2024 Dukascopy XAUUSD one-minute BID linked observations,
 the daily-range finding showed higher warning-review sensitivity median and
@@ -630,12 +630,17 @@ often in the lower half of the recorded daily range in January and more often
 in the upper half in February and March. The separately labelled warning-review
 sensitivity population had the same monthly lower-half or upper-half category
 majority in each corresponding month, though medians and category percentages
-differed by month. This was the first completed analysis using
-`research_observation_contract_v1`; the loader-backed execution succeeded
-without loader expansion. No production code, schema, filtering,
-classification, raw data, report artifact, dependency, loader, or producer
-change was made. No pooled strict-valid/warning-review result was produced. The
-next research task has not yet been selected.
+differed by month. The daily open-to-close finding showed that January and
+February strict-valid observations had more below-open dates, while March
+strict-valid observations had more above-open dates. The warning-review
+sensitivity population had more above-open dates in all three months, and the
+quality-tier comparison was mixed by month. Open-to-close classification is
+distinct from close location within the daily range. The loader-backed
+executions using `research_observation_contract_v1` succeeded without loader
+expansion. No production code, schema, filtering, classification, raw data,
+report artifact, dependency, loader, or producer change was made. No pooled
+strict-valid/warning-review result was produced. The next research task has
+not yet been selected.
 
 ## research_observation_contract_v1 Linked-Report Loader
 

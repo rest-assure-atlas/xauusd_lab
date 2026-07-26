@@ -860,3 +860,292 @@ statistical significance, the cause or harmlessness of
 - No statistical testing was performed.
 - No execution assumptions were included.
 - No next research task has been selected from this finding alone.
+
+## 2026-07-27 - January-March 2024 Daily Open-To-Close
+
+Status: `descriptive finding`
+
+### Question
+
+For each validated month from January through March 2024, how often did the
+recorded daily close finish above, below, or exactly at the recorded daily open
+for `strict_valid` observations, with `warning_review` reported separately as
+a labelled sensitivity view and `calendar_only`/`excluded_unusable` retained
+only as coverage?
+
+### Evidence Scope
+
+- Provider: Dukascopy
+- Instrument: XAUUSD
+- Quote side: BID
+- Timeframe: 1 minute
+- Timezone: UTC
+- Calendar period: January-March 2024
+- Primary input: provenance-linked daily observation reports
+- Access contract: `research_observation_contract_v1`
+- Quality treatment: `warning_treatment_v1`
+
+This is not a universal XAU/USD market record.
+
+### Source Reports
+
+Primary row-level source reports loaded through
+`research_observations.load_linked_reports(...)`:
+
+- `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
+- `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
+- `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+
+Warning context reports:
+
+- `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
+- `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
+- `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+
+### Category And Magnitude Definitions
+
+Linked fields used:
+
+- `date`
+- `quality_tier`
+- `daily_open`
+- `daily_close`
+
+Exact decimal arithmetic was used:
+
+```text
+open_to_close_change = daily_close - daily_open
+absolute_open_to_close_change = abs(daily_close - daily_open)
+```
+
+Each eligible observation was assigned to exactly one category:
+
+- `close_above_open`: `daily_close > daily_open`
+- `close_below_open`: `daily_close < daily_open`
+- `close_equal_open`: `daily_close == daily_open`
+
+No tolerance or approximate-equality category was used. Price changes are
+descriptive quote-unit differences, not returns, profit, or tradable P&L.
+
+### Coverage
+
+| Month | Requested | Strict valid | Warning review | Calendar only | Excluded/unusable |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| January | 31 | 9 | 18 | 4 | 0 |
+| February | 29 | 5 | 20 | 4 | 0 |
+| March | 31 | 9 | 16 | 6 | 0 |
+
+Eligible counts were identical to strict-valid and warning-review counts.
+Missing daily-open or daily-close values occurred only on `calendar_only`
+rows:
+
+| Month | Missing daily open/close values |
+| --- | ---: |
+| January | 4 |
+| February | 4 |
+| March | 6 |
+
+Calendar-only daily-open and daily-close values remained unavailable rather
+than being interpreted as zero.
+
+### Primary Strict-Valid Result
+
+Primary descriptive result under `warning_treatment_v1`:
+
+| Month | N | Close above open | Close below open | Close equal open | Minimum change | Median change | Mean change | Maximum change | Median absolute change |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| January | 9 | 4 (44.4%) | 5 (55.6%) | 0 (0.0%) | -2.710 | -0.190 | 1.450 | 13.620 | 2.180 |
+| February | 5 | 2 (40.0%) | 3 (60.0%) | 0 (0.0%) | -15.450 | -0.360 | -1.058 | 9.610 | 1.850 |
+| March | 9 | 7 (77.8%) | 2 (22.2%) | 0 (0.0%) | -16.680 | 2.530 | 8.126 | 42.133 | 5.970 |
+
+Strict-valid category dates:
+
+```text
+January close_above_open:
+2024-01-01
+2024-01-05
+2024-01-12
+2024-01-19
+
+January close_below_open:
+2024-01-07
+2024-01-14
+2024-01-21
+2024-01-26
+2024-01-28
+
+January close_equal_open:
+none
+
+February close_above_open:
+2024-02-11
+2024-02-16
+
+February close_below_open:
+2024-02-02
+2024-02-04
+2024-02-25
+
+February close_equal_open:
+none
+
+March close_above_open:
+2024-03-01
+2024-03-03
+2024-03-10
+2024-03-17
+2024-03-24
+2024-03-28
+2024-03-31
+
+March close_below_open:
+2024-03-15
+2024-03-22
+
+March close_equal_open:
+none
+```
+
+Simple three-month strict-valid audit count, not a universal rate or headline
+result:
+
+```text
+eligible = 23
+close_above_open = 13
+close_below_open = 10
+close_equal_open = 0
+```
+
+The per-month strict-valid results remain primary.
+
+### Warning-Review Sensitivity
+
+`warning-review sensitivity`:
+
+| Month | N | Close above open | Close below open | Close equal open | Minimum change | Median change | Mean change | Maximum change | Median absolute change |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| January | 18 | 9 (50.0%) | 8 (44.4%) | 1 (5.6%) | -25.980 | 0.616 | -2.323 | 14.170 | 7.630 |
+| February | 20 | 11 (55.0%) | 9 (45.0%) | 0 (0.0%) | -27.350 | 1.382 | 0.428 | 14.890 | 5.486 |
+| March | 16 | 12 (75.0%) | 4 (25.0%) | 0 (0.0%) | -26.670 | 8.872 | 7.689 | 46.870 | 14.210 |
+
+Equal-open warning-review observation:
+
+```text
+2024-01-09 warning_review
+```
+
+Warning context:
+
+| Month | Warning reason | Affected dates | Diagnostic runs | Diagnostic run rows |
+| --- | --- | ---: | ---: | ---: |
+| January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
+| February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
+| March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+
+The warning context is separate from the open-to-close calculation. It does
+not show that `INTERNAL_FLAT_ZERO_VOLUME` caused any open-to-close difference.
+
+Simple warning-review audit count, not pooled with strict-valid:
+
+```text
+eligible = 54
+close_above_open = 32
+close_below_open = 21
+close_equal_open = 1
+```
+
+### Distinction From Close-Location Finding
+
+Open-to-close classification and close location within the daily range are not
+interchangeable. Verified examples:
+
+```text
+2024-01-01 strict_valid:
+close above open
+close located in the lower half of the daily range
+
+2024-01-07 strict_valid:
+close below open
+close located in the upper half of the daily range
+
+2024-01-09 warning_review:
+close equal open
+close not at the exact daily-range midpoint
+```
+
+These examples do not establish any market cause.
+
+### Loader Practicality Evidence
+
+- The three linked reports were loaded through
+  `research_observations.load_linked_reports(...)`.
+- 91 observations were loaded.
+- Population counts were `23 / 54 / 14 / 0`.
+- Chronological order was preserved.
+- Three compatible software revisions were retained.
+- No loader validation failed.
+- Primary linked rows did not require ad hoc CSV parsing.
+- The loader handled loading, validation, provenance retention, blank
+  semantics, and population separation.
+- Remaining custom work was limited to the research-specific decimal
+  calculations, monthly grouping, magnitude summaries, cross-finding checks,
+  and separate warning-context reads.
+
+This does not establish that every future analysis will require no loader
+expansion.
+
+### Reconciliation
+
+- Every requested date appeared exactly once.
+- All strict-valid and warning-review observations were eligible.
+- All strict-valid and warning-review observations had daily-open and
+  daily-close values.
+- Missing values occurred only on calendar-only rows.
+- Calendar-only daily-open and daily-close values remained unavailable.
+- Daily-range reconciliation mismatches: 0.
+- Exact Decimal comparisons were used.
+- No repository file was changed during the preceding read-only execution.
+- No report was generated or regenerated during the preceding read-only
+  execution.
+
+Other raw-data quality dimensions were not revalidated during this
+open-to-close analysis.
+
+### Descriptive Conclusion
+
+In the strict-valid January-March 2024 observations, more dates closed below
+their recorded open in January and February, while more dates closed above
+their recorded open in March. No strict-valid observation closed exactly at its
+recorded open. In the separately labelled warning-review sensitivity
+population, more dates closed above their recorded open in all three months,
+with one equal-open observation in January.
+
+The quality-tier comparison was mixed by month. January and February had
+opposite category majorities between strict-valid and warning-review, while
+both populations had an above-open majority in March. The signed-change
+medians and category proportions also differed. These observations do not
+establish a causal warning effect or a repeatable directional pattern.
+
+### Interpretation Limits
+
+This finding does not establish bullish or bearish bias, future direction,
+directional market tendency, momentum or reversal, an entry or exit rule,
+support or resistance, a setup or signal, prediction, trading edge,
+profitability, execution realism, statistical significance, the cause or
+harmlessness of `INTERNAL_FLAT_ZERO_VOLUME`, or normal or universal XAU/USD
+behaviour.
+
+### Unresolved Questions
+
+- Strict-valid samples were small, especially February with 5 observations.
+- Warning treatment remains observation-level under `warning_treatment_v1`.
+- Warning causes remain unresolved.
+- The sample covers one provider, instrument, quote side, timeframe, and
+  three-month period.
+- No statistical testing was performed.
+- ASK, spread, commission, slippage, latency, and execution assumptions were
+  not included.
+- No next research task has been selected from this finding alone.

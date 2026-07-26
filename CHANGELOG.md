@@ -57,6 +57,10 @@
   under `warning_treatment_v1` as the first completed analysis using
   `research_observation_contract_v1`, with no source-code, schema, filtering,
   classification, data, dependency, loader, or producer change.
+- Recorded the January-March 2024 daily open-to-close descriptive finding
+  using `research_observation_contract_v1`, with no source-code, loader,
+  schema, filtering, classification, data, dependency, producer, or behaviour
+  change.
 
 ## v0.11
 
