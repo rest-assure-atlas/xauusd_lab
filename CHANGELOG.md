@@ -33,6 +33,10 @@
   contract for warning-review observations, with no code, schema,
   classification, filtering, report-generation, raw-data, or configuration
   change.
+- Recorded the January-March 2024 daily-range descriptive finding under
+  `warning_treatment_v1` as a documentation and research-evidence milestone,
+  with no source-code, schema, classification, filtering, data, or dependency
+  change.
 
 ## v0.11
 
