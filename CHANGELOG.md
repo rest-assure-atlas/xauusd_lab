@@ -16,6 +16,12 @@
 - Added `internal_flat_zero_volume_diagnostic.py` for deterministic structural
   run-location reports from existing manifest, linked observation, and raw CSV
   files without changing filtering or warning policy.
+- Verified the February 2024 single-month pipeline for 29 requested dates,
+  including February 29, with 29 downloaded raw daily CSVs, 5 strict-valid
+  observations, 20 warning-review observations, 4 calendar-only observations,
+  0 excluded/unusable observations, 20 `INTERNAL_FLAT_ZERO_VOLUME` warning
+  dates, 29 internal flat zero-volume runs, and successful cross-report,
+  provenance-checksum, and diagnostic arithmetic reconciliation.
 
 ## v0.11
 

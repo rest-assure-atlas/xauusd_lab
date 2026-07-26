@@ -253,6 +253,21 @@ The current automated test suite contains 136 tests and currently passes with:
 python -m unittest discover -s tests
 ```
 
+In the bundled Codex runtime used during February validation, Matplotlib was
+not available. `unittest` still discovered 136 test cases, but the five
+`ChartAutoscaleRegressionTest` methods were skipped at class setup and were not
+counted as run tests. Two additional Matplotlib-dependent tests were counted as
+skipped. That environment-specific result was:
+
+```text
+Bundled Codex runtime:
+131 tests run
+3 skipped
+0 failures
+0 errors
+Matplotlib unavailable in that runtime
+```
+
 The latest completed application milestone is v0.11.
 
 ## Recent Manually Verified Behaviour
@@ -309,6 +324,71 @@ Manual January 2024 manifest observations:
 - The January sample had complete 00:00 through 23:59 UTC timestamp coverage for every existing raw file, so no rows received `PARTIAL_DAY_COVERAGE`.
 
 These are structural observations only. They do not prove market closure, provider failure, or tradability.
+
+## February 2024 Pipeline Validation
+
+The February 2024 single-month pipeline has been manually validated for the
+inclusive date range 2024-02-01 through 2024-02-29.
+
+Verified February 2024 counts:
+
+```text
+Requested dates: 29
+Raw files: 29
+Manifest processed: 25
+Manifest no_active_candles: 4
+Manifest valid: 5
+Manifest warning: 20
+Manifest not_assessed: 4
+
+Linked strict_valid: 5
+Linked warning_review: 20
+Linked calendar_only: 4
+Linked excluded/unusable: 0
+
+Diagnostic warning dates: 20
+Diagnostic runs: 29
+Diagnostic run rows: 1,192
+```
+
+All 29 February raw CSV files were present with 1,440 data rows each. February
+29 was present, processed, and classified as `warning_review` with
+`INTERNAL_FLAT_ZERO_VOLUME`.
+
+The standalone February manifest, linked observation report, historical
+baseline, internal-flat diagnostic, and raw-source checksums reconciled. The
+baseline kept `strict_valid` and `warning_review` numeric summaries separate,
+and `calendar_only` values remained unavailable rather than being treated as
+zero.
+
+Seven February dates contained multiple separate diagnostic runs:
+
+```text
+2024-02-06: 3 runs
+2024-02-12: 2 runs
+2024-02-14: 2 runs
+2024-02-18: 2 runs
+2024-02-19: 2 runs
+2024-02-27: 2 runs
+2024-02-29: 3 runs
+```
+
+The February diagnostic command was accidentally executed twice. Verification
+showed deterministic replacement of the same output path, identical content,
+no appended rows, no duplicate report artifact, and no raw-file mutation.
+
+No saved January before-hash snapshot was available for direct January
+before/after proof. Implementation inspection showed the February commands were
+date-bounded to February output paths and February raw filenames, but that is
+not equivalent to direct January hash evidence.
+
+February is one additional bounded descriptive month only. January and February
+must not be treated as establishing normal XAU/USD behaviour. `strict_valid`
+and `warning_review` observations must remain separate. The February outputs do
+not support strategy, support/resistance, signal, prediction, edge,
+profitability, execution, or causal conclusions. `INTERNAL_FLAT_ZERO_VOLUME`
+remains an unresolved warning and has not been proven harmless or assigned a
+market or provider cause.
 
 ## v0.11 Data Quality Manifest Behaviour
 
