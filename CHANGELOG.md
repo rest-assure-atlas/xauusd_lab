@@ -37,6 +37,10 @@
   `warning_treatment_v1` as a documentation and research-evidence milestone,
   with no source-code, schema, classification, filtering, data, or dependency
   change.
+- Recorded the January-March 2024 daily-extrema UTC-hour descriptive finding
+  and tie-handling sensitivity result under `warning_treatment_v1` as a
+  documentation and research-evidence milestone, with no source-code, schema,
+  filtering, classification, data, or dependency change.
 
 ## v0.11
 
