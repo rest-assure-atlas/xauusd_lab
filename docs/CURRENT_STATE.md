@@ -390,6 +390,165 @@ profitability, execution, or causal conclusions. `INTERNAL_FLAT_ZERO_VOLUME`
 remains an unresolved warning and has not been proven harmless or assigned a
 market or provider cause.
 
+## March 2024 Pipeline Validation
+
+The March 2024 single-month pipeline has been manually validated for the
+inclusive date range 2024-03-01 through 2024-03-31.
+
+Verified March 2024 counts:
+
+```text
+Requested dates: 31
+Raw files: 31
+Manifest processed: 25
+Manifest no_active_candles: 6
+Manifest valid: 9
+Manifest warning: 16
+Manifest not_assessed: 6
+
+Linked strict_valid: 9
+Linked warning_review: 16
+Linked calendar_only: 6
+Linked excluded/unusable: 0
+
+Diagnostic warning dates: 16
+Diagnostic runs: 23
+Diagnostic run rows: 909
+```
+
+All 31 March raw CSV files were present exactly once with the expected
+filenames, header, 1,440 data rows, and 97,962 bytes per file. The final raw
+inventory covered March 1 through March 31 with no duplicate, temporary,
+partial, or unexpected March files. A first downloader attempt logged a
+2024-03-09 network timeout; a bounded retry saved the March 9 raw file with
+1,440 rows, and the retry reported 31 successful or skipped days and 0 failed
+days. The historical failure-log entry was left unchanged as generated evidence.
+
+The March manifest wrote 31 rows with schema version `1` and validation rule
+`raw_data_quality_v1`. File-status counts were 25 `processed` and 6
+`no_active_candles`; quality-status counts were 9 `valid`, 16 `warning`, and 6
+`not_assessed`. The reason distribution was 16
+`INTERNAL_FLAT_ZERO_VOLUME`, 6 `NO_ACTIVE_CANDLES`, and 9 blank reason rows.
+March 31 was present, processed, valid, and linked as `strict_valid`.
+
+The March linked observation report wrote 31 rows with linked schema version
+`1`, active-filter rule `edge_flat_zero_volume_v1`, session-definition checksum
+`30f6099c9cd51c206e03ba3ac96f43287ec2a62528d97de591118e73a6ec681a`, and
+software revision `a6233fa3375be6871ee225c3382e0ba3c02d9a1d`. Linkage-status
+counts were 25 `linked` and 6 `calendar_only`; linkage reasons were blank for
+all rows. Raw file sizes and SHA-256 checksums matched between the raw files,
+the standalone manifest, and the linked report. Calendar-only range values
+remained unavailable rather than being treated as zero.
+
+The March historical baseline used
+`linked_observation_report_2024-03-01_to_2024-03-31.csv` as its source and read
+31 linked rows. Coverage counts reconciled with the linked report, and
+`strict_valid` and `warning_review` numeric summaries remained separate.
+
+March descriptive range summaries:
+
+```text
+Group           Field            Count  Min     Median  Mean    Max
+strict_valid    daily_range      9      3.710   12.420  19.669  49.300
+strict_valid    tokyo_range      4      9.490   11.575  14.033  23.490
+strict_valid    london_range     4      16.180  26.575  28.070  42.950
+strict_valid    new_york_range   4      12.150  28.461  27.948  42.720
+warning_review  daily_range      16     14.230  26.350  30.299  73.400
+warning_review  tokyo_range      16     4.940   11.569  11.752  19.910
+warning_review  london_range     16     10.900  20.165  22.967  45.421
+warning_review  new_york_range   16     8.990   18.942  22.673  42.471
+```
+
+The March internal-flat diagnostic was required because the manifest contained
+`INTERNAL_FLAT_ZERO_VOLUME`. Diagnostic affected dates matched the 16 manifest
+warning dates exactly:
+
+```text
+2024-03-04
+2024-03-05
+2024-03-06
+2024-03-07
+2024-03-08
+2024-03-11
+2024-03-12
+2024-03-13
+2024-03-14
+2024-03-18
+2024-03-19
+2024-03-20
+2024-03-21
+2024-03-25
+2024-03-26
+2024-03-27
+```
+
+The diagnostic produced 23 runs and 909 run rows. Run lengths were 7 one-row
+runs, 1 two-row run, and 15 sixty-row runs. Six dates had multiple runs:
+
+```text
+2024-03-06: 2 runs
+2024-03-11: 2 runs
+2024-03-14: 2 runs
+2024-03-19: 2 runs
+2024-03-21: 3 runs
+2024-03-26: 2 runs
+```
+
+Run starts were distributed across UTC hours 03, 04, 20, 21, 22, and 23. The
+earliest run start was 2024-03-04 22:00:00 and the latest run start was
+2024-03-27 21:00:00. Diagnostic overlap totals were 3 Tokyo rows, 0 London
+rows, 1 New York row, and 905 outside-configured-session rows; these reconciled
+to 909 total run rows. A raw-file reconstruction matched the diagnostic rows,
+including run boundaries, run lengths, and configured-session overlap counts.
+
+Before March generation, a deterministic hash snapshot was stored outside the
+repository at
+`C:\Users\Lenovo\AppData\Local\Temp\xauusd_lab_jan_feb_hashes_before_march_20260726_124831.csv`.
+After March generation, the same January and February inventory was recalculated
+and all 69 files matched exactly: 31 January raw files, 29 February raw files, 5
+January report CSVs, and 4 February report CSVs. No January or February file
+changed, disappeared, or appeared unexpectedly.
+
+January, February, and March use compatible manifest, linked, baseline,
+diagnostic, active-filter, validation-rule, and session-definition contracts.
+The linked-report software revisions differ by month, but the compared schema
+and rule identities remain compatible.
+
+Three-month coverage checkpoint:
+
+```text
+Month  Days  Raw  Processed  No-active  Valid  Warning  Not assessed  Strict  Warning review  Calendar only  Excluded  Warning dates  Runs  Run rows
+Jan    31    31   27         4          9      18       4             9       18              4              0         18/31          20    1,232
+Feb    29    29   25         4          5      20       4             5       20              4              0         20/29          29    1,192
+Mar    31    31   25         6          9      16       6             9       16              6              0         16/31          23    909
+```
+
+Across the three validated months, `INTERNAL_FLAT_ZERO_VOLUME` recurred as the
+only manifest warning reason: 18 January warning dates, 20 February warning
+dates, and 16 March warning dates. Warning-date proportions were 18/31
+(58.1%), 20/29 (69.0%), and 16/31 (51.6%). Runs per warning date were 20/18
+(1.11), 29/20 (1.45), and 23/16 (1.44), so fragmentation increased from
+January to February and stayed similar in March rather than moving in one
+steady direction.
+
+The recurring descriptive pattern is broad warning-review coverage, many runs
+near 60 rows, repeated late-UTC timing, and most diagnostic rows outside the
+configured Tokyo/London/New York windows. February and March both showed more
+multi-run dates and more one-row fragments than January. The 210-row diagnostic
+outlier appeared in January and February but not March. March added a two-row
+run and had materially fewer total diagnostic run rows than January or February.
+
+After March, the next bounded milestone should be a focused
+`INTERNAL_FLAT_ZERO_VOLUME` warning-treatment specification before broader
+monthly expansion. This is not a final treatment rule and does not assign a
+reason to the warning. The specification should preserve uncertainty, keep
+`strict_valid` and `warning_review` observations separate, and define how future
+descriptive research may include, exclude, label, or bracket warning-review
+observations using the already generated January through March evidence.
+
+March remains one additional bounded descriptive month only. January,
+February, and March must not be treated as a universal market baseline.
+
 ## v0.11 Data Quality Manifest Behaviour
 
 `data_manifest.py` creates one CSV row per requested calendar date.

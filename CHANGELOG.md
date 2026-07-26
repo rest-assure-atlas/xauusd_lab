@@ -22,6 +22,13 @@
   0 excluded/unusable observations, 20 `INTERNAL_FLAT_ZERO_VOLUME` warning
   dates, 29 internal flat zero-volume runs, and successful cross-report,
   provenance-checksum, and diagnostic arithmetic reconciliation.
+- Verified the March 2024 single-month pipeline for 31 requested dates with 31
+  downloaded raw daily CSVs, 9 strict-valid observations, 16 warning-review
+  observations, 6 calendar-only observations, 0 excluded/unusable observations,
+  16 `INTERNAL_FLAT_ZERO_VOLUME` warning dates, 23 internal flat zero-volume
+  runs, reconciled provenance/checksum and diagnostic arithmetic checks, and
+  direct before-and-after hash verification that January and February files were
+  unchanged.
 
 ## v0.11
 
