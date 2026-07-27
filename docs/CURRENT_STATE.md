@@ -710,18 +710,20 @@ strict-valid observations had more above-open dates. The warning-review
 sensitivity population had more above-open dates in all three months, and the
 quality-tier comparison was mixed by month. Open-to-close classification is
 distinct from close location within the daily range. The elapsed-time
-between-daily-extrema finding showed strict-valid median absolute gaps of
-`26`, `24`, and `119` minutes for January, February, and March, while
-warning-review sensitivity medians were `444.5`, `444.5`, and `731` minutes.
-The warning-review distribution was visibly different, but no warning cause
-was inferred. Tie handling had limited influence on a few statistics. This
-elapsed-separation result is distinct from extrema ordering and extrema
-clock-hour frequency. The loader-backed executions using
+between-daily-extrema finding now covers January-April. April strict-valid
+minimum, median, mean, and maximum absolute gaps were `1`, `129`, `283`, and
+`940` minutes; April warning-review sensitivity values were `53`, `572`,
+`622.556`, and `1,262` minutes. Warning-review medians were higher than
+strict-valid medians in all four months, and April extended the finding without
+material revision. The sole April repeated-extremum observation changed no gap
+statistic. This elapsed-separation result is distinct from extrema ordering and
+extrema clock-hour frequency. The loader-backed executions using
 `research_observation_contract_v1` succeeded without loader expansion. No
 production code, schema, filtering, classification, raw data, report artifact,
 dependency, loader, or producer change was made. No pooled
-strict-valid/warning-review result was produced. The next research task has
-not yet been selected.
+strict-valid/warning-review result was produced. The daily-range,
+daily-extrema ordering, and elapsed-extrema separation findings currently
+extend through April. The next research task has not yet been selected.
 
 ## research_observation_contract_v1 Linked-Report Loader
 

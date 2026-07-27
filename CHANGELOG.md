@@ -82,6 +82,13 @@
   strict-valid, repeated-extremum sensitivity changed no April category, and no
   source, loader, schema, filtering, classification, data, dependency,
   producer, or behaviour change occurred.
+- Extended the existing elapsed-time-between-daily-extrema finding through
+  April 2024 using `research_observation_contract_v1`; April strict-valid gaps
+  were `1 / 129 / 283 / 940` minutes, April warning-review sensitivity gaps
+  were `53 / 572 / 622.556 / 1,262` minutes, warning-review medians remained
+  higher in all four months, repeated-extremum sensitivity changed no April gap
+  statistic, and no source, loader, schema, filtering, classification, data,
+  dependency, producer, or behaviour change occurred.
 
 ## v0.11
 
