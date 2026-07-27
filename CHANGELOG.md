@@ -65,6 +65,12 @@
   descriptive finding using `research_observation_contract_v1`, including the
   bounded tie-sensitivity check, with no source-code, loader, schema,
   filtering, classification, data, dependency, producer, or behaviour change.
+- Verified April 2024 acquisition and full pipeline validation with complete
+  30-file coverage, 8 strict-valid observations, 18 warning-review
+  observations, 4 calendar-only observations, January-April loader
+  compatibility, deterministic April baseline verification, unchanged
+  January-March evidence, and no source, schema, configuration, dependency, or
+  quality-treatment change.
 
 ## v0.11
 

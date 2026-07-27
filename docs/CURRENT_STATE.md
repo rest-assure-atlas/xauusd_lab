@@ -255,24 +255,24 @@ Source code, tests, documentation, JSON configuration, and `requirements.txt` ar
 
 ## Automated Test Status
 
-The current automated test suite contains 136 tests and currently passes with:
+The current automated test suite contains 152 tests and currently completes
+successfully with:
 
 ```powershell
 python -m unittest discover -s tests
 ```
 
-In the bundled Codex runtime used during February validation, Matplotlib was
-not available. `unittest` still discovered 136 test cases, but the five
-`ChartAutoscaleRegressionTest` methods were skipped at class setup and were not
-counted as run tests. Two additional Matplotlib-dependent tests were counted as
-skipped. That environment-specific result was:
+In the bundled Codex runtime used during April validation, Matplotlib was not
+available. The latest environment-specific result was:
 
 ```text
 Bundled Codex runtime:
-131 tests run
+152 tests run
+149 passed
 3 skipped
 0 failures
 0 errors
+Runtime: 8.647 seconds
 Matplotlib unavailable in that runtime
 ```
 
@@ -556,6 +556,66 @@ observations using the already generated January through March evidence.
 
 March remains one additional bounded descriptive month only. January,
 February, and March must not be treated as a universal market baseline.
+
+## April 2024 Pipeline Validation
+
+The April 2024 single-month pipeline has been manually validated for Dukascopy
+XAUUSD one-minute BID data in UTC, covering 2024-04-01 through 2024-04-30.
+This was a pipeline-validation and data/provenance-readiness milestone only,
+not a market finding. `warning_treatment_v1` and
+`research_observation_contract_v1` were preserved.
+
+Acquisition completed with 30 local ignored April raw CSV files, one for each
+requested date. Each file contained 1,440 rows and was 97,962 bytes. Failed
+dates were 0. No April failure entry was added to the existing downloader
+failure log, although the downloader touched that log's timestamp during
+current initialisation behaviour. The timestamp touch alone is not evidence of
+an April failure or raw-data change. Raw and generated CSV files remain ignored
+local artifacts, not committed repository content.
+
+A pre/post SHA-256 protection check covered 91 January-March raw CSVs and 15
+January-March generated reports. It found no changed, missing, or unexpectedly
+appearing protected files, and the temporary snapshot file was stored outside
+the repository and removed afterward.
+
+The existing pipeline successfully produced the April manifest, session report,
+linked observation report, historical baseline, and internal flat zero-volume
+diagnostic. The linked report retained one row per requested April date, zero
+duplicate dates, zero linked/session calculation mismatches, and the
+Dukascopy/XAUUSD/BID/1min provider contract. No source, schema, configuration,
+dependency, or quality-treatment change was required.
+
+Linked quality tiers were `8 strict_valid`, `18 warning_review`,
+`4 calendar_only`, and `0 excluded_unusable`. `INTERNAL_FLAT_ZERO_VOLUME`
+affected 18 warning-review observations, and four observations were
+`calendar_only` because they had no active candles. The warning cause remains
+unresolved; no harmlessness, severity, provider-outage, closure, corruption,
+or causal interpretation was made. The session report is not independently
+quality-tier aware and was not used alone for a research conclusion.
+
+April alone loaded successfully through
+`research_observations.load_linked_reports(...)`: chronological ordering and
+contract validation passed, no duplicate identity was detected, and
+calendar-only `daily_range` remained unavailable. January through April loaded
+successfully together with 121 observations: `31 strict_valid`,
+`72 warning_review`, `18 calendar_only`, and `0 excluded_unusable`.
+Chronological and compatibility validation passed, and no loader expansion was
+required.
+
+The April historical baseline command was rerun as the bounded determinism
+check and produced identical SHA-256 content before and after. This
+determinism check applied only to that baseline output, not every producer.
+
+The April validation run reported `152 run`, `149 passed`, `3 skipped`, `0
+failures`, `0 errors`, and `8.647 seconds`. The three skips were
+Matplotlib-dependent chart-display tests in that runtime and are not counted
+as passed tests.
+
+April is data/provenance-ready for a later bounded descriptive research
+extension under `warning_treatment_v1`, subject to its 18 warning-review
+observations, four calendar-only observations, and separate Director approval
+of any research extension. No April research extension has yet been approved,
+and the next research question remains unselected.
 
 ## warning_treatment_v1 Research Contract
 
