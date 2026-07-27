@@ -61,6 +61,10 @@
   using `research_observation_contract_v1`, with no source-code, loader,
   schema, filtering, classification, data, dependency, producer, or behaviour
   change.
+- Recorded the January-March 2024 elapsed-time-between-daily-extrema
+  descriptive finding using `research_observation_contract_v1`, including the
+  bounded tie-sensitivity check, with no source-code, loader, schema,
+  filtering, classification, data, dependency, producer, or behaviour change.
 
 ## v0.11
 

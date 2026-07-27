@@ -1149,3 +1149,310 @@ behaviour.
 - ASK, spread, commission, slippage, latency, and execution assumptions were
   not included.
 - No next research task has been selected from this finding alone.
+
+## 2026-07-27 - January-March 2024 Elapsed Time Between Daily Extrema
+
+Status: `descriptive finding`
+
+### Question
+
+For each validated month from January through March 2024, how much elapsed
+time separated the recorded daily high and recorded daily low for
+`strict_valid` observations, with `warning_review` reported separately as a
+labelled sensitivity view and `calendar_only`/`excluded_unusable` retained
+only as coverage?
+
+### Evidence Scope
+
+- Provider: Dukascopy
+- Instrument: XAUUSD
+- Quote side: BID
+- Timeframe: 1 minute
+- Timezone: UTC
+- Calendar period: January-March 2024
+- Primary input: provenance-linked daily observation reports
+- Access contract: `research_observation_contract_v1`
+- Quality treatment: `warning_treatment_v1`
+
+This is not a universal XAU/USD market record.
+
+### Source Reports
+
+Primary row-level source reports loaded through
+`research_observations.load_linked_reports(...)`:
+
+- `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
+- `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
+- `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+
+Warning context reports:
+
+- `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
+- `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
+- `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+
+Raw CSVs read only for the known repeated-extremum tie checks:
+
+- `data_raw/XAUUSD_2024-01-15_1min_BID_UTC.csv`
+- `data_raw/XAUUSD_2024-01-31_1min_BID_UTC.csv`
+- `data_raw/XAUUSD_2024-02-02_1min_BID_UTC.csv`
+- `data_raw/XAUUSD_2024-03-14_1min_BID_UTC.csv`
+- `data_raw/XAUUSD_2024-03-18_1min_BID_UTC.csv`
+
+### Timestamp And Gap Definitions
+
+Linked fields used:
+
+- `date`
+- `quality_tier`
+- `time_of_daily_high_utc`
+- `time_of_daily_low_utc`
+
+The timestamps are UTC one-minute candle opening times in `HH:MM:SS` format.
+All eligible timestamps had seconds equal to `00`, so integer minute
+differences were reported. Both extrema belong to the same requested UTC date;
+no overnight or circular-clock adjustment was applied. Equal extrema use the
+first active-candle occurrence, and that behaviour is protected by dedicated
+`session_report.py` regression tests for equal daily-high and equal daily-low
+ties after edge placeholder filtering.
+
+Calculations:
+
+```text
+signed_gap_minutes =
+    recorded daily-high timestamp
+    minus recorded daily-low timestamp
+
+absolute_gap_minutes =
+    abs(signed_gap_minutes)
+```
+
+Interpretation:
+
+```text
+positive signed gap = recorded high occurred after recorded low
+negative signed gap = recorded high occurred before recorded low
+zero = both were recorded in the same minute
+```
+
+No arbitrary duration bands were used.
+
+### Coverage
+
+| Month | Requested | Strict valid | Warning review | Calendar only | Excluded/unusable |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| January | 31 | 9 | 18 | 4 | 0 |
+| February | 29 | 5 | 20 | 4 | 0 |
+| March | 31 | 9 | 16 | 6 | 0 |
+
+All strict-valid and warning-review observations had both extrema timestamps.
+Missing timestamps occurred only on `calendar_only` rows:
+
+| Month | Missing timestamps |
+| --- | ---: |
+| January | 4 |
+| February | 4 |
+| March | 6 |
+
+Calendar-only timestamps remained unavailable rather than being interpreted as
+midnight. No eligible observation had both extrema recorded in the same minute.
+
+### Primary Strict-Valid Result
+
+Primary descriptive result under `warning_treatment_v1`, in minutes:
+
+| Month | N | Minimum absolute gap | Median absolute gap | Mean absolute gap | Maximum absolute gap | Minimum-gap date | Maximum-gap date | High before low | Low before high | Same minute |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | ---: | ---: |
+| January | 9 | 4 | 26 | 183.333 | 816 | 2024-01-01 | 2024-01-12 | 4 | 5 | 0 |
+| February | 5 | 4 | 24 | 84.2 | 341 | 2024-02-11 | 2024-02-16 | 1 | 4 | 0 |
+| March | 9 | 19 | 119 | 408.444 | 1,236 | 2024-03-03 | 2024-03-28 | 2 | 7 | 0 |
+
+Strict-valid observations:
+
+```text
+January
+2024-01-01 high 23:04 / low 23:00 / signed +4 / absolute 4
+2024-01-05 high 15:26 / low 13:31 / signed +115 / absolute 115
+2024-01-07 high 23:21 / low 23:42 / signed -21 / absolute 21
+2024-01-12 high 14:37 / low 01:01 / signed +816 / absolute 816
+2024-01-14 high 23:44 / low 23:31 / signed +13 / absolute 13
+2024-01-19 high 13:32 / low 05:41 / signed +471 / absolute 471
+2024-01-21 high 23:00 / low 23:26 / signed -26 / absolute 26
+2024-01-26 high 13:30 / low 16:14 / signed -164 / absolute 164
+2024-01-28 high 23:29 / low 23:49 / signed -20 / absolute 20
+
+February
+2024-02-02 high 13:16 / low 14:03 / signed -47 / absolute 47
+2024-02-04 high 23:05 / low 23:00 / signed +5 / absolute 5
+2024-02-11 high 23:04 / low 23:00 / signed +4 / absolute 4
+2024-02-16 high 19:17 / low 13:36 / signed +341 / absolute 341
+2024-02-25 high 23:24 / low 23:00 / signed +24 / absolute 24
+
+March
+2024-03-01 high 18:44 / low 08:52 / signed +592 / absolute 592
+2024-03-03 high 23:19 / low 23:00 / signed +19 / absolute 19
+2024-03-10 high 23:41 / low 22:59 / signed +42 / absolute 42
+2024-03-15 high 09:58 / low 17:57 / signed -479 / absolute 479
+2024-03-17 high 23:59 / low 22:00 / signed +119 / absolute 119
+2024-03-22 high 00:38 / low 17:28 / signed -1,010 / absolute 1,010
+2024-03-24 high 23:51 / low 22:35 / signed +76 / absolute 76
+2024-03-28 high 20:49 / low 00:13 / signed +1,236 / absolute 1,236
+2024-03-31 high 23:46 / low 22:03 / signed +103 / absolute 103
+```
+
+Simple three-month strict-valid audit summary, not a universal timing
+characteristic:
+
+```text
+N = 23
+minimum = 4
+median = 76
+mean = 249.87
+maximum = 1,236
+```
+
+The per-month strict-valid results remain primary.
+
+### Warning-Review Sensitivity
+
+`warning-review sensitivity`, in minutes:
+
+| Month | N | Minimum absolute gap | Median absolute gap | Mean absolute gap | Maximum absolute gap | Minimum-gap date | Maximum-gap date | High before low | Low before high | Same minute |
+| --- | ---: | ---: | ---: | ---: | ---: | --- | --- | ---: | ---: | ---: |
+| January | 18 | 58 | 444.5 | 522.889 | 1,132 | 2024-01-30 | 2024-01-16 | 13 | 5 | 0 |
+| February | 20 | 11 | 444.5 | 427.2 | 835 | 2024-02-18 | 2024-02-05 | 11 | 9 | 0 |
+| March | 16 | 396 | 731 | 741.688 | 1,133 | 2024-03-25 | 2024-03-12 | 5 | 11 | 0 |
+
+Warning context:
+
+| Month | Warning reason | Affected dates | Diagnostic runs | Diagnostic run rows |
+| --- | --- | ---: | ---: | ---: |
+| January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
+| February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
+| March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+
+The warning context is separate from the elapsed-time calculation. It does not
+show that `INTERNAL_FLAT_ZERO_VOLUME` caused any elapsed-time difference.
+
+Simple warning-review audit summary, not pooled with strict-valid:
+
+```text
+N = 54
+minimum = 11
+median = 557
+mean = 552.278
+maximum = 1,133
+```
+
+### Tie-Convention Sensitivity
+
+Known repeated-extremum checks:
+
+| Date | Tier | Repeated extremum | First-occurrence absolute gap | Last-occurrence absolute gap | Change |
+| --- | --- | --- | ---: | ---: | ---: |
+| 2024-01-15 | warning-review | high | 518 | 523 | +5 |
+| 2024-01-31 | warning-review | low | 296 | 323 | +27 |
+| 2024-02-02 | strict-valid | high | 47 | 46 | -1 |
+| 2024-03-14 | warning-review | high | 879 | 876 | -3 |
+| 2024-03-18 | warning-review | low | 561 | 434 | -127 |
+
+No sequence category changed. No monthly minimum changed. No monthly maximum
+changed.
+
+Monthly statistic changes under last equal-extremum occurrence:
+
+- February strict-valid mean changed from `84.2` to `84`.
+- January warning-review median changed from `444.5` to `447`.
+- January warning-review mean changed from `522.889` to `524.667`.
+- March warning-review mean changed from `741.688` to `733.562`.
+- All other reported monthly statistics were unchanged.
+
+The elapsed-time result showed limited dependence on a small number of
+repeated-extremum observations. The first-occurrence convention affected some
+monthly means and one median, but did not change sequence categories or
+monthly minimum and maximum gaps.
+
+Platform behaviour was not changed.
+
+### Distinction From Earlier Timing Findings
+
+This elapsed-time finding is distinct from daily-extrema ordering, which
+records which event occurred first, and from daily-extrema UTC-hour frequency,
+which records the clock-hour placement of each event. Elapsed separation
+measures the number of minutes between the two recorded events.
+
+### Loader Practicality Evidence
+
+- The three linked reports were loaded through
+  `research_observations.load_linked_reports(...)`.
+- 91 observations were loaded.
+- Population counts were `23 / 54 / 14 / 0`.
+- Chronological order was preserved.
+- Compatible software revisions were retained.
+- No loader validation failed.
+- The loader provided linked-row loading, validation, provenance retention,
+  blank semantics, and quality-tier separation.
+- Remaining custom work was limited to timestamp parsing, minute-gap
+  calculations, monthly grouping, raw tie verification, and separate
+  warning-context reads.
+- No missing loader capability materially complicated the analysis.
+
+This does not establish that every future timing analysis will need no
+interface changes.
+
+### Reconciliation
+
+- Every requested date appeared once.
+- All strict-valid and warning-review observations had both timestamps.
+- All eligible timestamps had seconds equal to `00`.
+- Calendar-only timestamps remained unavailable.
+- Raw CSVs were read only for the five known tie checks.
+- No repository file was changed during the preceding read-only execution.
+- No report was generated or regenerated during the preceding read-only
+  execution.
+
+Other raw-data quality dimensions were not revalidated during this
+elapsed-time analysis.
+
+### Descriptive Conclusion
+
+In the strict-valid January-March 2024 observations, the median absolute
+separation between the recorded daily high and low was 26 minutes in January,
+24 minutes in February, and 119 minutes in March. The separately labelled
+warning-review sensitivity medians were 444.5, 444.5, and 731 minutes
+respectively.
+
+The warning-review sensitivity population had substantially larger median
+absolute gaps than the strict-valid population in all three months. This is a
+visibly different bounded descriptive distribution, but it does not establish
+that the warning caused the difference or that either distribution represents
+normal or repeatable XAU/USD behaviour.
+
+March contained the largest strict-valid observed gap, 1,236 minutes on
+2024-03-28. No eligible observation had both extrema recorded in the same
+minute. Samples were small, particularly February strict-valid with 5
+observations.
+
+### Interpretation Limits
+
+This finding does not establish an entry or exit time, reversal timing, a
+preferred trading window, support or resistance, a setup or signal, prediction,
+trading edge, profitability, execution realism, statistical significance,
+market causation, the cause or harmlessness of `INTERNAL_FLAT_ZERO_VOLUME`, or
+normal or universal XAU/USD behaviour.
+
+### Unresolved Questions
+
+- Strict-valid samples were small.
+- Warning treatment remains observation-level under `warning_treatment_v1`.
+- First-occurrence extrema semantics affect some values.
+- Warning causes remain unresolved.
+- The sample covers one provider, instrument, quote side, timeframe, and
+  three-month period.
+- No statistical testing was performed.
+- No execution assumptions were included.
+- The analysis was descriptive rather than predictive.
+- No next research task has been selected from this finding alone.

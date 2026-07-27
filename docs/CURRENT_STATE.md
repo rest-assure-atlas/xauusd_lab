@@ -607,7 +607,7 @@ closure, provider outage, corruption, universal XAU/USD behaviour, statistical
 significance, support or resistance, a setup or signal, prediction, trading
 edge, profitability, or execution realism.
 
-The first five bounded descriptive questions under `warning_treatment_v1` are
+The first six bounded descriptive questions under `warning_treatment_v1` are
 complete and recorded in [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md). For
 January through March 2024 Dukascopy XAUUSD one-minute BID linked observations,
 the daily-range finding showed higher warning-review sensitivity median and
@@ -635,10 +635,17 @@ February strict-valid observations had more below-open dates, while March
 strict-valid observations had more above-open dates. The warning-review
 sensitivity population had more above-open dates in all three months, and the
 quality-tier comparison was mixed by month. Open-to-close classification is
-distinct from close location within the daily range. The loader-backed
-executions using `research_observation_contract_v1` succeeded without loader
-expansion. No production code, schema, filtering, classification, raw data,
-report artifact, dependency, loader, or producer change was made. No pooled
+distinct from close location within the daily range. The elapsed-time
+between-daily-extrema finding showed strict-valid median absolute gaps of
+`26`, `24`, and `119` minutes for January, February, and March, while
+warning-review sensitivity medians were `444.5`, `444.5`, and `731` minutes.
+The warning-review distribution was visibly different, but no warning cause
+was inferred. Tie handling had limited influence on a few statistics. This
+elapsed-separation result is distinct from extrema ordering and extrema
+clock-hour frequency. The loader-backed executions using
+`research_observation_contract_v1` succeeded without loader expansion. No
+production code, schema, filtering, classification, raw data, report artifact,
+dependency, loader, or producer change was made. No pooled
 strict-valid/warning-review result was produced. The next research task has
 not yet been selected.
 
