@@ -458,13 +458,15 @@ universal or normal XAU/USD behaviour.
   unresolved.
 - No next research task has been selected from this finding alone.
 
-## 2026-07-26 - January-March 2024 Daily-Extrema Ordering
+## 2026-07-26 - January-April 2024 Daily-Extrema Ordering
 
 Status: `descriptive finding`
 
+Extended through April 2024 on 2026-07-27 with a material qualification.
+
 ### Question
 
-For each validated month from January through March 2024, how often did the
+For each validated month from January through April 2024, how often did the
 recorded daily high occur before the recorded daily low, the recorded daily low
 occur before the recorded daily high, or both occur in the same recorded minute
 for `strict_valid` linked observations, with `warning_review` reported
@@ -478,9 +480,10 @@ retained as coverage?
 - Quote side: BID
 - Timeframe: 1 minute
 - Timezone: UTC
-- Calendar period: January-March 2024
-- Primary source: provenance-linked daily observation reports
-- Treatment contract: `warning_treatment_v1`
+- Calendar period: January-April 2024
+- Primary input: provenance-linked daily observation reports
+- Access contract: `research_observation_contract_v1`
+- Quality treatment: `warning_treatment_v1`
 
 This describes the ordering of recorded daily-extrema timestamps only. It is
 not a universal XAU/USD market record.
@@ -492,22 +495,28 @@ Primary row-level source reports:
 - `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
 - `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
 - `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+- `reports/linked_observation_report_2024-04-01_to_2024-04-30.csv`
 
 Warning context reports:
 
 - `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
 - `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
 - `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
+- `reports/data_manifest_2024-04-01_to_2024-04-30.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-04-01_to_2024-04-30.csv`
 
 ### Timestamp And Ordering Definitions
 
+- Required linked fields: `date`, `quality_tier`, `time_of_daily_high_utc`,
+  `time_of_daily_low_utc`, `daily_high`, and `daily_low`.
 - Daily high field: `time_of_daily_high_utc`
 - Daily low field: `time_of_daily_low_utc`
 - Format: `HH:MM:SS`
 - Timestamps are UTC one-minute candle opening times.
+- All eligible timestamps had seconds equal to `00`.
 - Edge flat zero-volume placeholders are removed before extrema selection.
 - Equal extrema use the first active-candle occurrence.
 - Dedicated `session_report.py` regression tests protect equal daily-high and
@@ -522,7 +531,8 @@ Each eligible observation was assigned to exactly one category:
 - `same_recorded_minute`: the two recorded timestamps are identical.
 
 Both timestamps belong to the same requested UTC date. No overnight or
-circular-clock adjustment was applied.
+circular-clock adjustment was applied. Events within the same one-minute candle
+cannot be internally ordered from this evidence.
 
 ### Coverage
 
@@ -531,10 +541,16 @@ circular-clock adjustment was applied.
 | January | 31 | 9 | 18 | 4 | 0 |
 | February | 29 | 5 | 20 | 4 | 0 |
 | March | 31 | 9 | 16 | 6 | 0 |
+| April | 30 | 8 | 18 | 4 | 0 |
 
 All `strict_valid` and `warning_review` rows had both daily-extrema timing
 fields available. Unavailable timing values occurred only for `calendar_only`
 rows and remained unavailable rather than being interpreted as midnight.
+Every requested date appeared exactly once.
+
+Combined January-April coverage was 121 observations: 31 `strict_valid`, 72
+`warning_review`, 18 `calendar_only`, and 0 `excluded_unusable`. All
+`strict_valid` and `warning_review` observations were eligible.
 
 ### Primary Strict-Valid Result
 
@@ -545,6 +561,7 @@ Primary descriptive result under `warning_treatment_v1`:
 | January | 9 | 4 | 44.4% | 5 | 55.6% | 0 | 0.0% |
 | February | 5 | 1 | 20.0% | 4 | 80.0% | 0 | 0.0% |
 | March | 9 | 2 | 22.2% | 7 | 77.8% | 0 | 0.0% |
+| April | 8 | 6 | 75.0% | 2 | 25.0% | 0 | 0.0% |
 
 Strict-valid category dates:
 
@@ -583,14 +600,29 @@ March low_before_high:
 2024-03-24
 2024-03-28
 2024-03-31
+
+April high_before_low:
+2024-04-07 - high 22:05, low 22:19
+2024-04-12 - high 15:04, low 19:03
+2024-04-14 - high 22:08, low 22:27
+2024-04-19 - high 01:46, low 11:12
+2024-04-21 - high 22:00, low 22:01
+2024-04-28 - high 22:00, low 22:06
+
+April low_before_high:
+2024-04-05 - low 01:31, high 17:11
+2024-04-26 - low 01:13, high 09:12
+
+April same_recorded_minute:
+none
 ```
 
-Simple three-month audit count, not a universal probability:
+Simple January-April strict-valid audit count, not a universal probability:
 
 ```text
-Eligible strict-valid observations: 23
-high_before_low: 7
-low_before_high: 16
+Eligible strict-valid observations: 31
+high_before_low: 13
+low_before_high: 18
 same_recorded_minute: 0
 ```
 
@@ -605,6 +637,36 @@ The per-month strict-valid results remain primary.
 | January | 18 | 13 | 72.2% | 5 | 27.8% | 0 | 0.0% |
 | February | 20 | 11 | 55.0% | 9 | 45.0% | 0 | 0.0% |
 | March | 16 | 5 | 31.2% | 11 | 68.8% | 0 | 0.0% |
+| April | 18 | 7 | 38.9% | 11 | 61.1% | 0 | 0.0% |
+
+April warning-review category dates:
+
+```text
+April high_before_low:
+2024-04-01
+2024-04-04
+2024-04-10
+2024-04-17
+2024-04-22
+2024-04-23
+2024-04-30
+
+April low_before_high:
+2024-04-02
+2024-04-03
+2024-04-08
+2024-04-09
+2024-04-11
+2024-04-15
+2024-04-16
+2024-04-18
+2024-04-24
+2024-04-25
+2024-04-29
+
+April same_recorded_minute:
+none
+```
 
 Warning context:
 
@@ -613,16 +675,17 @@ Warning context:
 | January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
 | February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
 | March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+| April | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 18 | 1,081 |
 
 The warning context is separate from the ordering result. It does not show that
 `INTERNAL_FLAT_ZERO_VOLUME` caused any ordering-distribution difference.
 
-Simple warning-review audit count, not pooled with strict-valid:
+Simple January-April warning-review audit count, not pooled with strict-valid:
 
 ```text
-Eligible warning-review observations: 54
-high_before_low: 29
-low_before_high: 25
+Eligible warning-review observations: 72
+high_before_low: 36
+low_before_high: 36
 same_recorded_minute: 0
 ```
 
@@ -638,11 +701,36 @@ Known repeated-extremum observations checked against raw CSVs:
 2024-03-18 warning_review
 ```
 
+April repeated-extremum check against raw CSVs:
+
+```text
+2024-04-09
+quality tier: warning_review
+
+repeated daily high:
+  first occurrence: 09:28
+  last occurrence: 09:30
+
+repeated daily low:
+  first occurrence: 01:04
+  last occurrence: 01:06
+
+ordering under first occurrences:
+low_before_high
+
+ordering under last occurrences:
+low_before_high
+```
+
 Changing from the recorded first occurrence to the last equal-extremum
-occurrence did not change the ordering category for any observation. Therefore,
-no monthly ordering count changed, and this finding did not materially depend
-on the known equal-extremum ties in this sample. This does not prove that
-first-occurrence semantics are universally irrelevant.
+occurrence did not change the ordering category for any known January-March
+repeated-extremum observation or for April's repeated-extremum observation.
+April 9 was the only eligible April date with a repeated daily extremum, no
+April strict-valid repeated extremum was found, no April ordering category
+changed, and no April monthly count changed. The approved April assessment is
+`no dependence observed` for April ordering. This does not prove that
+first-occurrence handling is irrelevant in every period or for every timing
+statistic.
 
 No platform behaviour change was made or adopted.
 
@@ -652,10 +740,17 @@ No platform behaviour change was made or adopted.
 - All `strict_valid` and `warning_review` observations with timing values were
   classified exactly once.
 - `calendar_only` timing values remained unavailable.
+- All four linked reports were loaded with
+  `research_observations.load_linked_reports(...)`; 121 observations loaded;
+  chronological and compatibility validation passed; four software revisions
+  were retained; duplicate identities were `0`; and no primary linked-row ad
+  hoc CSV parsing or loader expansion was required.
 - The current timestamp semantics and dedicated tie regression tests were
   inspected.
 - Linked observation reports preserve the session-report timing values.
-- Repeated-extremum cases were checked against raw CSVs.
+- Repeated-extremum cases were checked against raw CSVs; custom work was limited
+  to timestamp categorisation, the bounded April repeated-extremum scan, and
+  diagnostic-context reconciliation.
 - No category changed under last-occurrence selection.
 - No repository file was changed during the preceding read-only ordering
   execution.
@@ -666,28 +761,51 @@ analysis.
 
 ### Descriptive Conclusion
 
-In the strict-valid January-March 2024 observations, `low_before_high` appeared
-more often than `high_before_low` in each month. In the separately labelled
-warning-review sensitivity population, `high_before_low` appeared more often in
-January and February, while `low_before_high` appeared more often in March. No
-eligible observation had both recorded extrema in the same minute. The
-quality-tier comparison was therefore mixed by month, and the two populations
-must remain separately labelled.
+In the strict-valid January-March observations, `low_before_high` was the more
+frequent ordering category in each month. April did not continue that monthly
+pattern: six of eight strict-valid observations were `high_before_low`, while
+two were `low_before_high`.
 
-This does not establish bullish or bearish bias, a directional tendency, an
-entry or exit rule, a reversal pattern, support or resistance, a setup or
-signal, prediction, trading edge, profitability, execution realism, statistical
-significance, the cause or harmlessness of `INTERNAL_FLAT_ZERO_VOLUME`, or
-normal or universal XAU/USD behaviour.
+April therefore extends the existing ordering finding with a material
+qualification. The January-March result remains valid for those months, but it
+must not be generalised as a monthly pattern continuing through April.
+
+April warning-review showed the opposite monthly majority from April
+strict-valid: seven of eighteen observations were `high_before_low` and eleven
+were `low_before_high`.
+
+Strict-valid and warning-review monthly majorities differed in January,
+February, and April, and matched in March. These bounded differences do not
+establish a causal warning effect or a stable ordering tendency. No eligible
+January-April observation had both extrema recorded in the same minute.
+
+Extrema ordering is distinct from extrema UTC-hour frequency, which records
+clock-hour placement; elapsed-extrema separation, which records the number of
+minutes between extrema; daily open-to-close direction; and close location
+within the daily range.
+
+This does not establish a directional tendency, reversal sequence, preferred
+entry or exit timing, setup or signal, prediction, trading edge, profitability,
+execution realism, statistical significance, market causation, normal or
+universal XAU/USD behaviour, or that `INTERNAL_FLAT_ZERO_VOLUME` caused any
+ordering difference.
 
 ### Unresolved Questions
 
-- Strict-valid sample counts were small, especially February with 5
-  observations.
+- Strict-valid monthly samples remain small; February has 5 observations and
+  April has 8 observations.
+- Timestamps are one-minute candle opening times.
+- Events within one candle cannot be internally ordered.
+- First-occurrence semantics can matter where extrema repeat, despite no April
+  category change.
 - Warning treatment remains observation-level under `warning_treatment_v1`.
 - The cause and practical meaning of `INTERNAL_FLAT_ZERO_VOLUME` remain
   unresolved.
-- No statistical testing or execution-context analysis was performed.
+- The evidence covers one provider, instrument, BID quote side, timeframe, and
+  four months.
+- No statistical testing or serial-dependence modelling was performed.
+- No execution assumptions were included.
+- The analysis is descriptive rather than predictive.
 - No next research task has been selected from this finding alone.
 
 ## 2026-07-27 - January-March 2024 Daily Close Location

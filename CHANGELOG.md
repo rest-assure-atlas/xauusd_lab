@@ -76,6 +76,12 @@
   warning-review median/mean comparison while broader distribution
   relationships remained statistic-specific, with no source, loader, schema,
   filtering, classification, data, dependency, producer, or behaviour change.
+- Extended the existing daily-extrema ordering finding through April 2024 using
+  `research_observation_contract_v1`; April reversed the prior strict-valid
+  monthly majority, April warning-review had the opposite majority from
+  strict-valid, repeated-extremum sensitivity changed no April category, and no
+  source, loader, schema, filtering, classification, data, dependency,
+  producer, or behaviour change occurred.
 
 ## v0.11
 

@@ -677,8 +677,8 @@ validated month. April strict-valid median, mean, and maximum were `25.977`,
 `40.305` and `40.896`. April extended the finding without material revision,
 but broader daily-range distribution comparisons remain statistic-specific:
 monthly maxima were mixed between quality tiers. No loader expansion was
-required, and no other finding has yet been extended through April. See
-[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
+required for that extension. See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md)
+for detailed evidence.
 
 The daily-extrema timing finding showed strict-valid recorded daily-high peak
 hour `23` in all three months and strict-valid recorded daily-low peak hours
@@ -688,12 +688,18 @@ materially dependent on the tested first-occurrence, last-occurrence, or
 date-weighted all-occurrence tie representations. Current first-occurrence
 semantics are now protected by dedicated `session_report.py` regression tests
 for equal daily-high and equal daily-low ties after edge flat zero-volume
-placeholder filtering. The daily-extrema ordering finding showed that
-`low_before_high` appeared more often than `high_before_low` in each
-strict-valid month, while the separately labelled warning-review comparison was
-mixed by month; no eligible observation had both recorded extrema in the same
-minute, and the result was not changed by the known repeated-extremum ties. The
-daily close-location finding showed that strict-valid closes were more
+placeholder filtering. The daily-extrema ordering finding now covers
+January-April. January-March strict-valid observations had a `low_before_high`
+majority in each month, but April reversed that balance with `6/8`
+`high_before_low`. April warning-review sensitivity had `7/18`
+`high_before_low` and `11/18` `low_before_high`. April therefore adds a
+material qualification; no eligible January-April observation had both extrema
+in the same recorded minute, and April repeated-extremum handling changed no
+category. No loader expansion was required. Only the daily-range and
+daily-extrema ordering findings currently extend through April. See
+[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
+
+The daily close-location finding showed that strict-valid closes were more
 often in the lower half of the recorded daily range in January and more often
 in the upper half in February and March. The separately labelled warning-review
 sensitivity population had the same monthly lower-half or upper-half category
