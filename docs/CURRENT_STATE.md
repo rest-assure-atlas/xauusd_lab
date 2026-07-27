@@ -680,23 +680,24 @@ monthly maxima were mixed between quality tiers. No loader expansion was
 required for that extension. See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md)
 for detailed evidence.
 
-The daily-extrema timing finding showed strict-valid recorded daily-high peak
-hour `23` in all three months and strict-valid recorded daily-low peak hours
-`23`, `23`, and `22` for January, February, and March. Warning-review timing
-sensitivity differed visibly, and the principal timing result was not
-materially dependent on the tested first-occurrence, last-occurrence, or
-date-weighted all-occurrence tie representations. Current first-occurrence
-semantics are now protected by dedicated `session_report.py` regression tests
-for equal daily-high and equal daily-low ties after edge flat zero-volume
-placeholder filtering. The daily-extrema ordering finding now covers
-January-April. January-March strict-valid observations had a `low_before_high`
-majority in each month, but April reversed that balance with `6/8`
-`high_before_low`. April warning-review sensitivity had `7/18`
-`high_before_low` and `11/18` `low_before_high`. April therefore adds a
+The daily-extrema UTC-hour frequency finding now covers January-April.
+January-March strict-valid recorded daily-high modal hour was `23` in each
+month, but April adds a material qualification with high modal hour `22`
+containing `4/8` observations. April strict-valid recorded daily-low modal hour
+was also `22` with `4/8` observations, matching March but not January or
+February. April warning-review sensitivity had high modal hour `22` with
+`4/18` observations and low modal hour `01` with `5/18` observations; the
+warning-review hour distributions were more dispersed. The daily-extrema
+ordering finding now covers January-April. January-March strict-valid
+observations had a `low_before_high` majority in each month, but April reversed
+that balance with `6/8` `high_before_low`. April warning-review sensitivity had
+`7/18` `high_before_low` and `11/18` `low_before_high`. April therefore adds a
 material qualification; no eligible January-April observation had both extrema
 in the same recorded minute, and April repeated-extremum handling changed no
-category. No loader expansion was required. Only the daily-range and
-daily-extrema ordering findings currently extend through April. See
+category. Repeated-extremum sensitivity changed no April UTC-hour category. No
+loader expansion was required. All three extrema-timing findings now extend
+through April. The next proposed phase is May-December 2024 batch acquisition
+with monthly validation, subject to separate Director approval. See
 [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
 
 The daily close-location finding showed that strict-valid closes were more

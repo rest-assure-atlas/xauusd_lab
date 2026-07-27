@@ -240,13 +240,13 @@ trading edge, profitability, or execution realism.
 - The analysis is descriptive rather than predictive.
 - No next research task has been selected from this finding alone.
 
-## 2026-07-26 - January-March 2024 Daily-Extrema UTC Hours
+## 2026-07-26 - January-April 2024 Daily-Extrema UTC Hours
 
 Status: `descriptive finding`
 
 ### Question
 
-For each validated month from January through March 2024, at which UTC clock
+For each validated month from January through April 2024, at which UTC clock
 hours did the recorded daily high and daily low occur for `strict_valid` linked
 observations, with `warning_review` reported separately as a labelled
 sensitivity view and `calendar_only`/`excluded_unusable` retained as coverage?
@@ -258,43 +258,68 @@ sensitivity view and `calendar_only`/`excluded_unusable` retained as coverage?
 - Quote side: BID
 - Timeframe: 1 minute
 - Timezone: UTC
-- Calendar period: January-March 2024
-- Primary source: provenance-linked daily observation reports
-- Treatment contract: `warning_treatment_v1`
+- Calendar period: January-April 2024
+- Primary input: provenance-linked daily observation reports
+- Access contract: `research_observation_contract_v1`
+- Quality treatment: `warning_treatment_v1`
 
 This is not a universal XAU/USD market record.
 
 ### Source Reports
 
-Primary row-level source reports:
+Primary row-level source reports loaded through
+`research_observations.load_linked_reports(...)`:
 
 - `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
 - `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
 - `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+- `reports/linked_observation_report_2024-04-01_to_2024-04-30.csv`
 
 Warning context reports:
 
 - `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
 - `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
 - `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
+- `reports/data_manifest_2024-04-01_to_2024-04-30.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-04-01_to_2024-04-30.csv`
+
+April raw CSVs were read only for the bounded repeated-extremum sensitivity
+scan. Only `data_raw/XAUUSD_2024-04-09_1min_BID_UTC.csv` contained a repeated
+daily extremum among eligible April observations.
 
 ### Timing-Field Semantics
 
-- Daily high field: `time_of_daily_high_utc`
-- Daily low field: `time_of_daily_low_utc`
+- Required linked fields: `date`, `quality_tier`,
+  `time_of_daily_high_utc`, `time_of_daily_low_utc`, `daily_high`, and
+  `daily_low`
 - Format: `HH:MM:SS`
 - Timestamps are UTC one-minute candle opening times.
+- All eligible timestamps had seconds equal to `00`.
+- Valid hour categories are integers `0` through `23`.
+- Highs and lows are classified separately.
+- Both extrema belong to the requested UTC date.
+- No overnight or circular-clock adjustment was applied.
 - Edge flat zero-volume placeholders are removed before extrema selection.
 - Current implementation records the first active-candle occurrence when equal
   extrema repeat.
 - Dedicated `session_report.py` regression tests now cover equal daily-high and
   equal daily-low ties after edge flat zero-volume placeholders are removed.
+- Tied modal hours are all retained rather than choosing one arbitrarily.
 
 The timestamp fields record one occurrence. They do not represent all equal
 daily-high or daily-low occurrences.
+
+Hour definitions:
+
+```text
+daily_high_hour_utc = integer hour from time_of_daily_high_utc
+daily_low_hour_utc = integer hour from time_of_daily_low_utc
+```
+
+No ordinary mean or median clock hour was calculated.
 
 ### Coverage
 
@@ -303,50 +328,120 @@ daily-high or daily-low occurrences.
 | January | 31 | 9 | 18 | 4 | 0 |
 | February | 29 | 5 | 20 | 4 | 0 |
 | March | 31 | 9 | 16 | 6 | 0 |
+| April | 30 | 8 | 18 | 4 | 0 |
 
-All `strict_valid` and `warning_review` rows had available daily-high and
-daily-low timestamps. Timing values were unavailable only for `calendar_only`
-rows and remained unavailable rather than being interpreted as hour `00`.
+Combined January-April coverage:
+
+```text
+total = 121
+strict_valid = 31
+warning_review = 72
+calendar_only = 18
+excluded_unusable = 0
+```
+
+All `strict_valid` and `warning_review` rows were eligible and had available
+daily-high and daily-low timestamps. Timing values were unavailable only for
+`calendar_only` rows and remained unavailable rather than being interpreted as
+hour `00`. Every requested date appeared exactly once.
 
 ### Primary Strict-Valid Result
 
-Recorded daily-high peak hours:
+Monthly modal summary:
 
-| Month | Available count | Most frequent observed UTC hour | Count | Percentage |
-| --- | ---: | ---: | ---: | ---: |
-| January | 9 | 23 | 5 | 55.6% |
-| February | 5 | 23 | 3 | 60.0% |
-| March | 9 | 23 | 5 | 55.6% |
+| Side | Month | N | Modal hour(s) | Count | Percentage | Distinct observed hours |
+| --- | --- | ---: | --- | ---: | ---: | ---: |
+| High | January | 9 | 23 | 5 | 55.6% | 4 |
+| High | February | 5 | 23 | 3 | 60.0% | 3 |
+| High | March | 9 | 23 | 5 | 55.6% | 5 |
+| High | April | 8 | 22 | 4 | 50.0% | 5 |
+| Low | January | 9 | 23 | 5 | 55.6% | 5 |
+| Low | February | 5 | 23 | 3 | 60.0% | 3 |
+| Low | March | 9 | 22 | 4 | 44.4% | 5 |
+| Low | April | 8 | 22 | 4 | 50.0% | 4 |
 
-Recorded daily-low peak hours:
+April strict-valid daily-high hours:
 
-| Month | Available count | Most frequent observed UTC hour | Count | Percentage |
-| --- | ---: | ---: | ---: | ---: |
-| January | 9 | 23 | 5 | 55.6% |
-| February | 5 | 23 | 3 | 60.0% |
-| March | 9 | 22 | 4 | 44.4% |
+| UTC hour | Count | Percentage |
+| ---: | ---: | ---: |
+| 01 | 1 | 12.5% |
+| 09 | 1 | 12.5% |
+| 15 | 1 | 12.5% |
+| 17 | 1 | 12.5% |
+| 22 | 4 | 50.0% |
 
-No ordinary mean or median clock hour was calculated.
+April strict-valid daily-low hours:
+
+| UTC hour | Count | Percentage |
+| ---: | ---: | ---: |
+| 01 | 2 | 25.0% |
+| 11 | 1 | 12.5% |
+| 19 | 1 | 12.5% |
+| 22 | 4 | 50.0% |
+
+April strict-valid observations:
+
+```text
+2024-04-05 high 17:11 hour 17 / low 01:31 hour 01
+2024-04-07 high 22:05 hour 22 / low 22:19 hour 22
+2024-04-12 high 15:04 hour 15 / low 19:03 hour 19
+2024-04-14 high 22:08 hour 22 / low 22:27 hour 22
+2024-04-19 high 01:46 hour 01 / low 11:12 hour 11
+2024-04-21 high 22:00 hour 22 / low 22:01 hour 22
+2024-04-26 high 09:12 hour 09 / low 01:13 hour 01
+2024-04-28 high 22:00 hour 22 / low 22:06 hour 22
+```
+
+Simple January-April audit totals were calculated only as audit context, not as
+universal timing probabilities.
 
 ### Warning-Review Sensitivity
 
 `warning-review sensitivity`
 
-Recorded daily-high peaks:
+Monthly modal summary:
 
-| Month | Available count | Most frequent observed UTC hour | Count | Percentage |
-| --- | ---: | --- | ---: | ---: |
-| January | 18 | 13 | 4 | 22.2% |
-| February | 20 | 14 | 4 | 20.0% |
-| March | 16 | 00 and 13 tied | 3 each | 18.8% each |
+| Side | Month | N | Modal hour(s) | Count | Percentage | Distinct observed hours |
+| --- | --- | ---: | --- | ---: | ---: | ---: |
+| High | January | 18 | 13 | 4 | 22.2% | 12 |
+| High | February | 20 | 14 | 4 | 20.0% | 11 |
+| High | March | 16 | 00, 13 | 3 | 18.8% | 10 |
+| High | April | 18 | 22 | 4 | 22.2% | 12 |
+| Low | January | 18 | 00, 14, 15, 17, 18, 19 | 2 | 11.1% | 12 |
+| Low | February | 20 | 15, 16 | 3 | 15.0% | 13 |
+| Low | March | 16 | 01 | 5 | 31.2% | 9 |
+| Low | April | 18 | 01 | 5 | 27.8% | 11 |
 
-Recorded daily-low peaks:
+April warning-review sensitivity non-zero counts:
 
-| Month | Available count | Most frequent observed UTC hour | Count | Percentage |
-| --- | ---: | --- | ---: | ---: |
-| January | 18 | 00, 14, 15, 17, 18, and 19 tied | 2 each | 11.1% each |
-| February | 20 | 15 and 16 tied | 3 each | 15.0% each |
-| March | 16 | 01 | 5 | 31.2% |
+```text
+daily-high hours:
+00:1
+01:2
+02:1
+04:1
+05:1
+09:1
+13:1
+14:2
+15:1
+16:2
+18:1
+22:4
+
+daily-low hours:
+01:5
+03:1
+07:1
+08:1
+09:2
+12:1
+13:1
+14:2
+18:1
+19:1
+20:2
+```
 
 Warning context:
 
@@ -355,6 +450,7 @@ Warning context:
 | January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
 | February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
 | March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+| April | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 18 | 1,081 |
 
 The warning context is separate from the timing frequencies. It does not show
 that `INTERNAL_FLAT_ZERO_VOLUME` caused the different distributions.
@@ -369,6 +465,8 @@ that `INTERNAL_FLAT_ZERO_VOLUME` caused the different distributions.
 | February | warning-review | 20 | 0 | 0 |
 | March | strict-valid | 9 | 0 | 0 |
 | March | warning-review | 16 | 1 | 1 |
+| April | strict-valid | 8 | 0 | 0 |
+| April | warning-review | 18 | 1 | 1 |
 
 Repeated-extremum observations:
 
@@ -397,9 +495,22 @@ Repeated-extremum observations:
   03:16:00
   05:23:00
   recorded: 03:16:00
+
+2024-04-09 warning_review high:
+  first occurrence: 09:28:00
+  last occurrence: 09:30:00
+  first hour: 09
+  last hour: 09
+
+2024-04-09 warning_review low:
+  first occurrence: 01:04:00
+  last occurrence: 01:06:00
+  first hour: 01
+  last hour: 01
 ```
 
-Every recorded linked timestamp matched the reconstructed first occurrence.
+Every recorded linked timestamp matched the reconstructed first occurrence in
+the checked repeated-extremum observations.
 
 ### Tie-Handling Sensitivity
 
@@ -415,18 +526,54 @@ daily-low peak conclusions were unchanged. March warning-review daily-low
 retained hour `01` as its peak with `5/16`; only the non-peak allocation for
 `2024-03-18` changed between hours `03` and `05`.
 
+For April, `2024-04-09` was the only eligible observation with a repeated
+extremum. No April strict-valid repeated extremum was found. Neither April hour
+category changed, no April frequency count changed, and no modal result
+changed. The approved April assessment is `no dependence observed`. This
+conclusion is limited to April and does not establish that repeated extrema
+crossing an hour boundary could never matter.
+
 The timing finding showed no material dependence on the first-occurrence tie
 convention in this bounded sample. This does not prove that the convention is
 universally safe.
 
+Platform behaviour was not changed.
+
+### Relationship To Related Extrema Findings
+
+Extrema ordering records which recorded extremum occurred first. Elapsed
+separation records the minutes between extrema. UTC-hour frequency records
+placement on the UTC clock. None of the three determines the other two, and no
+causal relationship among them was tested.
+
+This UTC-hour finding is also distinct from daily-range magnitude, daily
+open-to-close direction, and close location within the daily range.
+
+### Loader Practicality Evidence
+
+- The four linked reports were loaded with
+  `research_observations.load_linked_reports(...)`.
+- 121 observations were loaded.
+- Population counts were `31 / 72 / 18 / 0`.
+- Chronological and compatibility validation passed.
+- Four software revisions were retained.
+- Duplicate identities were zero.
+- Calendar-only timestamp blanks remained unavailable.
+- No primary linked-row ad hoc CSV parsing was required.
+- Custom work was limited to timestamp parsing, hour extraction, frequency and
+  modal calculations, the bounded April repeated-extremum scan, and separate
+  warning-context reads.
+- No loader expansion was required.
+
 ### Reconciliation
 
-- All 23 strict-valid and 54 warning-review observations were reconstructed from
-  raw CSVs after the active edge-placeholder filter.
-- Linked high and low timestamps matched the reconstructed first occurrences.
-- No timestamp mismatches were found.
-- The three sensitivity representations were calculated using read-only
-  temporary analysis.
+- January-March repeated-extremum sensitivity evidence was preserved from the
+  existing finding.
+- April raw CSVs were read only for the bounded April repeated-extremum scan.
+- The April repeated-extremum scan found only `2024-04-09`.
+- No April hour category, frequency count, or modal result changed under the
+  last-occurrence check.
+- The frequency extension used read-only temporary analysis.
 - No repository files were modified during the preceding read-only timing
   execution.
 - No new report was generated during the preceding read-only timing execution.
@@ -436,26 +583,51 @@ analysis.
 
 ### Descriptive Conclusion
 
-In the strict-valid January-March 2024 sample, the recorded daily-high peak hour
-was `23` in all three months. The recorded daily-low peak hour was `23` in
-January and February and `22` in March. The separately labelled warning-review
-sensitivity distributions had different peak hours and were generally more
-dispersed across the UTC day. The principal peak-hour findings were unchanged
-under the tested tie-handling sensitivity representations.
+In the strict-valid January-March observations, the recorded daily-high modal
+hour was `23` in each month. April did not continue that result: its
+daily-high modal hour was `22`, containing four of eight observations.
 
-This does not establish a preferred or optimal trading hour, an entry or exit
-time, a market tendency, a reversal time, support or resistance, a setup or
-signal, prediction, trading edge, profitability, execution realism, statistical
-significance, the cause or harmlessness of `INTERNAL_FLAT_ZERO_VOLUME`, or
-universal or normal XAU/USD behaviour.
+April's strict-valid daily-low modal hour was also `22`, containing four of
+eight observations. This matched March's modal low hour but differed from
+January and February, where hour `23` was modal.
+
+April extends the UTC-hour finding with a material qualification. The
+January-March high-hour result remains valid for those months, but it must not
+be generalised as continuing through April.
+
+April strict-valid and warning-review daily-high distributions shared modal
+hour `22`, but strict-valid was more concentrated there: `50.0%` versus
+`22.2%`. For recorded daily lows, strict-valid modal hour was `22`, while
+warning-review modal hour was `01`. The warning-review high- and low-hour
+distributions also covered more distinct hours.
+
+These differences do not establish a causal warning effect, stable timing
+pattern, or preferred trading hour.
+
+This does not establish a best trading hour, preferred entry or exit timing, a
+setup or signal, prediction, trading edge, profitability, execution realism,
+statistical significance, market causation, the cause or harmlessness of
+`INTERNAL_FLAT_ZERO_VOLUME`, or normal or universal XAU/USD behaviour.
 
 ### Unresolved Questions
 
 - The first-occurrence tie convention is now protected by dedicated regression
   tests, but no broader tie-handling policy change or universal recommendation
   has been adopted.
+- Strict-valid samples remain small.
+- February has five strict-valid observations.
+- April has eight strict-valid observations.
+- Timestamps are one-minute candle opening times.
+- Repeated extrema within one hour may leave the hour category unchanged.
+- A repeated extremum crossing an hour boundary could affect classification.
+- Warning treatment remains observation-level under `warning_treatment_v1`.
 - The cause and practical meaning of `INTERNAL_FLAT_ZERO_VOLUME` remain
   unresolved.
+- The evidence covers one provider, instrument, BID quote side, timeframe, and
+  four months.
+- No statistical testing or serial-dependence modelling was performed.
+- No execution assumptions were included.
+- The analysis is descriptive rather than predictive.
 - No next research task has been selected from this finding alone.
 
 ## 2026-07-26 - January-April 2024 Daily-Extrema Ordering

@@ -89,6 +89,13 @@
   higher in all four months, repeated-extremum sensitivity changed no April gap
   statistic, and no source, loader, schema, filtering, classification, data,
   dependency, producer, or behaviour change occurred.
+- Extended the existing daily-extrema UTC-hour finding through April 2024 using
+  `research_observation_contract_v1`; April changed the strict-valid
+  daily-high modal hour from the earlier monthly hour `23` pattern to hour
+  `22`, April strict-valid daily-low mode was also hour `22`, warning-review
+  distributions were more dispersed, repeated-extremum sensitivity changed no
+  April hour result, and no source, loader, schema, filtering, classification,
+  data, dependency, producer, or behaviour change occurred.
 
 ## v0.11
 
