@@ -669,9 +669,17 @@ edge, profitability, or execution realism.
 
 The first six bounded descriptive questions under `warning_treatment_v1` are
 complete and recorded in [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md). For
-January through March 2024 Dukascopy XAUUSD one-minute BID linked observations,
-the daily-range finding showed higher warning-review sensitivity median and
-mean values than strict-valid median and mean values in each validated month.
+January through April 2024 Dukascopy XAUUSD one-minute BID linked observations,
+the extended daily-range finding showed higher warning-review sensitivity
+median and mean values than strict-valid median and mean values in each
+validated month. April strict-valid median, mean, and maximum were `25.977`,
+`36.707`, and `97.630`; April warning-review sensitivity median and mean were
+`40.305` and `40.896`. April extended the finding without material revision,
+but broader daily-range distribution comparisons remain statistic-specific:
+monthly maxima were mixed between quality tiers. No loader expansion was
+required, and no other finding has yet been extended through April. See
+[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
+
 The daily-extrema timing finding showed strict-valid recorded daily-high peak
 hour `23` in all three months and strict-valid recorded daily-low peak hours
 `23`, `23`, and `22` for January, February, and March. Warning-review timing

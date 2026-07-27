@@ -71,6 +71,11 @@
   compatibility, deterministic April baseline verification, unchanged
   January-March evidence, and no source, schema, configuration, dependency, or
   quality-treatment change.
+- Extended the existing daily-range distribution finding through April 2024
+  using `research_observation_contract_v1`; April preserved the monthly
+  warning-review median/mean comparison while broader distribution
+  relationships remained statistic-specific, with no source, loader, schema,
+  filtering, classification, data, dependency, producer, or behaviour change.
 
 ## v0.11
 

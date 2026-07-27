@@ -21,13 +21,15 @@ generated reports.
 - `superseded finding`: an older finding replaced by later approved evidence or
   treatment rules.
 
-## 2026-07-26 - January-March 2024 Daily-Range Distribution
+## 2026-07-26 - January-April 2024 Daily-Range Distribution
 
 Status: `descriptive finding`
 
+Extended through April 2024 on 2026-07-27 without material revision.
+
 ### Question
 
-For each validated month from January through March 2024, what is the
+For each validated month from January through April 2024, what is the
 descriptive distribution of daily range for `strict_valid` linked observations,
 with `warning_review` daily range reported separately as a labelled sensitivity
 view and `calendar_only`/`excluded_unusable` reported only as coverage?
@@ -38,9 +40,11 @@ view and `calendar_only`/`excluded_unusable` reported only as coverage?
 - Instrument: XAUUSD
 - Quote side: BID
 - Timeframe: 1 minute
-- Calendar period: January-March 2024
-- Primary source: provenance-linked daily observation reports
-- Treatment contract: `warning_treatment_v1`
+- Timezone: UTC
+- Calendar period: January-April 2024
+- Primary input: provenance-linked daily observation reports
+- Access contract: `research_observation_contract_v1`
+- Quality treatment: `warning_treatment_v1`
 
 This is not a universal XAU/USD record.
 
@@ -51,21 +55,39 @@ Primary row-level source reports:
 - `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
 - `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
 - `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+- `reports/linked_observation_report_2024-04-01_to_2024-04-30.csv`
 
 Reconciliation reports:
 
 - `reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv`
 - `reports/historical_baseline_linked_observation_report_2024-02-01_to_2024-02-29.csv`
 - `reports/historical_baseline_linked_observation_report_2024-03-01_to_2024-03-31.csv`
+- `reports/historical_baseline_linked_observation_report_2024-04-01_to_2024-04-30.csv`
 
 Warning context reports:
 
 - `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
 - `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
 - `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
+- `reports/data_manifest_2024-04-01_to_2024-04-30.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
 - `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+- `reports/internal_flat_zero_volume_diagnostic_2024-04-01_to_2024-04-30.csv`
+
+### Calculation Contract
+
+The extension used the linked fields `date`, `quality_tier`, `daily_high`,
+`daily_low`, and `daily_range`. For every eligible `strict_valid` and
+`warning_review` observation, exact `Decimal` arithmetic verified:
+
+```text
+recalculated_daily_range = daily_high - daily_low
+```
+
+Every stored range matched its recalculated value. Range mismatches were `0`.
+Missing daily-range values occurred only on `calendar_only` rows and remained
+unavailable rather than being interpreted as zero.
 
 ### Coverage
 
@@ -74,9 +96,15 @@ Warning context reports:
 | January | 31 | 9 | 18 | 4 | 0 |
 | February | 29 | 5 | 20 | 4 | 0 |
 | March | 31 | 9 | 16 | 6 | 0 |
+| April | 30 | 8 | 18 | 4 | 0 |
 
 Unavailable daily-range values occurred only for `calendar_only` observations
 and remained unavailable rather than being converted to zero.
+
+Combined January-April coverage was 121 observations: 31 `strict_valid`, 72
+`warning_review`, 18 `calendar_only`, and 0 `excluded_unusable`. All
+`strict_valid` and `warning_review` observations were eligible for daily-range
+summaries.
 
 ### Primary Strict-Valid Result
 
@@ -87,6 +115,20 @@ Primary descriptive result under `warning_treatment_v1`:
 | January | 9 | 2.370 | 7.199 | 13.440 | 39.583 |
 | February | 5 | 2.227 | 3.514 | 11.788 | 29.910 |
 | March | 9 | 3.710 | 12.420 | 19.669 | 49.300 |
+| April | 8 | 4.690 | 25.977 | 36.707 | 97.630 |
+
+April strict-valid observations:
+
+```text
+2024-04-05: 62.740
+2024-04-07: 24.550
+2024-04-12: 97.630
+2024-04-14: 25.700
+2024-04-19: 44.940
+2024-04-21: 7.150
+2024-04-26: 26.253
+2024-04-28: 4.690
+```
 
 ### Warning-Review Sensitivity
 
@@ -97,6 +139,30 @@ Primary descriptive result under `warning_treatment_v1`:
 | January | 18 | 12.830 | 19.627 | 22.218 | 35.320 |
 | February | 20 | 6.310 | 15.765 | 17.875 | 42.860 |
 | March | 16 | 14.230 | 26.350 | 30.299 | 73.400 |
+| April | 18 | 25.493 | 40.305 | 40.896 | 68.177 |
+
+April warning-review observations:
+
+```text
+2024-04-01: 37.190
+2024-04-02: 41.600
+2024-04-03: 37.150
+2024-04-04: 25.737
+2024-04-08: 51.080
+2024-04-09: 27.460
+2024-04-10: 40.800
+2024-04-11: 53.800
+2024-04-15: 68.177
+2024-04-16: 35.284
+2024-04-17: 41.013
+2024-04-18: 28.659
+2024-04-22: 61.900
+2024-04-23: 43.040
+2024-04-24: 25.493
+2024-04-25: 39.810
+2024-04-29: 26.857
+2024-04-30: 51.080
+```
 
 ### Warning Context
 
@@ -105,17 +171,24 @@ Primary descriptive result under `warning_treatment_v1`:
 | January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
 | February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
 | March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+| April | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 18 | 1,081 |
 
 The diagnostic run counts and run rows are warning context only. They are not
 additional daily-range statistics.
 
 ### Reconciliation
 
-- The statistics were independently calculated from linked observation rows.
-- All six monthly population summaries matched their corresponding
-  historical-baseline rows.
+- The statistics were independently calculated from linked observation rows
+  loaded through `research_observations.load_linked_reports(...)`.
+- All eight monthly population summaries matched their corresponding
+  historical-baseline `range_summary` rows exactly at three decimals.
+- Baseline mismatches were `0`, including rounding-only differences.
 - Warning-reason baseline rows also matched.
 - No provenance or schema incompatibility was found.
+- 121 observations loaded; chronological and compatibility validation passed;
+  four software revisions were retained; duplicate identities were `0`; blank
+  calendar-only ranges remained unavailable; no primary linked-row ad hoc CSV
+  parsing or loader expansion was needed.
 - During the preceding read-only analysis execution, no repository files were
   modified.
 
@@ -124,24 +197,47 @@ validations remain separate evidence.
 
 ### Descriptive Conclusion
 
-The warning-review sensitivity median and mean were higher than the strict-valid
-median and mean in each of the three validated months. Therefore, the bounded
-daily-range description is visibly sensitive to quality-tier treatment, and the
-two populations must remain separately labelled.
+Across January through April 2024, the warning-review median and mean daily
+ranges were higher than the strict-valid median and mean in each month. April
+continued this previously documented comparison: warning-review median `40.305`
+versus strict-valid `25.977`, and warning-review mean `40.896` versus
+strict-valid `36.707`.
 
-This does not establish that `INTERNAL_FLAT_ZERO_VOLUME` caused the difference,
-that warning-review observations are invalid, that warning-review observations
-are equivalent to strict-valid observations, that either group represents normal
-or universal XAU/USD behaviour, statistical significance, prediction, support or
-resistance, a setup or signal, trading edge, profitability, or execution
-realism.
+April had the largest strict-valid monthly median, mean, and maximum in the
+current four-month sample. April also had the largest warning-review median and
+mean, while the largest warning-review maximum remained March.
+
+The relationship was mixed by statistic. Warning-review minima, medians, and
+means were higher in all four months, but monthly maxima were not consistently
+ordered: strict-valid maxima were higher in January and April, while
+warning-review maxima were higher in February and March.
+
+April extends the existing finding without material revision. It preserves the
+previously documented monthly median and mean comparison, while reinforcing that
+broader distributional comparisons must remain statistic-specific.
+
+This does not establish that warnings caused larger ranges, that
+`INTERNAL_FLAT_ZERO_VOLUME` caused the difference, that warning-review
+observations are invalid, that warning-review observations are equivalent to
+strict-valid observations, a volatility regime, a breakout condition, stable or
+universal market behaviour, market causation, normal XAU/USD behaviour,
+statistical significance, prediction, support or resistance, a setup or signal,
+trading edge, profitability, or execution realism.
 
 ### Unresolved Questions
 
 - The cause and practical meaning of `INTERNAL_FLAT_ZERO_VOLUME` remain
   unresolved.
-- Strict-valid sample counts were small, especially February with 5
-  observations.
+- Strict-valid monthly samples remain small; February has 5 observations and
+  April has 8 observations.
+- Warning treatment remains observation-level.
+- The evidence covers one provider, instrument, BID quote side, timeframe, and
+  four months.
+- No statistical testing was performed.
+- Overlapping or serially related observations were not modelled.
+- ASK, spread, commission, slippage, latency, and execution assumptions were
+  not included.
+- The analysis is descriptive rather than predictive.
 - No next research task has been selected from this finding alone.
 
 ## 2026-07-26 - January-March 2024 Daily-Extrema UTC Hours
