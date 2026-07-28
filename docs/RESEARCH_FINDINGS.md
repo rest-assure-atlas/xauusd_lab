@@ -21,15 +21,18 @@ generated reports.
 - `superseded finding`: an older finding replaced by later approved evidence or
   treatment rules.
 
-## 2026-07-26 - January-April 2024 Daily-Range Distribution
+## 2026-07-26 - January-December 2024 Daily-Range Distribution
 
 Status: `descriptive finding`
 
 Extended through April 2024 on 2026-07-27 without material revision.
+Extended through December 2024 on 2026-07-28 without material revision.
+
+Classification: `extension without material revision`
 
 ### Question
 
-For each validated month from January through April 2024, what is the
+For each validated month from January through December 2024, what is the
 descriptive distribution of daily range for `strict_valid` linked observations,
 with `warning_review` daily range reported separately as a labelled sensitivity
 view and `calendar_only`/`excluded_unusable` reported only as coverage?
@@ -39,55 +42,59 @@ view and `calendar_only`/`excluded_unusable` reported only as coverage?
 - Provider: Dukascopy
 - Instrument: XAUUSD
 - Quote side: BID
-- Timeframe: 1 minute
+- Timeframe: 1min
 - Timezone: UTC
-- Calendar period: January-April 2024
+- Calendar period: January-December 2024
 - Primary input: provenance-linked daily observation reports
 - Access contract: `research_observation_contract_v1`
 - Quality treatment: `warning_treatment_v1`
 
+The evidence is the documented Dukascopy XAUUSD one-minute BID record in UTC.
 This is not a universal XAU/USD record.
 
 ### Source Reports
 
-Primary row-level source reports:
+Primary row-level source reports were the twelve monthly linked observation
+reports from:
 
-- `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
-- `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
-- `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
-- `reports/linked_observation_report_2024-04-01_to_2024-04-30.csv`
+```text
+reports/linked_observation_report_2024-01-01_to_2024-01-31.csv
+...
+reports/linked_observation_report_2024-12-01_to_2024-12-31.csv
+```
 
-Reconciliation reports:
+Reconciliation used the corresponding twelve monthly historical baseline
+reports from:
 
-- `reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv`
-- `reports/historical_baseline_linked_observation_report_2024-02-01_to_2024-02-29.csv`
-- `reports/historical_baseline_linked_observation_report_2024-03-01_to_2024-03-31.csv`
-- `reports/historical_baseline_linked_observation_report_2024-04-01_to_2024-04-30.csv`
+```text
+reports/historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv
+...
+reports/historical_baseline_linked_observation_report_2024-12-01_to_2024-12-31.csv
+```
 
-Warning context reports:
-
-- `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
-- `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
-- `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
-- `reports/data_manifest_2024-04-01_to_2024-04-30.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-04-01_to_2024-04-30.csv`
+Warning context used the corresponding monthly manifests and internal flat
+zero-volume diagnostics only for warning-reason counts and diagnostic context.
 
 ### Calculation Contract
 
 The extension used the linked fields `date`, `quality_tier`, `daily_high`,
-`daily_low`, and `daily_range`. For every eligible `strict_valid` and
-`warning_review` observation, exact `Decimal` arithmetic verified:
+`daily_low`, `daily_range`, `manifest_quality_reasons`, `provider`,
+`instrument`, `quote_side`, `timeframe`, `software_revision`, and source report
+provenance. For every eligible `strict_valid` and `warning_review` observation,
+exact `Decimal` arithmetic verified:
 
 ```text
-recalculated_daily_range = daily_high - daily_low
+daily_range = daily_high - daily_low
 ```
 
-Every stored range matched its recalculated value. Range mismatches were `0`.
-Missing daily-range values occurred only on `calendar_only` rows and remained
-unavailable rather than being interpreted as zero.
+Every stored range matched its recalculated value. Daily-range arithmetic
+mismatches were `0`. Missing daily-range values occurred only on
+`calendar_only` rows and remained unavailable rather than being interpreted as
+zero.
+
+Monthly descriptive statistics use the existing baseline convention: exact
+`Decimal` calculations reported to three decimal places with `ROUND_HALF_UP` to
+`0.001`.
 
 ### Coverage
 
@@ -97,12 +104,20 @@ unavailable rather than being interpreted as zero.
 | February | 29 | 5 | 20 | 4 | 0 |
 | March | 31 | 9 | 16 | 6 | 0 |
 | April | 30 | 8 | 18 | 4 | 0 |
+| May | 31 | 9 | 18 | 4 | 0 |
+| June | 30 | 9 | 16 | 5 | 0 |
+| July | 31 | 8 | 19 | 4 | 0 |
+| August | 31 | 9 | 17 | 5 | 0 |
+| September | 30 | 9 | 17 | 4 | 0 |
+| October | 31 | 8 | 19 | 4 | 0 |
+| November | 30 | 9 | 16 | 5 | 0 |
+| December | 31 | 12 | 15 | 4 | 0 |
 
 Unavailable daily-range values occurred only for `calendar_only` observations
 and remained unavailable rather than being converted to zero.
 
-Combined January-April coverage was 121 observations: 31 `strict_valid`, 72
-`warning_review`, 18 `calendar_only`, and 0 `excluded_unusable`. All
+Combined January-December coverage was 366 observations: 104 `strict_valid`,
+209 `warning_review`, 53 `calendar_only`, and 0 `excluded_unusable`. All
 `strict_valid` and `warning_review` observations were eligible for daily-range
 summaries.
 
@@ -116,8 +131,16 @@ Primary descriptive result under `warning_treatment_v1`:
 | February | 5 | 2.227 | 3.514 | 11.788 | 29.910 |
 | March | 9 | 3.710 | 12.420 | 19.669 | 49.300 |
 | April | 8 | 4.690 | 25.977 | 36.707 | 97.630 |
+| May | 9 | 4.370 | 22.060 | 24.435 | 48.787 |
+| June | 9 | 4.270 | 11.283 | 26.772 | 100.967 |
+| July | 8 | 5.383 | 21.342 | 24.513 | 47.543 |
+| August | 9 | 6.470 | 20.069 | 26.784 | 66.830 |
+| September | 9 | 2.709 | 7.880 | 18.560 | 44.110 |
+| October | 8 | 3.740 | 20.537 | 19.833 | 37.997 |
+| November | 9 | 6.617 | 28.953 | 24.281 | 47.447 |
+| December | 12 | 3.321 | 11.614 | 18.932 | 46.650 |
 
-April strict-valid observations:
+Retained April strict-valid observation detail from the January-April finding:
 
 ```text
 2024-04-05: 62.740
@@ -140,8 +163,17 @@ April strict-valid observations:
 | February | 20 | 6.310 | 15.765 | 17.875 | 42.860 |
 | March | 16 | 14.230 | 26.350 | 30.299 | 73.400 |
 | April | 18 | 25.493 | 40.305 | 40.896 | 68.177 |
+| May | 18 | 17.790 | 30.805 | 34.104 | 56.757 |
+| June | 16 | 10.884 | 28.409 | 27.600 | 39.930 |
+| July | 19 | 12.021 | 34.610 | 33.459 | 53.020 |
+| August | 17 | 18.123 | 32.210 | 36.077 | 94.491 |
+| September | 17 | 14.400 | 28.427 | 30.534 | 53.350 |
+| October | 19 | 19.120 | 26.520 | 30.364 | 58.590 |
+| November | 16 | 16.377 | 37.039 | 46.903 | 114.890 |
+| December | 15 | 20.770 | 32.060 | 35.207 | 69.261 |
 
-April warning-review observations:
+Retained April warning-review observation detail from the January-April
+finding:
 
 ```text
 2024-04-01: 37.190
@@ -164,29 +196,56 @@ April warning-review observations:
 2024-04-30: 51.080
 ```
 
+### Secondary Annual Nested Summary
+
+The annual rows below are secondary summaries of daily observations nested
+within calendar months. They are not twelve independent monthly observations
+and do not establish that every statistic behaved consistently across months.
+
+| Population | Count | Min | Median | Mean | Max |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| strict_valid | 104 | 2.227 | 16.690 | 22.308 | 100.967 |
+| warning_review sensitivity | 209 | 6.310 | 28.470 | 31.853 | 114.890 |
+
 ### Warning Context
 
-| Month | Warning reason | Affected dates | Diagnostic runs | Diagnostic run rows |
-| --- | --- | ---: | ---: | ---: |
-| January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
-| February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
-| March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
-| April | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 18 | 1,081 |
+All 209 `warning_review` observations had warning reason
+`INTERNAL_FLAT_ZERO_VOLUME`. This reason remains unresolved.
+
+| Month | Warning reason | Affected dates | Diagnostic runs | Diagnostic run rows | Tokyo overlap rows | London overlap rows | New York overlap rows |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 | 0 | 0 | 152 |
+| February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 | 2 | 0 | 157 |
+| March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 | 3 | 0 | 1 |
+| April | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 18 | 1,081 | 0 | 0 | 0 |
+| May | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 23 | 1,237 | 0 | 0 | 152 |
+| June | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 18 | 1,113 | 0 | 0 | 150 |
+| July | `INTERNAL_FLAT_ZERO_VOLUME` | 19 | 22 | 1,293 | 0 | 0 | 153 |
+| August | `INTERNAL_FLAT_ZERO_VOLUME` | 17 | 17 | 1,020 | 0 | 0 | 0 |
+| September | `INTERNAL_FLAT_ZERO_VOLUME` | 17 | 21 | 1,175 | 0 | 0 | 151 |
+| October | `INTERNAL_FLAT_ZERO_VOLUME` | 19 | 23 | 1,144 | 0 | 0 | 0 |
+| November | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 17 | 1,112 | 0 | 0 | 151 |
+| December | `INTERNAL_FLAT_ZERO_VOLUME` | 15 | 19 | 915 | 7 | 1 | 0 |
 
 The diagnostic run counts and run rows are warning context only. They are not
-additional daily-range statistics.
+additional daily-range statistics. Diagnostic reconciliation establishes
+counting and location consistency only. It does not establish cause,
+harmlessness, expected behaviour, market closure, provider outage, corruption,
+reliability, or that the warning caused the observed range differences.
 
 ### Reconciliation
 
 - The statistics were independently calculated from linked observation rows
   loaded through `research_observations.load_linked_reports(...)`.
-- All eight monthly population summaries matched their corresponding
-  historical-baseline `range_summary` rows exactly at three decimals.
+- All 24 monthly strict-valid and warning-review population summaries matched
+  their corresponding historical-baseline `range_summary` rows exactly at
+  three decimals.
+- All 12 monthly warning-reason summaries matched their corresponding
+  historical-baseline `range_summary_by_warning_reason` rows.
 - Baseline mismatches were `0`, including rounding-only differences.
-- Warning-reason baseline rows also matched.
 - No provenance or schema incompatibility was found.
-- 121 observations loaded; chronological and compatibility validation passed;
-  four software revisions were retained; duplicate identities were `0`; blank
+- 366 observations loaded; chronological and compatibility validation passed;
+  five software revisions were retained; duplicate identities were `0`; blank
   calendar-only ranges remained unavailable; no primary linked-row ad hoc CSV
   parsing or loader expansion was needed.
 - During the preceding read-only analysis execution, no repository files were
@@ -197,46 +256,46 @@ validations remain separate evidence.
 
 ### Descriptive Conclusion
 
-Across January through April 2024, the warning-review median and mean daily
-ranges were higher than the strict-valid median and mean in each month. April
-continued this previously documented comparison: warning-review median `40.305`
-versus strict-valid `25.977`, and warning-review mean `40.896` versus
-strict-valid `36.707`.
+Across January-December 2024 Dukascopy XAUUSD one-minute BID linked
+observations, warning-review sensitivity median and mean daily ranges were
+higher than strict-valid median and mean daily ranges in every validated month.
+The secondary annual nested daily-observation summary showed the same
+direction: warning-review median `28.470` versus strict-valid median `16.690`,
+and warning-review mean `31.853` versus strict-valid mean `22.308`.
 
-April had the largest strict-valid monthly median, mean, and maximum in the
-current four-month sample. April also had the largest warning-review median and
-mean, while the largest warning-review maximum remained March.
+This extends the January-April daily-range finding without material revision.
+Distributional comparisons remain statistic-specific: strict-valid monthly
+maxima were higher in January, April, and June, while warning-review maxima
+were higher in the other nine months. Warning-review minima were higher in all
+twelve months.
 
-The relationship was mixed by statistic. Warning-review minima, medians, and
-means were higher in all four months, but monthly maxima were not consistently
-ordered: strict-valid maxima were higher in January and April, while
-warning-review maxima were higher in February and March.
-
-April extends the existing finding without material revision. It preserves the
-previously documented monthly median and mean comparison, while reinforcing that
-broader distributional comparisons must remain statistic-specific.
+Monthly results remain primary. The annual nested summary can hide monthly
+exceptions, including the strict-valid monthly maximum exceptions. No
+inferential testing was performed.
 
 This does not establish that warnings caused larger ranges, that
 `INTERNAL_FLAT_ZERO_VOLUME` caused the difference, that warning-review
 observations are invalid, that warning-review observations are equivalent to
 strict-valid observations, a volatility regime, a breakout condition, stable or
 universal market behaviour, market causation, normal XAU/USD behaviour,
-statistical significance, prediction, support or resistance, a setup or signal,
-trading edge, profitability, or execution realism.
+statistical significance, causation, prediction, support or resistance, a setup
+or signal, trading edge, profitability, or execution realism.
 
 ### Unresolved Questions
 
 - The cause and practical meaning of `INTERNAL_FLAT_ZERO_VOLUME` remain
   unresolved.
-- Strict-valid monthly samples remain small; February has 5 observations and
-  April has 8 observations.
+- Strict-valid monthly samples remain small; February has 5 observations, and
+  April, July, and October each have 8 observations.
 - Warning treatment remains observation-level.
 - The evidence covers one provider, instrument, BID quote side, timeframe, and
-  four months.
+  one calendar year.
 - No statistical testing was performed.
 - Overlapping or serially related observations were not modelled.
-- ASK, spread, commission, slippage, latency, and execution assumptions were
+- ASK remains a future prerequisite before spread-aware or execution-aware
+  testing. Spread, commission, slippage, latency, and execution assumptions were
   not included.
+- Tick remains conditional on a defined need for sub-minute evidence.
 - The analysis is descriptive rather than predictive.
 - No next research task has been selected from this finding alone.
 

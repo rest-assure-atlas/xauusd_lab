@@ -691,10 +691,10 @@ diagnostics:
 
 Annual acquisition and loader compatibility are data/provenance milestones.
 Monthly baseline summaries remain validation summaries and are not
-automatically research findings. No annual descriptive finding has yet been
-approved, and no support/resistance, setup, signal, prediction, causation,
-edge, profitability, or execution conclusion follows from acquisition
-completion.
+automatically research findings. The January-December daily-range distribution
+extension has since been approved as a bounded descriptive finding, but no
+support/resistance, setup, signal, prediction, causation, edge, profitability,
+or execution conclusion follows from acquisition completion or that finding.
 
 The current validated annual dataset is one-minute BID only. ASK remains a
 future prerequisite for realistic entry/exit and spread-aware testing; current
@@ -757,17 +757,20 @@ significance, support or resistance, a setup or signal, prediction, trading
 edge, profitability, or execution realism.
 
 The first six bounded descriptive questions under `warning_treatment_v1` are
-complete and recorded in [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md). For
-January through April 2024 Dukascopy XAUUSD one-minute BID linked observations,
-the extended daily-range finding showed higher warning-review sensitivity
-median and mean values than strict-valid median and mean values in each
-validated month. April strict-valid median, mean, and maximum were `25.977`,
-`36.707`, and `97.630`; April warning-review sensitivity median and mean were
-`40.305` and `40.896`. April extended the finding without material revision,
-but broader daily-range distribution comparisons remain statistic-specific:
-monthly maxima were mixed between quality tiers. No loader expansion was
-required for that extension. See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md)
-for detailed evidence.
+complete and recorded in [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md). The
+daily-range distribution finding now covers January-December 2024 Dukascopy
+XAUUSD one-minute BID linked observations. The January-December read-only
+analysis used existing ignored monthly linked reports, reconciled against the
+existing monthly historical baselines, and required no production
+implementation change. It showed higher warning-review sensitivity median and
+mean daily ranges than strict-valid median and mean daily ranges in each
+validated month. The secondary annual nested daily-observation summary showed
+warning-review median `28.470` versus strict-valid median `16.690`, and
+warning-review mean `31.853` versus strict-valid mean `22.308`. The extension
+was classified as `extension without material revision`, while broader
+distribution comparisons remain statistic-specific: strict-valid monthly maxima
+were higher in January, April, and June, and warning-review maxima were higher
+in the other nine months.
 
 The daily-extrema UTC-hour frequency finding now covers January-April.
 January-March strict-valid recorded daily-high modal hour was `23` in each
@@ -785,9 +788,9 @@ material qualification; no eligible January-April observation had both extrema
 in the same recorded minute, and April repeated-extremum handling changed no
 category. Repeated-extremum sensitivity changed no April UTC-hour category. No
 loader expansion was required. All three extrema-timing findings now extend
-through April. The May-December acquisition phase has since completed as a
-data/provenance milestone, but no annual research extension has been approved.
-See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
+through April only. The daily-range distribution question is the only
+January-December research extension currently approved and documented. See
+[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
 
 The daily close-location finding showed that strict-valid closes were more
 often in the lower half of the recorded daily range in January and more often
@@ -811,9 +814,10 @@ extrema clock-hour frequency. The loader-backed executions using
 `research_observation_contract_v1` succeeded without loader expansion. No
 production code, schema, filtering, classification, raw data, report artifact,
 dependency, loader, or producer change was made. No pooled
-strict-valid/warning-review result was produced. The daily-range,
-daily-extrema ordering, and elapsed-extrema separation findings currently
-extend through April. The next research task has not yet been selected.
+strict-valid/warning-review result was produced. The daily-range finding now
+extends through December 2024; daily-extrema ordering and elapsed-extrema
+separation currently extend through April. The next research task has not yet
+been selected.
 
 ## research_observation_contract_v1 Linked-Report Loader
 
