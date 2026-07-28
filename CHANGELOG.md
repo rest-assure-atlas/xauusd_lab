@@ -96,6 +96,16 @@
   distributions were more dispersed, repeated-extremum sensitivity changed no
   April hour result, and no source, loader, schema, filtering, classification,
   data, dependency, producer, or behaviour change occurred.
+- Documented completion of May-December 2024 monthly BID-data acquisition and
+  validation, producing complete January-December 2024 linked coverage of 366
+  observations: 104 strict-valid, 209 warning-review, 53 calendar-only, and 0
+  excluded/unusable. All eight May-December monthly report sets completed,
+  monthly historical-baseline deterministic content checks passed, annual
+  loader compatibility passed, and the latest reported full suite was 152 run,
+  149 passed, 3 skipped, 0 failures, 0 errors, and 7.522 seconds. No source,
+  tests, schemas, configuration, dependencies, filtering, quality
+  classification, session rules, or pipeline behaviour changed; raw and
+  generated outputs remain ignored and uncommitted.
 
 ## v0.11
 

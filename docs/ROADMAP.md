@@ -1,6 +1,10 @@
 # Roadmap
 
-Current confirmed milestone: **v0.11**.
+Current confirmed application milestone: **v0.11**.
+
+Current confirmed data/provenance checkpoint: complete January-December 2024
+Dukascopy XAUUSD one-minute BID acquisition, monthly validation, and annual
+multi-report loader compatibility.
 
 Completed milestones are reconstructed from `CHANGELOG.md`, the current repository, and Git history.
 
@@ -100,10 +104,26 @@ Completed milestones are reconstructed from `CHANGELOG.md`, the current reposito
 - Documented the manifest contract in `docs/DATA_QUALITY_MANIFEST.md`.
 - Added self-contained synthetic tests for data quality rules, manifest output, deterministic rewriting, status reconciliation, CLI errors, and raw immutability.
 
+### 2024 BID Data/Provenance Checkpoint
+
+- Completed full 2024 Dukascopy XAUUSD one-minute BID acquisition in ignored
+  local raw CSV outputs.
+- Completed monthly May-December validation with monthly audit boundaries,
+  manifests, session reports, linked observation reports, historical baseline
+  reports, and internal flat zero-volume diagnostics.
+- Verified annual January-December multi-report loader compatibility across
+  all twelve monthly linked reports, keeping `strict_valid`, `warning_review`,
+  `calendar_only`, and `excluded_unusable` separate.
+
 ## Proposed Future Work
 
 Everything in this section is proposed only. It is not approved or implemented unless a future user request explicitly says so.
 
+- Review and preserve the annual data/provenance checkpoint.
+- Decide the next bounded research direction.
+- Perform a bounded ASK-data prerequisite inspection before execution-realistic
+  testing.
+- Consider tick data later only if required by defined research setups.
 - Aggregate multi-day session analysis.
 - Weekday and distribution analysis.
 - Carefully defined range and breakout relationships.

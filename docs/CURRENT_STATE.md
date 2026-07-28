@@ -1,6 +1,10 @@
 # Current State
 
-Verified committed milestone: **v0.11**.
+Verified committed application milestone: **v0.11**.
+
+Latest verified local data/provenance checkpoint: complete January-December
+2024 Dukascopy XAUUSD one-minute BID linked-observation coverage in ignored
+local outputs. This is not a universal XAU/USD market record.
 
 XAUUSD Lab is a Python research project for studying XAU/USD, meaning gold priced in US dollars. The current repository focuses on downloading Dukascopy one-minute BID data, exploring daily data, charting candles, applying configurable research-session windows, producing multi-day session research reports, creating data quality manifests for raw CSV provenance and validation, producing a separate non-canonical linked observation report, loading linked reports through an internal quality-aware research access layer, creating a first descriptive historical baseline from an existing linked observation CSV, and producing a narrow structural diagnostic for internal flat zero-volume runs.
 
@@ -255,28 +259,35 @@ Source code, tests, documentation, JSON configuration, and `requirements.txt` ar
 
 ## Automated Test Status
 
-The current automated test suite contains 152 tests and currently completes
-successfully with:
+The current automated test suite contains 152 tests and has been reported to
+complete successfully with:
 
 ```powershell
 python -m unittest discover -s tests
 ```
 
-In the bundled Codex runtime used during April validation, Matplotlib was not
-available. The latest environment-specific result was:
+In the bundled Codex runtime, Matplotlib was not available for three
+chart-display tests. The latest reported full-suite result is:
 
 ```text
 Bundled Codex runtime:
-152 tests run
-149 passed
-3 skipped
-0 failures
-0 errors
-Runtime: 8.647 seconds
-Matplotlib unavailable in that runtime
+Ran: 152
+Passed: 149
+Failures: 0
+Errors: 0
+Skipped: 3
+Runtime: 7.522 seconds
 ```
 
-The latest completed application milestone is v0.11.
+The three skips were Matplotlib-dependent chart-display tests in that bundled
+runtime. Passing software tests establishes tested implementation behaviour
+only. It does not establish provider completeness, market-data quality,
+statistical validity, prediction, trading edge, profitability, or execution
+realism.
+
+The latest completed application milestone is v0.11. The latest completed
+data/provenance milestone is full January-December 2024 BID linked coverage in
+ignored local outputs.
 
 ## Recent Manually Verified Behaviour
 
@@ -617,6 +628,84 @@ observations, four calendar-only observations, and separate Director approval
 of any research extension. No April research extension has yet been approved,
 and the next research question remains unselected.
 
+## May-December And Annual 2024 Data/Provenance Validation
+
+May-December 2024 monthly acquisition and validation has been completed for
+Dukascopy XAUUSD one-minute BID data in UTC. This preserved monthly audit
+boundaries and completed the local January-December 2024 linked-observation
+coverage. This is a data/provenance milestone only, not a research-finding,
+strategy, ASK-data, tick-data, source, loader, schema, quality-rule, session,
+or pipeline-behaviour milestone.
+
+All 245 requested May-December dates were represented. Each month from May
+through December has the expected ignored monthly outputs: daily raw CSVs, data
+manifest, session report, linked observation report, historical baseline report,
+and internal flat zero-volume diagnostic. All eight monthly report sets
+completed, monthly coverage and provenance reconciliation passed,
+linked/session mismatches were zero, and duplicate dates were zero. Monthly
+historical-baseline deterministic reruns produced identical content for every
+May-December month; this determinism check covered the baseline producer only.
+January-June protected outputs remained unchanged during the July-December
+continuation. Raw data, reports, and logs remain ignored by Git and were not
+committed.
+
+All twelve monthly linked reports were present and loaded successfully through
+`research_observations.load_linked_reports(...)`. Chronological ordering
+passed, duplicate identities were zero, calendar-only blanks remained
+unavailable, and five compatible software revisions were retained. The source
+contract remained: provider Dukascopy, instrument XAUUSD, quote side BID,
+timeframe 1 minute, and timezone UTC.
+
+Verified linked-observation quality-tier counts:
+
+```text
+May-December 2024:
+total observations: 245
+strict_valid: 73
+warning_review: 137
+calendar_only: 35
+excluded_unusable: 0
+
+January-December 2024:
+total observations: 366
+strict_valid: 104
+warning_review: 209
+calendar_only: 53
+excluded_unusable: 0
+```
+
+`strict_valid`, `warning_review`, `calendar_only`, and `excluded_unusable`
+remain separate populations. `INTERNAL_FLAT_ZERO_VOLUME` remains unresolved and
+has not been classified as harmless, expected market behaviour, market closure,
+provider outage, corruption, causal, or explained. Diagnostic/manifest
+reconciliation confirms counting consistency only; it does not establish the
+cause or meaning of the flat periods.
+
+Verified session-overlap qualification for May-December internal-flat
+diagnostics:
+
+- May, June, July, September, and November included New York-session overlap.
+- August and October did not include New York-session overlap.
+- December did not include New York-session overlap, but did include seven
+  Tokyo-overlap rows and one London-overlap row.
+
+Annual acquisition and loader compatibility are data/provenance milestones.
+Monthly baseline summaries remain validation summaries and are not
+automatically research findings. No annual descriptive finding has yet been
+approved, and no support/resistance, setup, signal, prediction, causation,
+edge, profitability, or execution conclusion follows from acquisition
+completion.
+
+The current validated annual dataset is one-minute BID only. ASK remains a
+future prerequisite for realistic entry/exit and spread-aware testing; current
+ASK support has not been established and requires a bounded prerequisite
+inspection. Tick data remains a later, conditional milestone based on the
+precision required by defined research setups.
+
+The acquisition checkpoint was verified on `main` at
+`cd97a14694dfee0d62f213aaa5cb85f0827c0a46`, aligned with `origin/main`, with a
+clean tracked working tree before this documentation-only update.
+
 ## warning_treatment_v1 Research Contract
 
 `warning_treatment_v1` is the approved research-treatment contract for
@@ -696,9 +785,9 @@ material qualification; no eligible January-April observation had both extrema
 in the same recorded minute, and April repeated-extremum handling changed no
 category. Repeated-extremum sensitivity changed no April UTC-hour category. No
 loader expansion was required. All three extrema-timing findings now extend
-through April. The next proposed phase is May-December 2024 batch acquisition
-with monthly validation, subject to separate Director approval. See
-[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
+through April. The May-December acquisition phase has since completed as a
+data/provenance milestone, but no annual research extension has been approved.
+See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
 
 The daily close-location finding showed that strict-valid closes were more
 often in the lower half of the recorded daily range in January and more often
@@ -1098,6 +1187,10 @@ historical-baseline behaviour are unchanged.
 ## Known Limitations
 
 - The current research data is BID-only and does not include ASK prices or spread.
+- Current ASK support has not been established and requires a bounded
+  prerequisite inspection before realistic entry/exit or spread-aware testing.
+- Tick data remains a later, conditional milestone based on the precision
+  required by defined research setups.
 - The project does not yet model commission, slippage, latency, or execution assumptions.
 - There is no backtesting engine yet.
 - There is no multi-year downloader orchestration yet.
