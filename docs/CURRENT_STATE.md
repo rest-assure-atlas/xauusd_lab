@@ -772,6 +772,22 @@ distribution comparisons remain statistic-specific: strict-valid monthly maxima
 were higher in January, April, and June, and warning-review maxima were higher
 in the other nine months.
 
+The daily close-location finding now also covers January-December 2024
+Dukascopy XAUUSD one-minute BID linked observations. The January-December
+read-only analysis reproduced the documented January-March close-location
+tables with zero mismatches, used existing ignored monthly linked reports, and
+required no production implementation change. It received a `material
+qualification`: strict-valid closes did not follow one stable monthly
+lower-half or upper-half category direction. January, May, and June had
+lower-half strict-valid majorities; February, March, and July through December
+had upper-half strict-valid majorities; April had no strict majority because
+lower-half and upper-half counts were tied. The warning-review sensitivity
+population matched the strict-valid strict-majority direction in January,
+February, March, July, September, October, and November, but diverged or had no
+strict majority in April, May, June, August, and December. The annual nested
+summary had upper-half majorities in both populations, but it does not replace
+the monthly evidence.
+
 The daily-extrema UTC-hour frequency finding now covers January-April.
 January-March strict-valid recorded daily-high modal hour was `23` in each
 month, but April adds a material qualification with high modal hour `22`
@@ -788,21 +804,17 @@ material qualification; no eligible January-April observation had both extrema
 in the same recorded minute, and April repeated-extremum handling changed no
 category. Repeated-extremum sensitivity changed no April UTC-hour category. No
 loader expansion was required. All three extrema-timing findings now extend
-through April only. The daily-range distribution question is the only
-January-December research extension currently approved and documented. See
-[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
+through April only. The daily-range distribution and daily close-location
+questions are the only January-December research extensions currently approved
+and documented. See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed
+evidence.
 
-The daily close-location finding showed that strict-valid closes were more
-often in the lower half of the recorded daily range in January and more often
-in the upper half in February and March. The separately labelled warning-review
-sensitivity population had the same monthly lower-half or upper-half category
-majority in each corresponding month, though medians and category percentages
-differed by month. The daily open-to-close finding showed that January and
-February strict-valid observations had more below-open dates, while March
-strict-valid observations had more above-open dates. The warning-review
-sensitivity population had more above-open dates in all three months, and the
-quality-tier comparison was mixed by month. Open-to-close classification is
-distinct from close location within the daily range. The elapsed-time
+The daily open-to-close finding showed that January and February strict-valid
+observations had more below-open dates, while March strict-valid observations
+had more above-open dates. The warning-review sensitivity population had more
+above-open dates in all three months, and the quality-tier comparison was mixed
+by month. Open-to-close classification is distinct from close location within
+the daily range. The elapsed-time
 between-daily-extrema finding now covers January-April. April strict-valid
 minimum, median, mean, and maximum absolute gaps were `1`, `129`, `283`, and
 `940` minutes; April warning-review sensitivity values were `53`, `572`,
@@ -814,10 +826,11 @@ extrema clock-hour frequency. The loader-backed executions using
 `research_observation_contract_v1` succeeded without loader expansion. No
 production code, schema, filtering, classification, raw data, report artifact,
 dependency, loader, or producer change was made. No pooled
-strict-valid/warning-review result was produced. The daily-range finding now
-extends through December 2024; daily-extrema ordering and elapsed-extrema
-separation currently extend through April. The next research task has not yet
-been selected.
+strict-valid/warning-review result was produced. The daily-range and daily
+close-location findings now extend through December 2024; daily-extrema
+UTC-hour, daily-extrema ordering, and elapsed-extrema separation currently
+extend through April, while daily open-to-close retains January-March coverage.
+The next research task has not yet been selected.
 
 ## research_observation_contract_v1 Linked-Report Loader
 

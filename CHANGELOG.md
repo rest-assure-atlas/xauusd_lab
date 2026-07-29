@@ -113,6 +113,13 @@
   baseline mismatches were 0, strict-valid and warning-review results remained
   separate, and no source, schema, quality-rule, loader, producer, dependency,
   configuration, filtering, or implementation change occurred.
+- Extended the existing daily close-location finding through January-December
+  2024 using existing ignored linked reports; the documented January-March
+  results reproduced exactly, arithmetic, bound, category, and supporting
+  baseline mismatches were 0, the result was classified as `material
+  qualification`, strict-valid and warning-review results remained separate,
+  and no source, schema, quality-rule, loader, producer, dependency,
+  configuration, filtering, or implementation change occurred.
 
 ## v0.11
 
