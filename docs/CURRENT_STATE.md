@@ -788,6 +788,22 @@ strict majority in April, May, June, August, and December. The annual nested
 summary had upper-half majorities in both populations, but it does not replace
 the monthly evidence.
 
+The daily open-to-close finding now covers January-December 2024 Dukascopy
+XAUUSD one-minute BID linked observations. The January-December read-only
+analysis reproduced the corrected January-March open-to-close tables with zero
+mismatches and required no production implementation change. It received a
+`material qualification`: strict-valid daily close-versus-open classification
+varied by month, with above-open strict majorities in five months, below-open
+strict majorities in four months, and tied above/below counts in April, October,
+and December. The warning-review sensitivity population had above-open strict
+majorities in nine months, a below-open strict majority in August, and no strict
+majority in January or May. Both populations had the same strict-majority
+category in March, July, August, September, and November. The secondary annual
+nested summaries had above-open strict majorities in both populations, but they
+do not replace the monthly evidence and hide monthly ties, below-open months,
+and quality-tier divergence. Open-to-close classification remains distinct from
+close location within the daily range.
+
 The daily-extrema UTC-hour frequency finding now covers January-April.
 January-March strict-valid recorded daily-high modal hour was `23` in each
 month, but April adds a material qualification with high modal hour `22`
@@ -804,24 +820,14 @@ material qualification; no eligible January-April observation had both extrema
 in the same recorded minute, and April repeated-extremum handling changed no
 category. Repeated-extremum sensitivity changed no April UTC-hour category. No
 loader expansion was required. All three extrema-timing findings now extend
-through April only. The daily-range distribution and daily close-location
-questions are the only January-December research extensions currently approved
-and documented. See [RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed
-evidence.
+through April only. The daily-range distribution, daily close-location, and
+daily open-to-close questions now extend through December 2024. See
+[RESEARCH_FINDINGS.md](RESEARCH_FINDINGS.md) for detailed evidence.
 
-The daily open-to-close finding showed that January and February strict-valid
-observations had more below-open dates, while March strict-valid observations
-had more above-open dates. The warning-review sensitivity population had more
-above-open dates in all three months, and the quality-tier comparison was mixed
-by month. Open-to-close classification is distinct from close location within
-the daily range. The January-March open-to-close evidence was re-audited for
-display rounding; two display-only values were corrected under the now-explicit
-`ROUND_HALF_UP` convention, with no row-level arithmetic, category, population,
-or conclusion change. The elapsed-time
-between-daily-extrema finding now covers January-April. April strict-valid
-minimum, median, mean, and maximum absolute gaps were `1`, `129`, `283`, and
-`940` minutes; April warning-review sensitivity values were `53`, `572`,
-`622.556`, and `1,262` minutes. Warning-review medians were higher than
+The elapsed-time between-daily-extrema finding now covers January-April. April
+strict-valid minimum, median, mean, and maximum absolute gaps were `1`, `129`,
+`283`, and `940` minutes; April warning-review sensitivity values were `53`,
+`572`, `622.556`, and `1,262` minutes. Warning-review medians were higher than
 strict-valid medians in all four months, and April extended the finding without
 material revision. The sole April repeated-extremum observation changed no gap
 statistic. This elapsed-separation result is distinct from extrema ordering and
@@ -829,11 +835,11 @@ extrema clock-hour frequency. The loader-backed executions using
 `research_observation_contract_v1` succeeded without loader expansion. No
 production code, schema, filtering, classification, raw data, report artifact,
 dependency, loader, or producer change was made. No pooled
-strict-valid/warning-review result was produced. The daily-range and daily
-close-location findings now extend through December 2024; daily-extrema
-UTC-hour, daily-extrema ordering, and elapsed-extrema separation currently
-extend through April, while daily open-to-close retains January-March coverage.
-The next research task has not yet been selected.
+strict-valid/warning-review result was produced. The daily-range, daily
+close-location, and daily open-to-close findings now extend through December
+2024; daily-extrema UTC-hour, daily-extrema ordering, and elapsed-extrema
+separation currently extend through April. The next research task has not yet
+been selected.
 
 ## research_observation_contract_v1 Linked-Report Loader
 

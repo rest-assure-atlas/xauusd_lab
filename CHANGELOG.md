@@ -125,6 +125,14 @@
   `0.617` and `5.487` under the documented `ROUND_HALF_UP` convention, with no
   source, loader, schema, quality-rule, category, population, or research
   conclusion change.
+- Extended the existing daily open-to-close finding through January-December
+  2024 using existing ignored linked reports; the corrected January-March
+  tables reproduced with zero mismatches, arithmetic/category checks and 192
+  supported-baseline checks had zero mismatches, the result was classified as
+  `material qualification`, strict-valid and warning-review results remained
+  separate, independently rounded annual warning-review category percentages
+  total `100.1%` as a display-rounding effect, and no source, loader, schema,
+  quality-rule, dependency, configuration, or implementation change occurred.
 
 ## v0.11
 

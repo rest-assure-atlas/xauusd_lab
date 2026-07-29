@@ -1468,13 +1468,16 @@ below `0.5` is not interpreted as bearish.
 - Tick remains conditional on a defined need for sub-minute evidence.
 - No next research task has been selected from this finding alone.
 
-## 2026-07-27 - January-March 2024 Daily Open-To-Close
+## 2026-07-27 - January-December 2024 Daily Open-To-Close
 
 Status: `descriptive finding`
 
+Extension note: 2026-07-29 extension through January-December 2024.
+Classification: `material qualification`.
+
 ### Question
 
-For each validated month from January through March 2024, how often did the
+For each validated month from January through December 2024, how often did the
 recorded daily close finish above, below, or exactly at the recorded daily open
 for `strict_valid` observations, with `warning_review` reported separately as
 a labelled sensitivity view and `calendar_only`/`excluded_unusable` retained
@@ -1485,9 +1488,9 @@ only as coverage?
 - Provider: Dukascopy
 - Instrument: XAUUSD
 - Quote side: BID
-- Timeframe: 1 minute
+- Timeframe: 1min
 - Timezone: UTC
-- Calendar period: January-March 2024
+- Calendar period: January-December 2024
 - Primary input: provenance-linked daily observation reports
 - Access contract: `research_observation_contract_v1`
 - Quality treatment: `warning_treatment_v1`
@@ -1502,15 +1505,21 @@ Primary row-level source reports loaded through
 - `reports/linked_observation_report_2024-01-01_to_2024-01-31.csv`
 - `reports/linked_observation_report_2024-02-01_to_2024-02-29.csv`
 - `reports/linked_observation_report_2024-03-01_to_2024-03-31.csv`
+- `reports/linked_observation_report_2024-04-01_to_2024-04-30.csv`
+- `reports/linked_observation_report_2024-05-01_to_2024-05-31.csv`
+- `reports/linked_observation_report_2024-06-01_to_2024-06-30.csv`
+- `reports/linked_observation_report_2024-07-01_to_2024-07-31.csv`
+- `reports/linked_observation_report_2024-08-01_to_2024-08-31.csv`
+- `reports/linked_observation_report_2024-09-01_to_2024-09-30.csv`
+- `reports/linked_observation_report_2024-10-01_to_2024-10-31.csv`
+- `reports/linked_observation_report_2024-11-01_to_2024-11-30.csv`
+- `reports/linked_observation_report_2024-12-01_to_2024-12-31.csv`
 
-Warning context reports:
-
-- `reports/data_manifest_2024-01-01_to_2024-01-31.csv`
-- `reports/data_manifest_2024-02-01_to_2024-02-29.csv`
-- `reports/data_manifest_2024-03-01_to_2024-03-31.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-01-01_to_2024-01-31.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-02-01_to_2024-02-29.csv`
-- `reports/internal_flat_zero_volume_diagnostic_2024-03-01_to_2024-03-31.csv`
+Supporting context used the corresponding twelve existing monthly data
+manifests, historical baseline reports, and internal flat zero-volume diagnostic
+reports. Historical baseline reports do not contain `daily_open`,
+`daily_close`, or `open_to_close_change`, so they were used only for the
+supporting coverage, availability, and daily-range metrics they contain.
 
 ### Category And Magnitude Definitions
 
@@ -1525,7 +1534,7 @@ Exact decimal arithmetic was used:
 
 ```text
 open_to_close_change = daily_close - daily_open
-absolute_open_to_close_change = abs(daily_close - daily_open)
+absolute_open_to_close_change = abs(open_to_close_change)
 ```
 
 Quote-unit statistics are displayed to three decimal places using
@@ -1534,9 +1543,9 @@ place using `ROUND_HALF_UP` to `0.1`.
 
 Each eligible observation was assigned to exactly one category:
 
-- `close_above_open`: `daily_close > daily_open`
-- `close_below_open`: `daily_close < daily_open`
-- `close_equal_open`: `daily_close == daily_open`
+- `close_above_open`: `open_to_close_change > 0`
+- `close_below_open`: `open_to_close_change < 0`
+- `close_equal_open`: `open_to_close_change == 0`
 
 No tolerance or approximate-equality category was used. Price changes are
 descriptive quote-unit differences, not returns, profit, or tradable P&L.
@@ -1548,19 +1557,23 @@ descriptive quote-unit differences, not returns, profit, or tradable P&L.
 | January | 31 | 9 | 18 | 4 | 0 |
 | February | 29 | 5 | 20 | 4 | 0 |
 | March | 31 | 9 | 16 | 6 | 0 |
+| April | 30 | 8 | 18 | 4 | 0 |
+| May | 31 | 9 | 18 | 4 | 0 |
+| June | 30 | 9 | 16 | 5 | 0 |
+| July | 31 | 8 | 19 | 4 | 0 |
+| August | 31 | 9 | 17 | 5 | 0 |
+| September | 30 | 9 | 17 | 4 | 0 |
+| October | 31 | 8 | 19 | 4 | 0 |
+| November | 30 | 9 | 16 | 5 | 0 |
+| December | 31 | 12 | 15 | 4 | 0 |
+| Total | 366 | 104 | 209 | 53 | 0 |
 
 Eligible counts were identical to strict-valid and warning-review counts.
 Missing daily-open or daily-close values occurred only on `calendar_only`
-rows:
+rows. Calendar-only daily-open and daily-close values remained unavailable
+rather than being interpreted as zero.
 
-| Month | Missing daily open/close values |
-| --- | ---: |
-| January | 4 |
-| February | 4 |
-| March | 6 |
-
-Calendar-only daily-open and daily-close values remained unavailable rather
-than being interpreted as zero.
+Eligible open-to-close observations: 313.
 
 ### Primary Strict-Valid Result
 
@@ -1571,66 +1584,27 @@ Primary descriptive result under `warning_treatment_v1`:
 | January | 9 | 4 (44.4%) | 5 (55.6%) | 0 (0.0%) | -2.710 | -0.190 | 1.450 | 13.620 | 2.180 |
 | February | 5 | 2 (40.0%) | 3 (60.0%) | 0 (0.0%) | -15.450 | -0.360 | -1.058 | 9.610 | 1.850 |
 | March | 9 | 7 (77.8%) | 2 (22.2%) | 0 (0.0%) | -16.680 | 2.530 | 8.126 | 42.133 | 5.970 |
+| April | 8 | 4 (50.0%) | 4 (50.0%) | 0 (0.0%) | -33.680 | 3.245 | 2.773 | 39.520 | 11.310 |
+| May | 9 | 5 (55.6%) | 4 (44.4%) | 0 (0.0%) | -16.870 | 0.740 | 2.504 | 36.740 | 3.087 |
+| June | 9 | 2 (22.2%) | 7 (77.8%) | 0 (0.0%) | -83.260 | -1.677 | -10.981 | 30.039 | 3.690 |
+| July | 8 | 5 (62.5%) | 3 (37.5%) | 0 (0.0%) | -40.663 | 4.835 | 3.378 | 34.050 | 9.684 |
+| August | 9 | 4 (44.4%) | 5 (55.6%) | 0 (0.0%) | -16.530 | -1.993 | 6.501 | 49.619 | 4.510 |
+| September | 9 | 5 (55.6%) | 4 (44.4%) | 0 (0.0%) | -20.120 | 0.300 | 2.681 | 34.379 | 5.483 |
+| October | 8 | 4 (50.0%) | 4 (50.0%) | 0 (0.0%) | -8.433 | 1.587 | 7.061 | 27.440 | 5.825 |
+| November | 9 | 6 (66.7%) | 3 (33.3%) | 0 (0.0%) | -22.700 | 4.937 | 4.511 | 46.797 | 6.997 |
+| December | 12 | 6 (50.0%) | 6 (50.0%) | 0 (0.0%) | -33.149 | -0.281 | -0.509 | 29.070 | 5.090 |
 
-Strict-valid category dates:
+Strict-valid strict-majority interpretation:
 
-```text
-January close_above_open:
-2024-01-01
-2024-01-05
-2024-01-12
-2024-01-19
+- Above-open strict-majority months: March, May, July, September, November.
+- Below-open strict-majority months: January, February, June, August.
+- No-strict-majority months: April, October, December.
 
-January close_below_open:
-2024-01-07
-2024-01-14
-2024-01-21
-2024-01-26
-2024-01-28
+The no-majority strict-valid months had tied above-open and below-open counts.
+No strict-valid equality occurred.
 
-January close_equal_open:
-none
-
-February close_above_open:
-2024-02-11
-2024-02-16
-
-February close_below_open:
-2024-02-02
-2024-02-04
-2024-02-25
-
-February close_equal_open:
-none
-
-March close_above_open:
-2024-03-01
-2024-03-03
-2024-03-10
-2024-03-17
-2024-03-24
-2024-03-28
-2024-03-31
-
-March close_below_open:
-2024-03-15
-2024-03-22
-
-March close_equal_open:
-none
-```
-
-Simple three-month strict-valid audit count, not a universal rate or headline
-result:
-
-```text
-eligible = 23
-close_above_open = 13
-close_below_open = 10
-close_equal_open = 0
-```
-
-The per-month strict-valid results remain primary.
+Strict majority means the category count exceeds half of eligible observations;
+largest category is not used as a synonym for strict majority.
 
 ### Warning-Review Sensitivity
 
@@ -1641,62 +1615,111 @@ The per-month strict-valid results remain primary.
 | January | 18 | 9 (50.0%) | 8 (44.4%) | 1 (5.6%) | -25.980 | 0.617 | -2.323 | 14.170 | 7.630 |
 | February | 20 | 11 (55.0%) | 9 (45.0%) | 0 (0.0%) | -27.350 | 1.382 | 0.428 | 14.890 | 5.487 |
 | March | 16 | 12 (75.0%) | 4 (25.0%) | 0 (0.0%) | -26.670 | 8.872 | 7.689 | 46.870 | 14.210 |
+| April | 18 | 10 (55.6%) | 8 (44.4%) | 0 (0.0%) | -52.740 | 1.891 | 1.291 | 41.230 | 15.430 |
+| May | 18 | 9 (50.0%) | 9 (50.0%) | 0 (0.0%) | -50.207 | 0.504 | 0.067 | 37.609 | 18.492 |
+| June | 16 | 11 (68.8%) | 5 (31.3%) | 0 (0.0%) | -21.817 | 6.522 | 5.951 | 31.430 | 14.999 |
+| July | 19 | 10 (52.6%) | 9 (47.4%) | 0 (0.0%) | -35.010 | 3.273 | 5.011 | 45.740 | 15.870 |
+| August | 17 | 8 (47.1%) | 9 (52.9%) | 0 (0.0%) | -36.190 | -0.210 | -0.142 | 47.590 | 11.341 |
+| September | 17 | 10 (58.8%) | 7 (41.2%) | 0 (0.0%) | -27.823 | 4.530 | 6.379 | 46.569 | 9.850 |
+| October | 19 | 11 (57.9%) | 8 (42.1%) | 0 (0.0%) | -38.729 | 8.590 | 3.761 | 30.570 | 13.190 |
+| November | 16 | 9 (56.3%) | 7 (43.8%) | 0 (0.0%) | -109.350 | 3.200 | -8.359 | 42.900 | 22.130 |
+| December | 15 | 8 (53.3%) | 7 (46.7%) | 0 (0.0%) | -59.217 | 0.280 | -2.720 | 35.383 | 14.204 |
+
+Warning-review strict-majority interpretation:
+
+- Above-open strict-majority months: February, March, April, June, July,
+  September, October, November, December.
+- Below-open strict-majority month: August.
+- No-strict-majority months: January, May.
 
 Equal-open warning-review observation:
 
 ```text
-2024-01-09 warning_review
+2024-01-09 warning_review close_equal_open
 ```
 
-Warning context:
+January warning-review had `close_above_open` as the largest category but not a
+strict majority. May warning-review had tied above-open and below-open counts.
+No eligible equality occurred after January.
 
-| Month | Warning reason | Affected dates | Diagnostic runs | Diagnostic run rows |
-| --- | --- | ---: | ---: | ---: |
-| January | `INTERNAL_FLAT_ZERO_VOLUME` | 18 | 20 | 1,232 |
-| February | `INTERNAL_FLAT_ZERO_VOLUME` | 20 | 29 | 1,192 |
-| March | `INTERNAL_FLAT_ZERO_VOLUME` | 16 | 23 | 909 |
+Both populations had the same strict-majority category in March, July, August,
+September, and November. Other months diverged or included a no-majority
+population.
 
-The warning context is separate from the open-to-close calculation. It does
-not show that `INTERNAL_FLAT_ZERO_VOLUME` caused any open-to-close difference.
+### Annual Nested Summary
 
-Simple warning-review audit count, not pooled with strict-valid:
+January-December nested summaries of daily observations within calendar months:
+
+| Population | N | Close above open | Close below open | Close equal open | Minimum change | Median change | Mean change | Maximum change | Median absolute change |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| strict_valid | 104 | 54 (51.9%) | 50 (48.1%) | 0 (0.0%) | -83.260 | 0.420 | 2.187 | 49.619 | 5.412 |
+| warning_review sensitivity | 209 | 118 (56.5%) | 90 (43.1%) | 1 (0.5%) | -109.350 | 2.441 | 1.472 | 47.590 | 12.853 |
+
+These are secondary nested summaries of daily observations within calendar
+months. They do not treat the twelve months as independent observations, and
+they do not replace the monthly findings. Independently rounded warning-review
+category percentages total 100.1%. This is a display-rounding effect; the exact
+category counts reconcile to 209.
+
+### Magnitude Comparison
+
+Category counts and signed magnitude summaries answer different questions. A
+month can contain more below-open observations but still have a positive mean
+when a smaller number of positive changes are larger in magnitude. Signed means
+and medians are descriptive quote-unit summaries only, not market bias, profit,
+or trade performance.
+
+Warning-review median absolute open-to-close change exceeded the strict-valid
+median absolute open-to-close change in all twelve months. This descriptive
+difference does not show that the warning condition caused or explains the
+larger observed magnitudes.
+
+### Quality And Diagnostic Context
+
+Warning-review reason context:
 
 ```text
-eligible = 54
-close_above_open = 32
-close_below_open = 21
-close_equal_open = 1
+INTERNAL_FLAT_ZERO_VOLUME = 209 warning_review observations
 ```
+
+Calendar-only reason context:
+
+```text
+NO_ACTIVE_CANDLES = 53 calendar_only observations
+```
+
+Diagnostic annual totals:
+
+```text
+affected dates: 209
+runs: 250
+run rows: 13,423
+Tokyo overlap rows: 12
+London overlap rows: 1
+New York overlap rows: 1,067
+outside configured session rows: 12,343
+```
+
+The diagnostic context is separate from the open-to-close calculation. It does
+not show that `INTERNAL_FLAT_ZERO_VOLUME` caused any open-to-close category,
+difference, or magnitude.
 
 ### Distinction From Close-Location Finding
 
 Open-to-close classification and close location within the daily range are not
-interchangeable. Verified examples:
-
-```text
-2024-01-01 strict_valid:
-close above open
-close located in the lower half of the daily range
-
-2024-01-07 strict_valid:
-close below open
-close located in the upper half of the daily range
-
-2024-01-09 warning_review:
-close equal open
-close not at the exact daily-range midpoint
-```
-
-These examples do not establish any market cause.
+interchangeable. A daily close can finish above the recorded open while still
+being located in the lower half of the daily range, or finish below the recorded
+open while being located in the upper half of the daily range. These examples
+do not establish any market cause.
 
 ### Loader Practicality Evidence
 
-- The three linked reports were loaded through
+- The twelve linked reports were loaded through
   `research_observations.load_linked_reports(...)`.
-- 91 observations were loaded.
-- Population counts were `23 / 54 / 14 / 0`.
+- 366 observations were loaded.
+- Population counts were `104 / 209 / 53 / 0`.
 - Chronological order was preserved.
-- Three compatible software revisions were retained.
+- Five compatible software revisions were retained.
 - No loader validation failed.
 - Primary linked rows did not require ad hoc CSV parsing.
 - The loader handled loading, validation, provenance retention, blank
@@ -1710,55 +1733,77 @@ expansion.
 
 ### Reconciliation
 
-- Every requested date appeared exactly once.
-- All strict-valid and warning-review observations were eligible.
-- All strict-valid and warning-review observations had daily-open and
-  daily-close values.
-- Missing values occurred only on calendar-only rows.
-- Calendar-only daily-open and daily-close values remained unavailable.
-- Daily-range reconciliation mismatches: 0.
-- Exact Decimal comparisons were used.
-- The January warning-review median change and February warning-review median
-  absolute change previously reflected an unstated display-rounding convention.
-  They were corrected to the now-explicit `ROUND_HALF_UP` display contract.
-- No repository file was changed during the preceding read-only execution.
-- No report was generated or regenerated during the preceding read-only
-  execution.
-
-Other raw-data quality dimensions were not revalidated during this
-open-to-close analysis.
+- The corrected January-March tables reproduced with zero mismatches.
+- All 313 eligible observations had usable Decimal daily-open and daily-close
+  values.
+- Ineligible eligible-tier rows: 0.
+- Invalid Decimal rows: 0.
+- Signed-change arithmetic errors: 0.
+- Absolute-change errors: 0.
+- Category-assignment errors: 0.
+- Category/sign mismatches: 0.
+- Category-total mismatches: 0.
+- Every eligible row received exactly one sign-consistent category.
+- Monthly category totals reconciled.
+- The only equal-open row reproduced: `2024-01-09 warning_review
+  close_equal_open`.
+- Historical baseline reports do not contain `daily_open`, `daily_close`, or
+  `open_to_close_change`. Open-to-close results were therefore reconciled
+  through corrected January-March reproduction and direct linked-field Decimal
+  arithmetic and category invariants.
+- Historical baselines were used only for the supporting metrics they contain.
+- Supported baseline rows checked: 192.
+- Baseline missing-row count: 0.
+- Baseline duplicate-row count: 0.
+- Baseline value-mismatch count: 0.
+- No report was generated or regenerated during the read-only execution.
 
 ### Descriptive Conclusion
 
-In the strict-valid January-March 2024 observations, more dates closed below
-their recorded open in January and February, while more dates closed above
-their recorded open in March. No strict-valid observation closed exactly at its
-recorded open. In the separately labelled warning-review sensitivity
-population, more dates closed above their recorded open in all three months,
-with one equal-open observation in January.
+Across January-December 2024 Dukascopy XAUUSD one-minute BID linked
+observations, strict-valid daily close-versus-open classification varied by
+month rather than following one stable monthly direction. Strict-valid had
+above-open strict majorities in five months, below-open strict majorities in
+four months, and tied above/below counts in three months.
 
-The quality-tier comparison was mixed by month. January and February had
-opposite category majorities between strict-valid and warning-review, while
-both populations had an above-open majority in March. The signed-change
-medians and category proportions also differed. These observations do not
-establish a causal warning effect or a repeatable directional pattern.
+The warning-review sensitivity population had above-open strict majorities in
+nine months, a below-open strict majority in August, and no strict majority in
+January or May. Both populations had the same strict-majority category in
+March, July, August, September, and November.
+
+Warning-review median absolute open-to-close change exceeded the strict-valid
+median absolute change in all twelve months. This descriptive difference does
+not show that the warning condition caused or explains the larger observed
+magnitudes.
+
+The secondary annual nested summaries had above-open strict majorities in both
+populations, but the annual view hides monthly ties, below-open months, and
+quality-tier divergence.
+
+This extension is classified as `material qualification`. It is not a reversal
+because the committed January-March month-specific observations reproduced
+exactly and remain factual.
 
 ### Interpretation Limits
 
-This finding does not establish bullish or bearish bias, future direction,
-directional market tendency, momentum or reversal, an entry or exit rule,
-support or resistance, a setup or signal, prediction, trading edge,
-profitability, execution realism, statistical significance, the cause or
-harmlessness of `INTERNAL_FLAT_ZERO_VOLUME`, or normal or universal XAU/USD
-behaviour.
+This finding does not establish bullish or bearish bias, directional market
+tendency, support or resistance, entry or exit rules, a setup or signal,
+momentum or reversal, prediction, trading edge, profitability, execution
+realism, statistical significance, causation, the cause or harmlessness of
+`INTERNAL_FLAT_ZERO_VOLUME`, or normal or universal XAU/USD behaviour.
+
+The evidence remains the documented Dukascopy XAUUSD one-minute BID record in
+UTC. ASK remains a future prerequisite for spread-aware or execution-aware
+testing. Tick remains conditional on a defined sub-minute requirement.
 
 ### Unresolved Questions
 
-- Strict-valid samples were small, especially February with 5 observations.
+- Strict-valid samples were small, especially February with 5 observations and
+  April, July, and October with 8 observations.
 - Warning treatment remains observation-level under `warning_treatment_v1`.
 - Warning causes remain unresolved.
 - The sample covers one provider, instrument, quote side, timeframe, and
-  three-month period.
+  one calendar year.
 - No statistical testing was performed.
 - ASK, spread, commission, slippage, latency, and execution assumptions were
   not included.
