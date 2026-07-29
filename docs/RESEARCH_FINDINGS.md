@@ -1528,6 +1528,10 @@ open_to_close_change = daily_close - daily_open
 absolute_open_to_close_change = abs(daily_close - daily_open)
 ```
 
+Quote-unit statistics are displayed to three decimal places using
+`ROUND_HALF_UP` to `0.001`. Category percentages are displayed to one decimal
+place using `ROUND_HALF_UP` to `0.1`.
+
 Each eligible observation was assigned to exactly one category:
 
 - `close_above_open`: `daily_close > daily_open`
@@ -1634,8 +1638,8 @@ The per-month strict-valid results remain primary.
 
 | Month | N | Close above open | Close below open | Close equal open | Minimum change | Median change | Mean change | Maximum change | Median absolute change |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| January | 18 | 9 (50.0%) | 8 (44.4%) | 1 (5.6%) | -25.980 | 0.616 | -2.323 | 14.170 | 7.630 |
-| February | 20 | 11 (55.0%) | 9 (45.0%) | 0 (0.0%) | -27.350 | 1.382 | 0.428 | 14.890 | 5.486 |
+| January | 18 | 9 (50.0%) | 8 (44.4%) | 1 (5.6%) | -25.980 | 0.617 | -2.323 | 14.170 | 7.630 |
+| February | 20 | 11 (55.0%) | 9 (45.0%) | 0 (0.0%) | -27.350 | 1.382 | 0.428 | 14.890 | 5.487 |
 | March | 16 | 12 (75.0%) | 4 (25.0%) | 0 (0.0%) | -26.670 | 8.872 | 7.689 | 46.870 | 14.210 |
 
 Equal-open warning-review observation:
@@ -1714,6 +1718,9 @@ expansion.
 - Calendar-only daily-open and daily-close values remained unavailable.
 - Daily-range reconciliation mismatches: 0.
 - Exact Decimal comparisons were used.
+- The January warning-review median change and February warning-review median
+  absolute change previously reflected an unstated display-rounding convention.
+  They were corrected to the now-explicit `ROUND_HALF_UP` display contract.
 - No repository file was changed during the preceding read-only execution.
 - No report was generated or regenerated during the preceding read-only
   execution.

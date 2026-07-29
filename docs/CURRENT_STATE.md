@@ -814,7 +814,10 @@ observations had more below-open dates, while March strict-valid observations
 had more above-open dates. The warning-review sensitivity population had more
 above-open dates in all three months, and the quality-tier comparison was mixed
 by month. Open-to-close classification is distinct from close location within
-the daily range. The elapsed-time
+the daily range. The January-March open-to-close evidence was re-audited for
+display rounding; two display-only values were corrected under the now-explicit
+`ROUND_HALF_UP` convention, with no row-level arithmetic, category, population,
+or conclusion change. The elapsed-time
 between-daily-extrema finding now covers January-April. April strict-valid
 minimum, median, mean, and maximum absolute gaps were `1`, `129`, `283`, and
 `940` minutes; April warning-review sensitivity values were `53`, `572`,

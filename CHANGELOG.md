@@ -120,6 +120,11 @@
   qualification`, strict-valid and warning-review results remained separate,
   and no source, schema, quality-rule, loader, producer, dependency,
   configuration, filtering, or implementation change occurred.
+- Corrected two January-March daily open-to-close display values after
+  re-auditing exact values `0.6165` and `5.4865`; the displayed values are now
+  `0.617` and `5.487` under the documented `ROUND_HALF_UP` convention, with no
+  source, loader, schema, quality-rule, category, population, or research
+  conclusion change.
 
 ## v0.11
 
