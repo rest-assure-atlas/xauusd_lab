@@ -5,6 +5,7 @@ Usage:
     python data_downloader.py
     python data_downloader.py 2024-01-02
     python data_downloader.py 2024-01-02 2024-01-31
+    python data_downloader.py --quote-side ASK 2024-01-02 2024-01-31
 
 Each CSV file is saved into the data_raw folder as:
     XAUUSD_2024-01-02_1min_BID_UTC.csv
@@ -22,6 +23,8 @@ from pathlib import Path
 from time import sleep
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+
+from source_contracts import SourceContractError, validate_quote_side
 
 
 # Project settings for Version 0.4.
@@ -78,6 +81,55 @@ def parse_date_arguments(arguments: list[str]) -> tuple[date, date]:
     return start_day, end_day
 
 
+def parse_quote_side_arguments(arguments: list[str]) -> list[str]:
+    """Apply an optional --quote-side flag and return the remaining date args."""
+    global PRICE_SIDE
+
+    PRICE_SIDE = "BID"
+    remaining_arguments = []
+    quote_side_seen = False
+    index = 0
+
+    while index < len(arguments):
+        argument = arguments[index]
+
+        if argument == "--quote-side":
+            if quote_side_seen:
+                raise ValueError("Please enter --quote-side only once.")
+            if index + 1 >= len(arguments) or arguments[index + 1].startswith("--"):
+                raise ValueError("Please enter BID or ASK after --quote-side.")
+
+            quote_side_seen = True
+            try:
+                PRICE_SIDE = validate_quote_side(arguments[index + 1])
+            except SourceContractError as error:
+                raise ValueError(str(error)) from error
+
+            index += 2
+            continue
+
+        if argument.startswith("--quote-side="):
+            if quote_side_seen:
+                raise ValueError("Please enter --quote-side only once.")
+
+            quote_side_seen = True
+            try:
+                PRICE_SIDE = validate_quote_side(argument.split("=", 1)[1])
+            except SourceContractError as error:
+                raise ValueError(str(error)) from error
+
+            index += 1
+            continue
+
+        if argument.startswith("--"):
+            raise ValueError(f"Unknown option: {argument}")
+
+        remaining_arguments.append(argument)
+        index += 1
+
+    return remaining_arguments
+
+
 def read_config_value(config: dict, key: str) -> str:
     """Read one text value from config.json and give a clear error if missing."""
     value = config.get(key)
@@ -121,6 +173,7 @@ def apply_config_settings(config: dict) -> None:
 def get_download_dates(arguments: list[str]) -> tuple[date, date, str]:
     """Choose dates from the command line or from config.json."""
     if arguments:
+        arguments = parse_quote_side_arguments(arguments)
         start_day, end_day = parse_date_arguments(arguments)
         return start_day, end_day, "command line"
 
@@ -308,11 +361,13 @@ def print_usage() -> None:
     print("  python data_downloader.py")
     print("  python data_downloader.py YYYY-MM-DD")
     print("  python data_downloader.py YYYY-MM-DD YYYY-MM-DD")
+    print("  python data_downloader.py --quote-side BID|ASK YYYY-MM-DD YYYY-MM-DD")
     print()
     print("Examples:")
     print("  python data_downloader.py")
     print("  python data_downloader.py 2024-01-02")
     print("  python data_downloader.py 2024-01-02 2024-01-31")
+    print("  python data_downloader.py --quote-side ASK 2024-01-02 2024-01-31")
 
 
 def main() -> int:

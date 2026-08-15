@@ -1,0 +1,204 @@
+{
+  "artifact": "multi_year_research_partition_plan",
+  "date": "2026-08-11",
+  "status": "final_after_independent_critic_amendments",
+  "mission_scope": "design_policy_gate_only_no_acquisition_no_strategy_work",
+  "current_gate_entering_mission": "EXECUTION_COST_MODEL_NEEDS_POLICY_REVIEW",
+  "pre_critic_gate": "READY_FOR_BOUNDED_MULTIYEAR_ACQUISITION_WITH_LOCKED_PARTITIONS",
+  "final_gate": "READY_FOR_PARTITION_LOCK_AND_ACCESS_LOG_PREPARATION_ONLY",
+  "execution_cost_candidate_freeze_decision": "FROZEN_WITH_SMALL_PREDECLARED_CLARIFICATIONS",
+  "frozen_execution_cost_candidate": {
+    "candidate_version": "execution_cost_tail_rule_v1_candidate",
+    "population": "active strict_valid_pair only",
+    "warning_review_baseline_use": "PROHIBITED",
+    "placeholder_use": "PROHIBITED",
+    "percentile": 0.995,
+    "lookback_days": 30,
+    "recalibration_cadence": "monthly_boundary",
+    "minimum_prior_strict_valid_observations": 1000,
+    "calibration_information_set": "timestamps earlier than the monthly calibration boundary only",
+    "insufficient_history_behavior": "return unavailable/error; do not backfill with future rows",
+    "session_time_handling": "diagnostic only, not primary tail-rule input",
+    "policy_version": "post_corroboration_execution_cost_evidence_policy:2026-08-10",
+    "label": "2024_developed_candidate_not_cleanly_validated"
+  },
+  "preserved_2024_facts": {
+    "static_train_p95_q4_coverage": 0.731404,
+    "rolling_30d_monthly_p995_minimum_2024_monthly_coverage": 0.960529,
+    "rolling_30d_monthly_p995_mean_2024_monthly_coverage": 0.987697,
+    "warning_review_rows_entered_baseline": 0,
+    "q4_clean_holdout_status": "consumed_by_tail_rule_selection"
+  },
+  "multi_year_scope": {
+    "ideal_range": {
+      "start": "2010-01-01",
+      "end": "2025-12-31",
+      "condition": "subject_to_dukascopy_xauusd_bid_ask_availability_and_later_approval"
+    },
+    "minimum_acceptable_range": {
+      "start": "2013-01-01",
+      "end": "2025-12-31",
+      "condition": "if_older_availability_or_operational_burden_blocks_ideal_range"
+    },
+    "no_data_acquired_in_this_gate": true
+  },
+  "partitions": [
+    {
+      "id": "A",
+      "name": "engineering_consumed_development",
+      "years": ["2024"],
+      "purpose": "already_used_pipeline_corrob_execution_cost_development_tail_hardening",
+      "execution_cost_v1_influence": "already_used",
+      "strategy_use": "not_pristine_holdout",
+      "holdout_status": "consumed"
+    },
+    {
+      "id": "A2",
+      "name": "expansion_shakedown",
+      "years": ["2010"],
+      "purpose": "first_multi_year_availability_provenance_pipeline_scale_check",
+      "execution_cost_v1_influence": "technical_only",
+      "strategy_use": "none",
+      "holdout_status": "not_strategy_holdout"
+    },
+    {
+      "id": "B",
+      "name": "execution_cost_clean_validation",
+      "years": ["2011", "2012", "2013", "2014"],
+      "purpose": "clean_validation_of_frozen_execution_cost_tail_rule_v1_candidate",
+      "execution_cost_v1_influence": "validation_only",
+      "strategy_use": "none",
+      "holdout_status": "reserved_until_execution_cost_validation_release"
+    },
+    {
+      "id": "C",
+      "name": "strategy_hypothesis_development",
+      "years": ["2015", "2016", "2017", "2018", "2019"],
+      "purpose": "future_strategy_family_development_after_execution_cost_gate",
+      "execution_cost_v1_influence": "no_tuning",
+      "strategy_use": "development_only_after_approval",
+      "holdout_status": "reserved_until_strategy_development_approval"
+    },
+    {
+      "id": "D",
+      "name": "strategy_validation_walk_forward",
+      "years": ["2020", "2021", "2022"],
+      "purpose": "future_walk_forward_validation_after_strategy_families_are_frozen",
+      "execution_cost_v1_influence": "no_tuning",
+      "strategy_use": "validation_only_after_approval",
+      "holdout_status": "reserved_until_strategy_validation_approval"
+    },
+    {
+      "id": "E",
+      "name": "final_untouched_holdout",
+      "years": ["2023", "2025"],
+      "fallback_years_order": ["2023", "2022", "2021"],
+      "purpose": "final_evaluation_after_model_strategy_families_and_reporting_rules_are_frozen",
+      "execution_cost_v1_influence": "no_tuning",
+      "strategy_use": "no_development_no_validation",
+      "holdout_status": "untouched_until_final_release"
+    }
+  ],
+  "holdout_preservation_rules": [
+    "do_not_compute_descriptive_spread_summaries_for_reserved_partitions_before_approved_release",
+    "do_not_open_final_holdout_years_for_charts_exploratory_statistics_strategy_evaluation_execution_cost_retuning_or_anomaly_hunting",
+    "technical_acquisition_checks_are_limited_by_technical_only_metadata_policy",
+    "record_every_reserved_partition_access_in_a_durable_access_log",
+    "once_a_holdout_is_opened_for_its_approved_purpose_it_is_consumed_for_that_purpose",
+    "if_policy_or_model_changes_after_opening_a_holdout_establish_a_new_untouched_holdout",
+    "summary_statistics_of_final_holdout_years_are_prohibited_before_final_release",
+    "failed_or_inconclusive_holdout_results_must_be_preserved"
+  ],
+  "technical_only_metadata_policy": {
+    "final_holdout_allowed_pre_release_fields": [
+      "annual_requested_day_count",
+      "annual_file_existence_status",
+      "checksum_presence_status",
+      "source_identity_status",
+      "terminal_completion_status",
+      "coarse_schema_validity_status"
+    ],
+    "final_holdout_prohibited_pre_release_fields": [
+      "per_day_row_counts",
+      "per_month_row_counts",
+      "placeholder_counts",
+      "strict_warning_counts",
+      "spread_summaries",
+      "quality_reason_distributions",
+      "missing_minute_patterns",
+      "anomaly_lists",
+      "charts",
+      "descriptive_statistics"
+    ],
+    "sealed_technical_logs": "exact technical row counts generated internally by existing validators must not be surfaced to modelling or strategy researchers before holdout release"
+  },
+  "access_log_schema_path": "reports/holdout_access_log_schema.json",
+  "access_log_path": "reports/holdout_access_log.csv",
+  "execution_cost_clean_validation_plan": {
+    "validation_partition": "B",
+    "validation_years": ["2011", "2012", "2013", "2014"],
+    "monthly_minimum_coverage_required": 0.90,
+    "annual_coverage_required": 0.95,
+    "systematic_undercoverage_rule": "two_consecutive_undercovered_validation_months_requires_failure_or_caveat",
+    "no_warning_review_or_placeholder_baseline_rows": true,
+    "failure_handling": "label_v1_candidate_failed_or_inconclusive; do_not_tune_same_validation_years_and_claim_clean_validation"
+  },
+  "external_corroboration_triggers": [
+    "any_proposed_change_to_warning_review_baseline_eligibility",
+    "any_new_strict_valid_spread_extreme_above_previous_2024_strict_valid_max_or_frozen_multiyear_p999_threshold",
+    "any_contiguous_stress_cluster_that_would_materially_change_tail_rule_or_stress_scenario",
+    "any_provider_specific_anomaly_that_would_otherwise_exclude_active_strict_valid_evidence",
+    "any_inconclusive_or_contradictory_provider_behavior_used_to_support_policy_change"
+  ],
+  "strategy_readiness_conditions": [
+    "multi_year_bid_ask_acquisition_complete_enough_for_approved_partitions",
+    "provenance_checksums_source_identity_quality_status_and_reconciliation_reports_complete",
+    "frozen_execution_cost_candidate_passed_clean_validation_or_policy_handles_failure",
+    "partition_locks_and_access_logs_active",
+    "strategy_development_validation_and_final_holdout_years_reserved",
+    "backtest_infrastructure_applies_spread_costs_and_metadata_without_warning_review_baseline_leakage",
+    "stress_sensitivity_treatment_separate_from_strict_only_baseline",
+    "reporting_templates_include_strict_only_baseline_stress_sensitivity_missing_costs_holdout_status_and_no_retrospective_optimization"
+  ],
+  "strategy_protocol_gate_required": {
+    "required_before": "any_non_plumbing_strategy_code",
+    "must_include": [
+      "strategy_family_registry",
+      "parameter_bounds",
+      "development_validation_split",
+      "walk_forward_rules",
+      "failure_reporting_requirements",
+      "final_holdout_release_criteria",
+      "cost_stress_reporting_rules"
+    ]
+  },
+  "independent_critic": {
+    "status": "completed_read_only",
+    "materially_changed_gate": true,
+    "material_findings": [
+      "pre_critic_acquisition_gate_too_strong_without_enforceable_locks",
+      "final_holdouts_vulnerable_to_contamination_by_detailed_acquisition_checks",
+      "2024_influence_heavy_but_acknowledged",
+      "2011_2014_validation_defensible_only_if_not_touched_during_shakedown",
+      "final_holdouts_fragile_and_need_predeclared_fallback_years",
+      "strategy_readiness_needed_separate_protocol_gate"
+    ],
+    "responses": [
+      "final_gate_narrowed_to_partition_lock_and_access_log_preparation_only",
+      "multi_year_acquisition_not_authorized_by_this_gate",
+      "access_log_schema_and_technical_only_metadata_limits_made_explicit",
+      "fallback_final_holdout_years_predeclared",
+      "external_corroboration_triggers_made_explicit",
+      "strategy_protocol_gate_requirement_added"
+    ]
+  },
+  "prohibited_by_this_gate": [
+    "multi_year_data_acquisition",
+    "strategy_backtesting",
+    "strategy_discovery",
+    "strategy_ranking",
+    "parameter_optimization",
+    "profitability_claims"
+  ],
+  "exact_next_approval_required": "approve_partition_lock_and_access_log_implementation_preparation_before_any_multi_year_acquisition"
+}

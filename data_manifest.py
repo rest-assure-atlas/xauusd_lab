@@ -16,14 +16,16 @@ from pathlib import Path
 
 from data_quality import (
     ASSESSMENT_COLUMNS,
-    INSTRUMENT,
     MANIFEST_SCHEMA_VERSION,
-    PROVIDER,
-    QUOTE_SIDE,
-    TIMEFRAME,
     VALIDATION_RULE_VERSION,
     assess_raw_csv_file,
     missing_file_assessment,
+)
+from source_contracts import (
+    DEFAULT_SOURCE_CONTRACT,
+    SourceContract,
+    build_raw_csv_filename,
+    build_report_filename,
 )
 
 
@@ -120,41 +122,67 @@ def each_day(start_day: date, end_day: date):
         current_day += timedelta(days=1)
 
 
-def build_source_filename(day: date) -> str:
+def build_source_filename(
+    day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+) -> str:
     """Build the expected raw CSV basename for one requested day."""
-    return f"XAUUSD_{day:%Y-%m-%d}_1min_BID_UTC.csv"
+    return build_raw_csv_filename(day, source_contract)
 
 
-def build_source_path(data_dir: Path, day: date) -> Path:
+def build_source_path(
+    data_dir: Path,
+    day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+) -> Path:
     """Build the expected raw CSV path for one requested day."""
-    return data_dir / build_source_filename(day)
+    return data_dir / build_source_filename(day, source_contract)
 
 
-def build_manifest_path(start_day: date, end_day: date) -> Path:
+def build_manifest_path(
+    start_day: date,
+    end_day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+    *,
+    legacy_side_omitted: bool = True,
+) -> Path:
     """Build the deterministic output path for a manifest date range."""
-    filename = f"data_manifest_{start_day:%Y-%m-%d}_to_{end_day:%Y-%m-%d}.csv"
+    filename = build_report_filename(
+        "data_manifest",
+        start_day,
+        end_day,
+        source_contract,
+        legacy_side_omitted=legacy_side_omitted,
+    )
     return REPORTS_DIR / filename
 
 
-def base_manifest_row(day: date) -> dict[str, str]:
+def base_manifest_row(
+    day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+) -> dict[str, str]:
     """Create one manifest row with stable source metadata filled in."""
     row = {column: "" for column in MANIFEST_COLUMNS}
     row["manifest_schema_version"] = MANIFEST_SCHEMA_VERSION
     row["validation_rule_version"] = VALIDATION_RULE_VERSION
     row["date"] = f"{day:%Y-%m-%d}"
     row["weekday"] = day.strftime("%A")
-    row["provider"] = PROVIDER
-    row["instrument"] = INSTRUMENT
-    row["quote_side"] = QUOTE_SIDE
-    row["timeframe"] = TIMEFRAME
-    row["source_filename"] = build_source_filename(day)
+    row["provider"] = source_contract.provider
+    row["instrument"] = source_contract.instrument
+    row["quote_side"] = source_contract.quote_side
+    row["timeframe"] = source_contract.timeframe
+    row["source_filename"] = build_source_filename(day, source_contract)
     return row
 
 
-def build_manifest_row(data_dir: Path, day: date) -> dict[str, str]:
+def build_manifest_row(
+    data_dir: Path,
+    day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+) -> dict[str, str]:
     """Build one manifest row for a requested calendar date."""
-    row = base_manifest_row(day)
-    source_path = build_source_path(data_dir, day)
+    row = base_manifest_row(day, source_contract)
+    source_path = build_source_path(data_dir, day, source_contract)
 
     if source_path.exists():
         assessment = assess_raw_csv_file(source_path, day)
@@ -199,11 +227,19 @@ def create_data_manifest(
     start_day: date,
     end_day: date,
     data_dir: Path = DATA_RAW_DIR,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+    *,
+    legacy_side_omitted: bool = True,
 ) -> ManifestSummary:
     """Create a full data quality manifest for an inclusive date range."""
+    output_path = build_manifest_path(
+        start_day,
+        end_day,
+        source_contract,
+        legacy_side_omitted=legacy_side_omitted,
+    )
     days = list(each_day(start_day, end_day))
-    rows = [build_manifest_row(data_dir, day) for day in days]
-    output_path = build_manifest_path(start_day, end_day)
+    rows = [build_manifest_row(data_dir, day, source_contract) for day in days]
     write_manifest(rows, output_path)
     return summarize_manifest(rows, output_path)
 

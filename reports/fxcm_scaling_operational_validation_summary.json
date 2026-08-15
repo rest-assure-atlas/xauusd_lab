@@ -1,0 +1,313 @@
+{
+  "artifact_dir": "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/external_corroboration/fxcm_scaling_operational_validation",
+  "dec11_repeat_comparison": {
+    "primary_count": 58459,
+    "repeat_count": 58459,
+    "same_length": true,
+    "same_sequence": true
+  },
+  "recovery_resume": {
+    "partial_stop_after_new_chunks": 5,
+    "raw_ticks_after_resume": 58459,
+    "resume_new_chunks": 161,
+    "resume_skipped_completed_chunks": 5,
+    "total_chunks_after_resume": 166,
+    "window": "dec11_target"
+  },
+  "windows": {
+    "dec11_target": {
+      "assembled_after_exact_dedup": 58459,
+      "assembled_before_dedup": 58459,
+      "boundary_exact_duplicate_examples": [],
+      "chunks": 166,
+      "chunks_without_terminal_reject": 0,
+      "exact_duplicate_instances": 0,
+      "exact_duplicate_keys": 0,
+      "first_timestamp": "20241211-04:20:01.055",
+      "last_timestamp": "20241211-07:05:59.069",
+      "logs": {
+        "dec11_target_partial_stderr.log": {
+          "bytes": 43345,
+          "communication_exception": 40,
+          "connection_refused": 120,
+          "lines": 1069,
+          "unsupported_scope": 0
+        },
+        "dec11_target_partial_stdout.log": {
+          "bytes": 170,
+          "communication_exception": 0,
+          "connection_refused": 0,
+          "lines": 6,
+          "unsupported_scope": 0
+        },
+        "dec11_target_repeat_stderr.log": {
+          "bytes": 1372259,
+          "communication_exception": 1259,
+          "connection_refused": 3777,
+          "lines": 33983,
+          "unsupported_scope": 0
+        },
+        "dec11_target_repeat_stdout.log": {
+          "bytes": 157,
+          "communication_exception": 0,
+          "connection_refused": 0,
+          "lines": 5,
+          "unsupported_scope": 0
+        },
+        "dec11_target_resume_stderr.log": {
+          "bytes": 1341049,
+          "communication_exception": 1230,
+          "connection_refused": 3690,
+          "lines": 33219,
+          "unsupported_scope": 0
+        },
+        "dec11_target_resume_stdout.log": {
+          "bytes": 150,
+          "communication_exception": 0,
+          "connection_refused": 0,
+          "lines": 5,
+          "unsupported_scope": 0
+        }
+      },
+      "missing_bidask": 0,
+      "negative_spreads": 0,
+      "nonidentical_same_timestamp_count": 0,
+      "nonidentical_same_timestamp_examples": [],
+      "normalized_market_data_sha256": "3201125902958bf0e37976c298daa5aefe032a84a6bf6bc6e2a0a50811be6004",
+      "raw_ticks": 58459,
+      "records_after_reject": 52850,
+      "timeouts": 0,
+      "unordered_chunks": 0,
+      "zero_record_chunks": 0,
+      "zero_record_ranges": [],
+      "zero_spreads": 1
+    },
+    "dec11_target_repeat": {
+      "assembled_after_exact_dedup": 58459,
+      "assembled_before_dedup": 58459,
+      "boundary_exact_duplicate_examples": [],
+      "chunks": 166,
+      "chunks_without_terminal_reject": 0,
+      "exact_duplicate_instances": 0,
+      "exact_duplicate_keys": 0,
+      "first_timestamp": "20241211-04:20:01.055",
+      "last_timestamp": "20241211-07:05:59.069",
+      "logs": {
+        "dec11_target_repeat_stderr.log": {
+          "bytes": 1372259,
+          "communication_exception": 1259,
+          "connection_refused": 3777,
+          "lines": 33983,
+          "unsupported_scope": 0
+        },
+        "dec11_target_repeat_stdout.log": {
+          "bytes": 157,
+          "communication_exception": 0,
+          "connection_refused": 0,
+          "lines": 5,
+          "unsupported_scope": 0
+        }
+      },
+      "missing_bidask": 0,
+      "negative_spreads": 0,
+      "nonidentical_same_timestamp_count": 0,
+      "nonidentical_same_timestamp_examples": [],
+      "normalized_market_data_sha256": "3201125902958bf0e37976c298daa5aefe032a84a6bf6bc6e2a0a50811be6004",
+      "raw_ticks": 58459,
+      "records_after_reject": 53098,
+      "timeouts": 0,
+      "unordered_chunks": 0,
+      "zero_record_chunks": 0,
+      "zero_record_ranges": [],
+      "zero_spreads": 1
+    },
+    "may22_p99_control": {
+      "assembled_after_exact_dedup": 435295,
+      "assembled_before_dedup": 435301,
+      "boundary_exact_duplicate_examples": [
+        {
+          "ask": "2422.14",
+          "bid": "2421.82",
+          "chunks": [
+            [
+              "2024-05-22T00:00:00Z",
+              "2024-05-22T00:01:00Z"
+            ],
+            [
+              "2024-05-22T00:01:00Z",
+              "2024-05-22T00:02:00Z"
+            ]
+          ],
+          "row_count": 2,
+          "timestamp": "20240522-00:01:00.000"
+        },
+        {
+          "ask": "2413.88",
+          "bid": "2413.57",
+          "chunks": [
+            [
+              "2024-05-22T04:43:00Z",
+              "2024-05-22T04:44:00Z"
+            ],
+            [
+              "2024-05-22T04:44:00Z",
+              "2024-05-22T04:45:00Z"
+            ]
+          ],
+          "row_count": 2,
+          "timestamp": "20240522-04:44:00.000"
+        },
+        {
+          "ask": "2415.74",
+          "bid": "2415.42",
+          "chunks": [
+            [
+              "2024-05-22T06:19:00Z",
+              "2024-05-22T06:20:00Z"
+            ],
+            [
+              "2024-05-22T06:20:00Z",
+              "2024-05-22T06:21:00Z"
+            ]
+          ],
+          "row_count": 2,
+          "timestamp": "20240522-06:20:00.000"
+        },
+        {
+          "ask": "2414.3",
+          "bid": "2414.0",
+          "chunks": [
+            [
+              "2024-05-22T06:29:00Z",
+              "2024-05-22T06:30:00Z"
+            ],
+            [
+              "2024-05-22T06:30:00Z",
+              "2024-05-22T06:31:00Z"
+            ]
+          ],
+          "row_count": 2,
+          "timestamp": "20240522-06:30:00.000"
+        },
+        {
+          "ask": "2415.89",
+          "bid": "2415.55",
+          "chunks": [
+            [
+              "2024-05-22T07:07:00Z",
+              "2024-05-22T07:08:00Z"
+            ],
+            [
+              "2024-05-22T07:08:00Z",
+              "2024-05-22T07:09:00Z"
+            ]
+          ],
+          "row_count": 2,
+          "timestamp": "20240522-07:08:00.000"
+        },
+        {
+          "ask": "2413.08",
+          "bid": "2412.78",
+          "chunks": [
+            [
+              "2024-05-22T08:35:00Z",
+              "2024-05-22T08:36:00Z"
+            ],
+            [
+              "2024-05-22T08:36:00Z",
+              "2024-05-22T08:37:00Z"
+            ]
+          ],
+          "row_count": 2,
+          "timestamp": "20240522-08:36:00.000"
+        }
+      ],
+      "chunks": 1381,
+      "chunks_without_terminal_reject": 0,
+      "exact_duplicate_instances": 6,
+      "exact_duplicate_keys": 6,
+      "first_timestamp": "20240521-23:30:00.107",
+      "last_timestamp": "20240522-22:30:58.571",
+      "logs": {
+        "may22_p99_control_stderr.log": {
+          "bytes": 11488501,
+          "communication_exception": 10531,
+          "connection_refused": 31593,
+          "lines": 284331,
+          "unsupported_scope": 0
+        },
+        "may22_p99_control_stdout.log": {
+          "bytes": 157,
+          "communication_exception": 0,
+          "connection_refused": 0,
+          "lines": 5,
+          "unsupported_scope": 0
+        }
+      },
+      "missing_bidask": 0,
+      "negative_spreads": 0,
+      "nonidentical_same_timestamp_count": 0,
+      "nonidentical_same_timestamp_examples": [],
+      "normalized_market_data_sha256": "1f884cd34fe29d35cc3eae83874a36a20ad9ca0ed83e91f4f567cb8499506e11",
+      "raw_ticks": 435301,
+      "records_after_reject": 405366,
+      "timeouts": 0,
+      "unordered_chunks": 0,
+      "zero_record_chunks": 64,
+      "zero_record_ranges": [
+        {
+          "after": {
+            "chunk_start_utc": "2024-05-22T00:08:00Z",
+            "first_timestamp": "20240522-00:08:04.596",
+            "records": 94
+          },
+          "before": {
+            "chunk_start_utc": "2024-05-22T00:06:00Z",
+            "last_timestamp": "20240522-00:07:00.000",
+            "records": 102
+          },
+          "chunks": 1,
+          "end_utc": "2024-05-22T00:08:00Z",
+          "reject_seen_all": true,
+          "start_utc": "2024-05-22T00:07:00Z",
+          "timeout_any": false
+        },
+        {
+          "after": {
+            "chunk_start_utc": "2024-05-22T22:01:00Z",
+            "first_timestamp": "20240522-22:01:00.737",
+            "records": 19
+          },
+          "before": {
+            "chunk_start_utc": "2024-05-22T20:59:00Z",
+            "last_timestamp": "20240522-20:59:59.198",
+            "records": 127
+          },
+          "chunks": 61,
+          "end_utc": "2024-05-22T22:01:00Z",
+          "reject_seen_all": true,
+          "start_utc": "2024-05-22T21:00:00Z",
+          "timeout_any": false
+        },
+        {
+          "after": {
+            "chunk_start_utc": "2024-05-22T22:04:00Z",
+            "first_timestamp": "20240522-22:04:59.726",
+            "records": 1
+          },
+          "before": {
+            "chunk_start_utc": "2024-05-22T22:01:00Z",
+            "last_timestamp": "20240522-22:01:41.186",
+            "records": 19
+          },
+          "chunks": 2,
+          "end_utc": "2024-05-22T22:04:00Z",
+          "reject_seen_all": true,
+          "start_utc": "2024-05-22T22:02:00Z",
+          "timeout_any": false
+        }
+      ],
+      "zero_spreads": 0
+    }
+  }
+}

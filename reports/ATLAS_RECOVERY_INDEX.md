@@ -32,15 +32,28 @@ artifacts may supersede this index.
   diagnostics, and the V2 design response.
 - V2 Architecture B specification contract is frozen:
   `B_multi_horizon_strict_tail_maximum`.
-- Independent critic review completed with no blocking defect.
+- Architecture B implementation and implementation verification are complete.
+- Independent implementation critic rereview passed with verdict
+  `PASS_READY_FOR_DIRECTOR_PROTOCOL_DECISION`; no remaining contract ambiguity,
+  material test gap, future leakage, population leakage, or unstated
+  implementation choice was found.
+- Current gate: `READY_FOR_DIRECTOR_V2_EVALUATION_PROTOCOL_DECISION`.
+- Exact next operation: await the Director decision on the V2 evaluation
+  protocol. Do not repeat implementation or implementation testing unless a
+  later defect requires it.
+- 2015-2019 acquisition remains paused/incomplete.
 - 2023 and 2025 remain final untouched holdouts.
-- This does not imply V2 implementation, candidate performance testing,
-  backtesting, strategy research, or holdout release has occurred.
+- No V2 performance evaluation has been authorized or performed. This does not
+  imply candidate performance testing, backtesting, strategy research, or
+  holdout release has occurred.
 
 ## Authoritative Artifact Pointers
 
 - `reports/execution_cost_candidate_v2_architecture_b_specification_freeze.md`
 - `reports/execution_cost_candidate_v2_architecture_b_specification_freeze_critic.md`
+- `reports/v2_architecture_b_implementation_campaign_checkpoint.json`
+- `reports/v2_architecture_b_implementation_campaign_checkpoint.md`
+- `reports/v2_architecture_b_implementation_critic.md`
 - `reports/execution_cost_tail_rule_v1_candidate_clean_validation_2011_2014.md`
 - `reports/execution_cost_tail_rule_v1_candidate_failure_diagnostics_2011_2014.md`
 - `reports/multi_year_partition_lock.json`

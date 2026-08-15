@@ -21,6 +21,12 @@ from session_tools import (
     calculate_session_statistics,
     get_session_windows,
 )
+from source_contracts import (
+    DEFAULT_SOURCE_CONTRACT,
+    SourceContract,
+    build_raw_csv_filename,
+    build_report_filename,
+)
 
 
 SYMBOL = "XAUUSD"
@@ -112,15 +118,29 @@ def each_day(start_day: date, end_day: date):
         current_day += timedelta(days=1)
 
 
-def build_csv_path(day: date) -> Path:
+def build_csv_path(
+    day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+) -> Path:
     """Build the expected raw CSV path for one downloaded day."""
-    filename = f"{SYMBOL}_{day:%Y-%m-%d}_{TIMEFRAME_LABEL}_{PRICE_SIDE}_UTC.csv"
-    return DATA_RAW_DIR / filename
+    return DATA_RAW_DIR / build_raw_csv_filename(day, source_contract)
 
 
-def build_report_path(start_day: date, end_day: date) -> Path:
+def build_report_path(
+    start_day: date,
+    end_day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+    *,
+    legacy_side_omitted: bool = True,
+) -> Path:
     """Build the output report path for the requested date range."""
-    filename = f"session_report_{start_day:%Y-%m-%d}_to_{end_day:%Y-%m-%d}.csv"
+    filename = build_report_filename(
+        "session_report",
+        start_day,
+        end_day,
+        source_contract,
+        legacy_side_omitted=legacy_side_omitted,
+    )
     return REPORTS_DIR / filename
 
 
@@ -243,9 +263,13 @@ def add_session_statistics(
     )
 
 
-def process_one_day(day: date, columns: list[str]) -> DailyReportResult:
+def process_one_day(
+    day: date,
+    columns: list[str],
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+) -> DailyReportResult:
     """Process one calendar date into one report CSV row."""
-    csv_path = build_csv_path(day)
+    csv_path = build_csv_path(day, source_contract)
 
     if not csv_path.exists():
         return DailyReportResult(
@@ -344,8 +368,20 @@ def write_report(rows: list[dict[str, str]], columns: list[str], output_path: Pa
         writer.writerows(rows)
 
 
-def create_session_report(start_day: date, end_day: date) -> ReportSummary:
+def create_session_report(
+    start_day: date,
+    end_day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+    *,
+    legacy_side_omitted: bool = True,
+) -> ReportSummary:
     """Create the full session report for an inclusive date range."""
+    output_path = build_report_path(
+        start_day,
+        end_day,
+        source_contract,
+        legacy_side_omitted=legacy_side_omitted,
+    )
     days = list(each_day(start_day, end_day))
     columns = build_report_columns(start_day)
     rows = []
@@ -355,7 +391,7 @@ def create_session_report(start_day: date, end_day: date) -> ReportSummary:
     failed_dates = 0
 
     for day in days:
-        result = process_one_day(day, columns)
+        result = process_one_day(day, columns, source_contract)
         rows.append(result.row)
 
         if result.completed:
@@ -370,7 +406,6 @@ def create_session_report(start_day: date, end_day: date) -> ReportSummary:
         if result.failed:
             failed_dates += 1
 
-    output_path = build_report_path(start_day, end_day)
     write_report(rows, columns, output_path)
 
     return ReportSummary(

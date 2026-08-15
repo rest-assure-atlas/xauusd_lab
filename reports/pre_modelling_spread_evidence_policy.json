@@ -1,0 +1,25 @@
+{
+  "mission": "PRE_MODELLING_SPREAD_EVIDENCE_POLICY",
+  "date": "2026-08-09",
+  "gate_outcome": "READY_FOR_TARGETED_EXTERNAL_CORROBORATION",
+  "primary_population_policy": "active strict_valid_pair rows are the primary/default evidence population for future reporting and baseline candidates",
+  "warning_review_policy": "separate labelled descriptive/sensitivity/stress use allowed; baseline modelling, strategy ranking, and headline conclusions prohibited until external corroboration and a later modelling gate",
+  "stress_event_policy": "active stress-event clusters must be preserved and reported; retrospective filters are diagnostic only unless pre-registered or artifact-proven",
+  "inconclusive_data_policy": "labelled descriptive/adverse diagnostic use only; no baseline modelling, strategy ranking, or headline support",
+  "exclusion_burden": "burden of proof is on exclusion; warning status, extremeness, holiday timing, or strategy outcome is insufficient",
+  "external_corroboration_requirement": "target independent BID/ASK source coverage for all warning >=2.0 rows where practicable, minimum full 2024-12-11 cluster plus every other warning >=2.0 date and controls",
+  "mandatory_future_reporting_treatments": [
+    "counts by evidence class",
+    "primary population statement",
+    "strict-only baseline summary",
+    "separate warning-review summary if used",
+    "stress-event cluster table",
+    "exclusion artifact citations",
+    "external corroboration status",
+    "no strategy-outcome selection statement",
+    "policy version"
+  ],
+  "independent_review_materially_changed_draft": true,
+  "durable_artifact_path": "/workspace/XAUUSD_Lab/reports/pre_modelling_spread_evidence_policy.md",
+  "recommended_next_research_gate": "targeted independent BID/ASK corroboration for warning_review active spread clusters before execution-cost modelling decisions"
+}

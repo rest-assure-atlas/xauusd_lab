@@ -14,9 +14,18 @@ from fixture_helpers import (
     make_active_rows,
     make_placeholder_only_day,
     production_csv_filename,
+    write_csv,
     write_daily_csv,
 )
 from session_tools import SessionDefinition
+from source_contracts import (
+    ASK,
+    BID,
+    SourceContract,
+    SourceContractError,
+    build_raw_csv_filename,
+    source_contract_for_side,
+)
 
 
 class LinkedObservationReportTest(unittest.TestCase):
@@ -24,7 +33,17 @@ class LinkedObservationReportTest(unittest.TestCase):
         with report_path.open("r", newline="", encoding="utf-8") as report_file:
             return list(csv.DictReader(report_file))
 
-    def create_report(self, start_day, end_day, data_dir: Path, reports_dir: Path):
+    def create_report(
+        self,
+        start_day,
+        end_day,
+        data_dir: Path,
+        reports_dir: Path,
+        source_contract=None,
+        legacy_side_omitted=True,
+    ):
+        if source_contract is None:
+            source_contract = source_contract_for_side(BID)
         with (
             patch("linked_observation_report.REPORTS_DIR", reports_dir),
             patch("linked_observation_report.get_software_revision", return_value="testrev"),
@@ -33,20 +52,28 @@ class LinkedObservationReportTest(unittest.TestCase):
                 start_day,
                 end_day,
                 data_dir,
+                source_contract,
+                legacy_side_omitted=legacy_side_omitted,
             )
 
         return summary, self.read_rows(summary.output_path)
 
-    def build_linked_row_from_rows(self, day, rows):
+    def build_linked_row_from_rows(self, day, rows, source_contract=None):
+        if source_contract is None:
+            source_contract = source_contract_for_side(BID)
         with TemporaryDirectory() as temp_root:
             data_dir = Path(temp_root)
-            csv_path = write_daily_csv(data_dir, day, rows)
+            csv_path = write_csv(
+                data_dir / build_raw_csv_filename(day, source_contract),
+                rows,
+            )
             raw_bytes = csv_path.read_bytes()
 
         session_columns = linked_report.expected_session_report_columns()
         manifest_row = linked_report.build_manifest_row_from_assessment(
             day,
             data_quality.assess_raw_csv_bytes(raw_bytes, day).fields,
+            source_contract,
         )
         session_row = session_report.process_raw_bytes_for_day(
             day,
@@ -54,7 +81,7 @@ class LinkedObservationReportTest(unittest.TestCase):
             raw_bytes,
         ).row
         source_identity = linked_report.source_identity_from_bytes(
-            production_csv_filename(day),
+            build_raw_csv_filename(day, source_contract),
             raw_bytes,
         )
         linked_row = linked_report.build_linked_row(
@@ -66,6 +93,7 @@ class LinkedObservationReportTest(unittest.TestCase):
             source_changed=False,
             session_definition_checksum="session-checksum",
             software_revision="testrev",
+            source_contract=source_contract,
         )
         return linked_row, manifest_row, session_row, source_identity
 
@@ -92,6 +120,173 @@ class LinkedObservationReportTest(unittest.TestCase):
 
     def temporary_report_files(self, output_path: Path):
         return list(output_path.parent.glob(f".{output_path.name}.*.tmp"))
+
+
+    def test_legacy_bid_linked_report_path_is_unchanged(self):
+        start_day = date(2024, 1, 1)
+        end_day = date(2024, 1, 31)
+
+        self.assertEqual(
+            linked_report.build_linked_report_path(start_day, end_day).name,
+            "linked_observation_report_2024-01-01_to_2024-01-31.csv",
+        )
+
+    def test_explicit_bid_source_contract_preserves_linked_identity(self):
+        bid_contract = source_contract_for_side(BID)
+        day = date(2024, 1, 2)
+
+        linked_row, _, _, _ = self.build_linked_row_from_rows(
+            day,
+            make_active_rows(day, time(0, 0), time(0, 2)),
+            bid_contract,
+        )
+
+        self.assertEqual(linked_row["quote_side"], BID)
+        self.assertEqual(linked_row["source_filename"], "XAUUSD_2024-01-02_1min_BID_UTC.csv")
+        self.assertEqual(linked_row["linkage_status"], linked_report.LINKED)
+        self.assertEqual(linked_row["linkage_reasons"], "")
+
+    def test_explicit_ask_source_contract_preserves_linked_identity(self):
+        ask_contract = source_contract_for_side(ASK)
+        day = date(2024, 1, 2)
+
+        linked_row, _, _, _ = self.build_linked_row_from_rows(
+            day,
+            make_active_rows(day, time(0, 0), time(0, 2)),
+            ask_contract,
+        )
+
+        self.assertEqual(linked_row["quote_side"], ASK)
+        self.assertEqual(linked_row["source_filename"], "XAUUSD_2024-01-02_1min_ASK_UTC.csv")
+        self.assertEqual(linked_row["linkage_status"], linked_report.LINKED)
+        self.assertNotIn(linked_report.QUOTE_SIDE_MISMATCH, linked_row["linkage_reasons"])
+
+    def test_synthetic_ask_linked_report_uses_side_specific_output_and_identity(self):
+        ask_contract = source_contract_for_side(ASK)
+        day = date(2024, 1, 2)
+
+        with TemporaryDirectory() as temp_root:
+            temp_root_path = Path(temp_root)
+            data_dir = temp_root_path / "data_raw"
+            reports_dir = temp_root_path / "reports"
+            write_csv(
+                data_dir / build_raw_csv_filename(day, ask_contract),
+                make_active_rows(day, time(0, 0), time(0, 0)),
+            )
+
+            summary, rows = self.create_report(
+                day,
+                day,
+                data_dir,
+                reports_dir,
+                ask_contract,
+                legacy_side_omitted=False,
+            )
+
+        self.assertEqual(
+            summary.output_path.name,
+            "linked_observation_report_ASK_2024-01-02_to_2024-01-02.csv",
+        )
+        self.assertEqual(summary.strict_valid_observations, 1)
+        self.assertEqual(rows[0]["quote_side"], ASK)
+        self.assertEqual(rows[0]["source_filename"], "XAUUSD_2024-01-02_1min_ASK_UTC.csv")
+        self.assertEqual(rows[0]["linkage_status"], linked_report.LINKED)
+        self.assertEqual(rows[0]["quality_tier"], linked_report.STRICT_VALID)
+
+    def test_ask_legacy_side_omitted_linked_report_naming_is_rejected(self):
+        with TemporaryDirectory() as temp_root:
+            data_dir = Path(temp_root) / "data_raw"
+            data_dir.mkdir()
+            reports_dir = Path(temp_root) / "reports"
+
+            with self.assertRaisesRegex(SourceContractError, "BID-only"):
+                self.create_report(
+                    date(2024, 1, 1),
+                    date(2024, 1, 1),
+                    data_dir,
+                    reports_dir,
+                    source_contract_for_side(ASK),
+                )
+
+    def test_mismatched_manifest_quote_side_is_excluded(self):
+        day = date(2024, 1, 2)
+        ask_contract = source_contract_for_side(ASK)
+        _, manifest_row, session_row, source_identity = self.build_linked_row_from_rows(
+            day,
+            make_active_rows(day, time(0, 0), time(0, 2)),
+            ask_contract,
+        )
+        manifest_row["quote_side"] = BID
+        manifest_row["source_filename"] = build_raw_csv_filename(day, source_contract_for_side(BID))
+
+        linked_row = linked_report.build_linked_row(
+            day,
+            manifest_row,
+            session_row,
+            source_identity,
+            source_read_failed=False,
+            source_changed=False,
+            session_definition_checksum="session-checksum",
+            software_revision="testrev",
+            source_contract=ask_contract,
+        )
+
+        self.assertEqual(linked_row["linkage_status"], linked_report.CONTRADICTION)
+        self.assertIn(linked_report.QUOTE_SIDE_MISMATCH, linked_row["linkage_reasons"])
+        self.assertIn(linked_report.SOURCE_FILENAME_MISMATCH, linked_row["linkage_reasons"])
+        self.assertEqual(linked_row["quality_tier"], linked_report.EXCLUDED_UNUSABLE)
+
+    def test_source_contract_provider_instrument_timeframe_mismatch_is_excluded(self):
+        day = date(2024, 1, 2)
+        contract = SourceContract(provider="OtherProvider", instrument="EURUSD", timeframe="5min")
+        _, manifest_row, session_row, source_identity = self.build_linked_row_from_rows(
+            day,
+            make_active_rows(day, time(0, 0), time(0, 2)),
+        )
+
+        linked_row = linked_report.build_linked_row(
+            day,
+            manifest_row,
+            session_row,
+            source_identity,
+            source_read_failed=False,
+            source_changed=False,
+            session_definition_checksum="session-checksum",
+            software_revision="testrev",
+            source_contract=contract,
+        )
+
+        self.assertIn(linked_report.PROVIDER_MISMATCH, linked_row["linkage_reasons"])
+        self.assertIn(linked_report.INSTRUMENT_MISMATCH, linked_row["linkage_reasons"])
+        self.assertIn(linked_report.TIMEFRAME_MISMATCH, linked_row["linkage_reasons"])
+        self.assertIn(linked_report.SOURCE_FILENAME_MISMATCH, linked_row["linkage_reasons"])
+        self.assertEqual(linked_row["quality_tier"], linked_report.EXCLUDED_UNUSABLE)
+
+    def test_ask_run_does_not_process_legacy_bid_file(self):
+        ask_contract = source_contract_for_side(ASK)
+        day = date(2024, 1, 26)
+
+        with TemporaryDirectory() as temp_root:
+            data_dir = Path(temp_root) / "data_raw"
+            reports_dir = Path(temp_root) / "reports"
+            data_dir.mkdir()
+            write_daily_csv(data_dir, day, make_active_rows(day, time(0, 0), time(0, 2)))
+
+            summary, rows = self.create_report(
+                day,
+                day,
+                data_dir,
+                reports_dir,
+                ask_contract,
+                legacy_side_omitted=False,
+            )
+
+        self.assertEqual(summary.calendar_only_observations, 1)
+        self.assertEqual(rows[0]["quote_side"], ASK)
+        self.assertEqual(rows[0]["source_filename"], "XAUUSD_2024-01-26_1min_ASK_UTC.csv")
+        self.assertEqual(rows[0]["manifest_file_status"], "missing_file")
+        self.assertEqual(rows[0]["session_status"], "missing_file")
+        self.assertEqual(rows[0]["quality_tier"], linked_report.CALENDAR_ONLY)
 
     def test_atomic_writer_success_writes_complete_report(self):
         with TemporaryDirectory() as temp_root:

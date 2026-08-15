@@ -1,0 +1,274 @@
+{
+  "artifact": "execution_cost_candidate_v2_architecture_proposal",
+  "created_utc": "2026-08-12T15:19:36Z",
+  "mission_scope": "design_phase_only_no_testing_no_optimization_no_backtests_no_strategy_research",
+  "retired_candidate": {
+    "candidate_version": "execution_cost_tail_rule_v1_candidate",
+    "status": "retired_from_advancement",
+    "preservation": "failed rejected candidate evidence remains durable and must not be silently modified"
+  },
+  "prohibitions_observed": {
+    "candidate_performance_calculated": false,
+    "parameters_optimized": false,
+    "backtests_run": false,
+    "strategy_research_run": false,
+    "acquired_or_inspected_2015_plus_data": false,
+    "accessed_2023_or_2025_final_holdouts": false
+  },
+  "source_evidence": {
+    "development_evidence": [
+      "reports/execution_cost_model_implementation.md",
+      "reports/execution_cost_prospective_tail_hardening.md",
+      "reports/execution_cost_model_spec.json",
+      "reports/post_corroboration_execution_cost_evidence_policy.json"
+    ],
+    "burned_validation_and_diagnostic_evidence": [
+      "reports/execution_cost_tail_rule_v1_candidate_clean_validation_2011_2014.json",
+      "reports/execution_cost_tail_rule_v1_candidate_failure_diagnostics_2011_2014.json",
+      "reports/execution_cost_tail_rule_v1_candidate_eligible_coverage_stability_diagnostic_2011_2014.json"
+    ],
+    "partition_evidence": [
+      "reports/multi_year_partition_lock.json"
+    ]
+  },
+  "lessons": [
+    {
+      "weakness": "availability_failure",
+      "evidence": "Fixed 30-calendar-day strict-valid lookback with 1000-row minimum caused all 11990 unavailable strict-valid rows in the 2011-2014 failure diagnostics.",
+      "design_requirement": "v2 must preserve prospective strict-only evidence while avoiding silent unavailability when recent strict-valid rows are sparse."
+    },
+    {
+      "weakness": "coverage_instability",
+      "evidence": "2011-08 had threshold 0.604, realized coverage 0.726984, and 1376 uncovered eligible rows; 2013-04 was a secondary weak month with coverage 0.944746.",
+      "design_requirement": "v2 must respond more explicitly to spread-regime or tail expansion after calibration boundaries."
+    }
+  ],
+  "global_design_requirements": [
+    "Primary population remains active strict_valid_pair only.",
+    "Warning-review, placeholder, calendar-only, excluded, or synthetic rows must not enter the primary baseline.",
+    "Only rows timestamped before the applicable decision/calibration time may affect a threshold.",
+    "Sparse recent history behavior must be explicit and auditable.",
+    "Regime response must be deterministic and prospective.",
+    "All tunable constants must be frozen before clean testing."
+  ],
+  "architectures": [
+    {
+      "id": "A",
+      "name": "Expanding Strict History With Recent Tail Guard",
+      "threshold_estimation": "Strict-only high-tail empirical threshold from all prior active strict_valid_pair rows before the update boundary, with a recent strict-only tail guard.",
+      "update_cadence": "Periodic boundary update, with optional deterministic interim update when a predeclared recent-tail guard triggers.",
+      "sparse_recent_history_handling": "Use expanding prior strict-valid history as the primary availability source; sparse recent history is labelled rather than causing silent failure when total prior history is sufficient.",
+      "regime_tail_response": "Recent-tail guard can lift the estimate when recent strict-valid spreads rise materially.",
+      "allowed_prospective_data": "Only active strict_valid_pair rows earlier than the update boundary or guard evaluation time.",
+      "leakage_safeguards": [
+        "No future rows.",
+        "No non-strict baseline rows.",
+        "No full-period descriptive statistics as inputs.",
+        "Guard triggers computed only from prior evidence."
+      ],
+      "strengths": [
+        "Simple and interpretable.",
+        "Directly addresses sparse-window unavailability.",
+        "Less fragile than pure short-window rules."
+      ],
+      "failure_risks": [
+        "Expanding history can lag structural changes if the guard is too weak.",
+        "An overly sensitive guard can respond to ordinary tail noise.",
+        "Trigger and update rules require careful pre-freezing."
+      ],
+      "expected_implementation_complexity": "low_to_moderate",
+      "parameters_to_freeze": [
+        "total_history_minimum",
+        "tail_percentile",
+        "update_cadence",
+        "recent_guard_window_definition",
+        "recent_guard_statistic",
+        "trigger_condition",
+        "sparse_recent_history_labels",
+        "unavailable_error_behavior"
+      ],
+      "structural_choices": [
+        "strict-only expanding prior history",
+        "prospective-only updates",
+        "separate recent-tail guard",
+        "no non-strict baseline fallback"
+      ],
+      "tunable_choices": [
+        "percentile",
+        "total-history minimum",
+        "update cadence",
+        "guard window",
+        "guard statistic",
+        "guard trigger"
+      ]
+    },
+    {
+      "id": "B",
+      "name": "Multi-Horizon Strict Tail Maximum",
+      "threshold_estimation": "Compute strict-only tail estimates over multiple predeclared prior horizons and use the maximum eligible horizon estimate.",
+      "update_cadence": "Regular calendar update with deterministic intraperiod refresh only at frozen times.",
+      "sparse_recent_history_handling": "Each horizon has its own minimum strict-valid count; sparse horizons are skipped; longer eligible horizons preserve availability.",
+      "regime_tail_response": "Shorter horizons can lift the threshold during recent tail expansion while longer horizons stabilize sparse periods.",
+      "allowed_prospective_data": "Only active strict_valid_pair rows before each update boundary.",
+      "leakage_safeguards": [
+        "Horizon set frozen before testing.",
+        "Horizon minimums frozen before testing.",
+        "Update cadence frozen before testing.",
+        "Aggregation rule frozen before testing.",
+        "No horizon added, removed, or reweighted after validation outcomes."
+      ],
+      "strengths": [
+        "Auditable and deterministic.",
+        "Handles sparse short windows without future leakage.",
+        "Responds faster than a monthly single-window rule if shorter horizons update more often.",
+        "Conservative maximum aggregation is easy to explain."
+      ],
+      "failure_risks": [
+        "Long horizons can keep thresholds high after temporary shocks.",
+        "Short horizons can dominate after noisy bursts.",
+        "More tunable constants than Architecture A."
+      ],
+      "expected_implementation_complexity": "moderate",
+      "parameters_to_freeze": [
+        "horizon_list",
+        "horizon_specific_minimum_counts",
+        "tail_percentile",
+        "update_cadence",
+        "aggregation_rule",
+        "sparse_horizon_skip_behavior",
+        "unavailable_error_behavior"
+      ],
+      "structural_choices": [
+        "predeclared multiple strict-only horizons",
+        "maximum eligible tail estimate",
+        "no non-strict fallback",
+        "prospective-only update"
+      ],
+      "tunable_choices": [
+        "horizon lengths",
+        "minimum counts",
+        "percentile",
+        "update cadence",
+        "treatment of tied or stale horizons"
+      ]
+    },
+    {
+      "id": "C",
+      "name": "State-Labeled Strict Tail Rule",
+      "threshold_estimation": "Maintain a strict-only baseline threshold plus a deterministic prior-only regime state label; return the threshold from a small predeclared state table.",
+      "update_cadence": "Fixed state-evaluation boundaries with optional predeclared emergency state trigger.",
+      "sparse_recent_history_handling": "Use longer or expanding strict-only prior history for baseline availability; sparse recent history maps to an explicit sparse_recent_history state.",
+      "regime_tail_response": "State labels identify normal, elevated-tail, shock, and sparse-recent-history conditions.",
+      "allowed_prospective_data": "Only prior active strict_valid_pair rows and derived prior-only state features.",
+      "leakage_safeguards": [
+        "State definitions frozen before testing.",
+        "State transition thresholds frozen before testing.",
+        "State-specific threshold rules frozen before testing.",
+        "State labels reproducible from timestamped prior evidence only."
+      ],
+      "strengths": [
+        "Directly targets regime/tail expansion.",
+        "Produces useful audit labels.",
+        "Can distinguish sparse data from elevated spread conditions."
+      ],
+      "failure_risks": [
+        "More complex and easier to overfit than A or B.",
+        "State thresholds can become hidden tuning knobs.",
+        "Requires stronger critic scrutiny before clean testing."
+      ],
+      "expected_implementation_complexity": "moderate_to_high",
+      "parameters_to_freeze": [
+        "state_definitions",
+        "state_transition_thresholds",
+        "persistence_reset_rules",
+        "state_specific_threshold_percentiles_or_addons",
+        "baseline_minimum_counts",
+        "update_cadence",
+        "unavailable_error_behavior"
+      ],
+      "structural_choices": [
+        "deterministic prior-only state labels",
+        "strict-only baseline",
+        "explicit sparse/elevated/shock states",
+        "no non-strict fallback"
+      ],
+      "tunable_choices": [
+        "state thresholds",
+        "persistence lengths",
+        "baseline/guard windows",
+        "percentiles",
+        "state-specific threshold mapping"
+      ]
+    }
+  ],
+  "recommended_architecture": {
+    "id": "B",
+    "name": "Multi-Horizon Strict Tail Maximum",
+    "basis": "simplicity, methodological defensibility, and fit to observed v1 failure mechanisms; not retrospective performance optimization",
+    "rationale": [
+      "Longer horizons reduce sparse-window unavailability.",
+      "Shorter horizons provide structural responsiveness to recent tail expansion.",
+      "Maximum aggregation is conservative, deterministic, and auditable.",
+      "It avoids the greater overfitting and hidden-state risk of state-labelled modelling."
+    ],
+    "parameter_values_selected": false
+  },
+  "future_research_partition_plan": {
+    "consumed_or_burned": {
+      "2024": "consumed development evidence",
+      "2011_2014": "burned validation and diagnostic evidence for v1; not pristine for v2 informed by these findings"
+    },
+    "proposed_steps": [
+      {
+        "step": 1,
+        "name": "design_freeze_package",
+        "years": "2024 plus burned 2011-2014 lessons only",
+        "purpose": "freeze one v2 architecture and all tunable constants without performance selection on 2011-2014"
+      },
+      {
+        "step": 2,
+        "name": "development_calibration_sandbox",
+        "years": "2015-2019",
+        "purpose": "after explicit release/acquisition approval, implementation plumbing, parameter pre-freeze checks, and non-final development",
+        "status_this_mission": "not_acquired_not_inspected"
+      },
+      {
+        "step": 3,
+        "name": "clean_walk_forward_validation",
+        "years": "2020-2022",
+        "purpose": "after v2 design is fully frozen, clean validation block released only by explicit protocol gate"
+      },
+      {
+        "step": 4,
+        "name": "final_untouched_holdout",
+        "years": "2023 and 2025",
+        "purpose": "final evaluation only after separate explicit final-release gate",
+        "status": "FINAL_UNTOUCHED_HOLDOUT"
+      }
+    ],
+    "evidence_hygiene_rule": "If any future design decision is influenced by Partition C or D outcomes, those years must be marked consumed for that design generation and cannot be reused as pristine validation for a later candidate."
+  },
+  "required_next_gate": "Director review should decide whether to approve a v2 design-freeze protocol, not a test run.",
+  "independent_critic_review": {
+    "status": "completed_read_only",
+    "verdict": "accept_for_director_review",
+    "blocking_defects": [],
+    "key_checks_passed": [
+      "Scope is explicitly design-only in both Markdown and JSON.",
+      "v1 is retired and preserved as failed evidence, not advanced or silently modified.",
+      "No candidate performance calculation, parameter optimization, backtest, strategy research, 2015+ inspection/acquisition, or 2023/2025 holdout access is claimed.",
+      "Both v1 weaknesses are explicitly addressed: sparse 30-day strict-valid history availability failure and 2011-08-led coverage instability.",
+      "Exactly three architectures are proposed.",
+      "Each architecture covers threshold estimate, update cadence, sparse history, regime/tail response, allowed prospective data, leakage safeguards, strengths/risks, complexity, parameters to freeze, and structural versus tunable choices.",
+      "Architecture B recommendation is methodological, not based on retrospective performance optimization.",
+      "Partition plan treats 2024 as consumed, 2011-2014 as burned, 2015-2019 and 2020-2022 as gated future use, and 2023/2025 as final untouched holdouts."
+    ],
+    "non_blocking_caveats": [
+      "Architecture A's optional deterministic interim update and guard trigger need especially tight freeze language later, since they could become hidden tuning knobs.",
+      "Architecture C's reserve-for-later path should be handled carefully: any clean-testing evidence used after simple mechanisms fail would become consumed for that design generation.",
+      "The critic did not inspect execution_cost_model_spec.json or post_corroboration_execution_cost_evidence_policy.json because the review task constrained necessary source context."
+    ],
+    "critic_artifact": "reports/execution_cost_candidate_v2_architecture_proposal_critic.md"
+  },
+  "final_gate": "DESIGN_PROPOSAL_ACCEPT_FOR_DIRECTOR_REVIEW_EXECUTION_COST_CANDIDATE_V2"
+}

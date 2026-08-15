@@ -3,11 +3,34 @@ data_raw/*.csv
 
 # Runtime logs
 logs/
+*.log
 
-# Generated reports
+# Generated report bulk
 reports/*
 !reports/.gitkeep
+!reports/ATLAS_RECOVERY_INDEX.md
+!reports/*.md
+!reports/*.json
+!reports/evidence/
+reports/evidence/*
+!reports/evidence/*.md
+!reports/evidence/*.json
+
+# External corroboration runtime/data outputs
+external_corroboration/
+.fxcm_compat_runtime/
+.fxcm_runtime_probe/
+
+# Downloaded runtimes, SDK archives, and compiled Java outputs
+*.class
+*.jar
+*.zip
+*.tar.gz
+*.sha256.txt
 
 # Python cache files
 __pycache__/
 *.pyc
+
+# Temporary files
+*.tmp

@@ -15,6 +15,7 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 
 import linked_observation_report as linked_report
+from source_contracts import SourceContractError, validate_quote_side
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -26,6 +27,10 @@ DECIMAL_PLACES = Decimal("0.001")
 BASELINE_COLUMNS = [
     "baseline_schema_version",
     "source_report",
+    "provider",
+    "instrument",
+    "quote_side",
+    "timeframe",
     "metric_section",
     "metric_name",
     "observation_group",
@@ -212,6 +217,7 @@ def validate_linked_report_rows(
         )
 
     seen_dates: set[str] = set()
+    expected_source_identity: dict[str, str] | None = None
 
     for row_number, row in enumerate(rows, start=2):
         if row["linked_schema_version"] != linked_report.LINKED_SCHEMA_VERSION:
@@ -234,12 +240,49 @@ def validate_linked_report_rows(
                 + ", ".join(blank_fields)
             )
 
+        try:
+            validate_quote_side(row["quote_side"])
+        except SourceContractError as error:
+            raise ValueError(
+                f"Unsupported quote_side on row {row_number}: {row['quote_side']}"
+            ) from error
 
-def blank_metric_row(source_report: str) -> dict[str, str]:
+        row_source_identity = {
+            field: row[field]
+            for field in ("provider", "instrument", "quote_side", "timeframe")
+        }
+        if expected_source_identity is None:
+            expected_source_identity = row_source_identity
+        elif row_source_identity != expected_source_identity:
+            mismatched_fields = [
+                field
+                for field, expected_value in expected_source_identity.items()
+                if row_source_identity[field] != expected_value
+            ]
+            raise ValueError(
+                "Input linked report mixes source identity on row "
+                f"{row_number}: " + ", ".join(mismatched_fields)
+            )
+
+
+def source_identity_from_rows(linked_rows: list[dict[str, str]]) -> dict[str, str]:
+    """Return the already-validated source identity for one linked report."""
+    first_row = linked_rows[0]
+    return {
+        field: first_row[field]
+        for field in ("provider", "instrument", "quote_side", "timeframe")
+    }
+
+
+def blank_metric_row(source_report: str, source_identity: dict[str, str]) -> dict[str, str]:
     """Return an empty baseline metric row with stable common fields."""
     return {
         "baseline_schema_version": BASELINE_SCHEMA_VERSION,
         "source_report": source_report,
+        "provider": source_identity["provider"],
+        "instrument": source_identity["instrument"],
+        "quote_side": source_identity["quote_side"],
+        "timeframe": source_identity["timeframe"],
         "metric_section": "",
         "metric_name": "",
         "observation_group": "",
@@ -281,6 +324,7 @@ def split_reason_codes(reason_text: str) -> list[str]:
 def add_coverage_rows(
     baseline_rows: list[dict[str, str]],
     source_report: str,
+    source_identity: dict[str, str],
     linked_rows: list[dict[str, str]],
 ) -> None:
     """Append deterministic coverage count rows."""
@@ -288,7 +332,7 @@ def add_coverage_rows(
         counts = Counter(row[field_name] for row in linked_rows)
 
         for value in ordered_values(field_name, counts):
-            baseline_row = blank_metric_row(source_report)
+            baseline_row = blank_metric_row(source_report, source_identity)
             baseline_row["metric_section"] = "coverage"
             baseline_row["metric_name"] = f"row_count_by_{field_name}"
             baseline_row["observation_group"] = label_blank(value)
@@ -302,7 +346,7 @@ def add_coverage_rows(
             reason_counts.update(split_reason_codes(row[field_name]))
 
         for reason_code in sorted(reason_counts):
-            baseline_row = blank_metric_row(source_report)
+            baseline_row = blank_metric_row(source_report, source_identity)
             baseline_row["metric_section"] = "coverage"
             baseline_row["metric_name"] = f"row_count_by_{field_name}_reason_code"
             baseline_row["observation_group"] = "all"
@@ -361,6 +405,7 @@ def median_decimal(values: list[Decimal]) -> Decimal:
 def add_range_summary_row(
     baseline_rows: list[dict[str, str]],
     source_report: str,
+    source_identity: dict[str, str],
     metric_name: str,
     observation_group: str,
     reason_code: str,
@@ -369,7 +414,7 @@ def add_range_summary_row(
     notes: str,
 ) -> None:
     """Append one numeric range summary row."""
-    baseline_row = blank_metric_row(source_report)
+    baseline_row = blank_metric_row(source_report, source_identity)
     baseline_row["metric_section"] = "range_summary"
     baseline_row["metric_name"] = metric_name
     baseline_row["observation_group"] = observation_group
@@ -391,6 +436,7 @@ def add_range_summary_row(
 def add_range_summary_rows(
     baseline_rows: list[dict[str, str]],
     source_report: str,
+    source_identity: dict[str, str],
     linked_rows: list[dict[str, str]],
 ) -> None:
     """Append strict and warning-review range summaries."""
@@ -405,6 +451,7 @@ def add_range_summary_rows(
         add_range_summary_row(
             baseline_rows,
             source_report,
+            source_identity,
             "range_summary",
             linked_report.STRICT_VALID,
             "",
@@ -415,6 +462,7 @@ def add_range_summary_rows(
         add_range_summary_row(
             baseline_rows,
             source_report,
+            source_identity,
             "range_summary",
             linked_report.WARNING_REVIEW,
             "",
@@ -439,6 +487,7 @@ def add_range_summary_rows(
             add_range_summary_row(
                 baseline_rows,
                 source_report,
+                source_identity,
                 "range_summary_by_warning_reason",
                 linked_report.WARNING_REVIEW,
                 reason_code,
@@ -462,6 +511,7 @@ def rows_for_observation_group(
 def add_availability_rows(
     baseline_rows: list[dict[str, str]],
     source_report: str,
+    source_identity: dict[str, str],
     linked_rows: list[dict[str, str]],
 ) -> None:
     """Append numeric value and blank availability counts."""
@@ -476,7 +526,7 @@ def add_availability_rows(
                 ("usable_numeric_value_count", usable_count),
                 ("blank_value_count", blank_count),
             ):
-                baseline_row = blank_metric_row(source_report)
+                baseline_row = blank_metric_row(source_report, source_identity)
                 baseline_row["metric_section"] = "availability"
                 baseline_row["metric_name"] = metric_name
                 baseline_row["observation_group"] = observation_group
@@ -491,10 +541,11 @@ def build_baseline_rows(
     source_report: str,
 ) -> list[dict[str, str]]:
     """Build all baseline metric rows from already-validated linked rows."""
+    source_identity = source_identity_from_rows(linked_rows)
     baseline_rows: list[dict[str, str]] = []
-    add_coverage_rows(baseline_rows, source_report, linked_rows)
-    add_availability_rows(baseline_rows, source_report, linked_rows)
-    add_range_summary_rows(baseline_rows, source_report, linked_rows)
+    add_coverage_rows(baseline_rows, source_report, source_identity, linked_rows)
+    add_availability_rows(baseline_rows, source_report, source_identity, linked_rows)
+    add_range_summary_rows(baseline_rows, source_report, source_identity, linked_rows)
     return baseline_rows
 
 

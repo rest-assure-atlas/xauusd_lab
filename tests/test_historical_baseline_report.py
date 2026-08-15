@@ -21,6 +21,7 @@ class HistoricalBaselineReportTest(unittest.TestCase):
         new_york_range="4.000",
         manifest_quality_reasons="",
         linkage_reasons="",
+        quote_side="BID",
     ):
         row = {column: "" for column in linked_report.LINKED_COLUMNS}
         row["linked_schema_version"] = linked_report.LINKED_SCHEMA_VERSION
@@ -28,9 +29,9 @@ class HistoricalBaselineReportTest(unittest.TestCase):
         row["weekday"] = "Tuesday"
         row["provider"] = "Dukascopy"
         row["instrument"] = "XAUUSD"
-        row["quote_side"] = "BID"
+        row["quote_side"] = quote_side
         row["timeframe"] = "1min"
-        row["source_filename"] = f"XAUUSD_{day_text}_1min_BID_UTC.csv"
+        row["source_filename"] = f"XAUUSD_{day_text}_1min_{quote_side}_UTC.csv"
         row["source_file_size_bytes"] = "100"
         row["source_checksum_algorithm"] = "sha256"
         row["source_checksum"] = "a" * 64
@@ -175,6 +176,79 @@ class HistoricalBaselineReportTest(unittest.TestCase):
             self.write_linked_report(linked_path, rows)
 
             with self.assertRaisesRegex(ValueError, "Duplicate date"):
+                baseline.create_historical_baseline_report(linked_path)
+
+    def test_explicit_ask_linked_report_is_accepted_and_named_by_source_report(self):
+        with TemporaryDirectory() as temp_root:
+            temp_root_path = Path(temp_root)
+            linked_path = (
+                temp_root_path
+                / "linked_observation_report_ASK_2024-01-02_to_2024-01-02.csv"
+            )
+            reports_dir = temp_root_path / "reports"
+            self.write_linked_report(
+                linked_path,
+                [self.linked_row("2024-01-02", quote_side="ASK")],
+            )
+
+            summary, baseline_rows = self.create_baseline(linked_path, reports_dir)
+
+        self.assertEqual(
+            summary.output_path.name,
+            "historical_baseline_linked_observation_report_ASK_2024-01-02_to_2024-01-02.csv",
+        )
+        self.assertEqual(
+            self.find_metric(
+                baseline_rows,
+                "coverage",
+                "row_count_by_quality_tier",
+                linked_report.STRICT_VALID,
+                "quality_tier",
+            )["count"],
+            "1",
+        )
+
+    def test_mixed_quote_side_rows_are_rejected_before_population_pooling(self):
+        with TemporaryDirectory() as temp_root:
+            linked_path = Path(temp_root) / "linked.csv"
+            rows = [
+                self.linked_row("2024-01-02", quote_side="BID"),
+                self.linked_row("2024-01-03", quote_side="ASK"),
+            ]
+            self.write_linked_report(linked_path, rows)
+
+            with self.assertRaisesRegex(ValueError, "mixes source identity.*quote_side"):
+                baseline.create_historical_baseline_report(linked_path)
+
+    def test_provider_instrument_timeframe_mismatch_is_rejected(self):
+        mismatch_cases = {
+            "provider": "OtherProvider",
+            "instrument": "EURUSD",
+            "timeframe": "5min",
+        }
+        for field, replacement in mismatch_cases.items():
+            with self.subTest(field=field):
+                with TemporaryDirectory() as temp_root:
+                    linked_path = Path(temp_root) / "linked.csv"
+                    second_row = self.linked_row("2024-01-03")
+                    second_row[field] = replacement
+                    self.write_linked_report(
+                        linked_path,
+                        [self.linked_row("2024-01-02"), second_row],
+                    )
+
+                    with self.assertRaisesRegex(ValueError, f"mixes source identity.*{field}"):
+                        baseline.create_historical_baseline_report(linked_path)
+
+    def test_unknown_quote_side_is_rejected(self):
+        with TemporaryDirectory() as temp_root:
+            linked_path = Path(temp_root) / "linked.csv"
+            self.write_linked_report(
+                linked_path,
+                [self.linked_row("2024-01-02", quote_side="MID")],
+            )
+
+            with self.assertRaisesRegex(ValueError, "Unsupported quote_side"):
                 baseline.create_historical_baseline_report(linked_path)
 
     def test_blank_required_identity_or_status_field_is_rejected(self):
@@ -566,12 +640,35 @@ class HistoricalBaselineReportTest(unittest.TestCase):
             / "historical_baseline_linked_observation_report_2024-01-01_to_2024-01-31.csv",
         )
 
+    def test_baseline_rows_preserve_source_identity(self):
+        with TemporaryDirectory() as temp_root:
+            temp_root_path = Path(temp_root)
+            linked_path = temp_root_path / "renamed_linked.csv"
+            self.write_linked_report(
+                linked_path,
+                [self.linked_row("2024-01-02", quote_side="ASK")],
+            )
+            _, baseline_rows = self.create_baseline(
+                linked_path,
+                temp_root_path / "reports",
+            )
+
+        for row in baseline_rows:
+            self.assertEqual(row["provider"], "Dukascopy")
+            self.assertEqual(row["instrument"], "XAUUSD")
+            self.assertEqual(row["quote_side"], "ASK")
+            self.assertEqual(row["timeframe"], "1min")
+
     def test_baseline_columns_have_stable_order(self):
         self.assertEqual(
             baseline.BASELINE_COLUMNS,
             [
                 "baseline_schema_version",
                 "source_report",
+                "provider",
+                "instrument",
+                "quote_side",
+                "timeframe",
                 "metric_section",
                 "metric_name",
                 "observation_group",

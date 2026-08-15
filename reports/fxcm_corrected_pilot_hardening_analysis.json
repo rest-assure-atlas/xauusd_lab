@@ -1,0 +1,188 @@
+{
+  "generated_at": "2026-08-10T06:59:59+01:00",
+  "windows": {
+    "extreme": {
+      "raw_rows": 3544,
+      "dedup_rows": 3544,
+      "exact_duplicate_rows_dropped": 0,
+      "duplicate_timestamp_count": 0,
+      "duplicate_timestamps": [],
+      "zero_record_chunks": [
+        {
+          "start": "2024-01-25T22:52:00Z",
+          "end": "2024-01-25T22:53:00Z"
+        },
+        {
+          "start": "2024-01-25T22:53:00Z",
+          "end": "2024-01-25T22:54:00Z"
+        },
+        {
+          "start": "2024-01-25T22:54:00Z",
+          "end": "2024-01-25T22:55:00Z"
+        },
+        {
+          "start": "2024-01-25T22:55:00Z",
+          "end": "2024-01-25T22:56:00Z"
+        },
+        {
+          "start": "2024-01-25T22:56:00Z",
+          "end": "2024-01-25T22:57:00Z"
+        },
+        {
+          "start": "2024-01-25T22:57:00Z",
+          "end": "2024-01-25T22:58:00Z"
+        },
+        {
+          "start": "2024-01-25T22:58:00Z",
+          "end": "2024-01-25T22:59:00Z"
+        },
+        {
+          "start": "2024-01-25T22:59:00Z",
+          "end": "2024-01-25T23:00:00Z"
+        },
+        {
+          "start": "2024-01-25T23:00:00Z",
+          "end": "2024-01-25T23:01:00Z"
+        }
+      ],
+      "zero_record_chunk_count": 9,
+      "timeouts": 0,
+      "chunks_without_reject": 0,
+      "records_after_reject": 3146,
+      "dedup_repeat_equal": true
+    },
+    "control": {
+      "raw_rows": 18256,
+      "dedup_rows": 18256,
+      "exact_duplicate_rows_dropped": 0,
+      "duplicate_timestamp_count": 1,
+      "duplicate_timestamps": [
+        "20240315-12:06:00.000"
+      ],
+      "zero_record_chunks": [],
+      "zero_record_chunk_count": 0,
+      "timeouts": 0,
+      "chunks_without_reject": 0,
+      "records_after_reject": 16682,
+      "dedup_repeat_equal": true,
+      "market_duplicate_rows_dropped_by_timestamp_bid_ask": 1,
+      "dedup_rows_by_timestamp_bid_ask": 18255
+    },
+    "extreme_repeat": {
+      "raw_rows": 3544,
+      "dedup_rows": 3544,
+      "exact_duplicate_rows_dropped": 0,
+      "duplicate_timestamp_count": 0,
+      "duplicate_timestamps": [],
+      "zero_record_chunks": [
+        {
+          "start": "2024-01-25T22:52:00Z",
+          "end": "2024-01-25T22:53:00Z"
+        },
+        {
+          "start": "2024-01-25T22:53:00Z",
+          "end": "2024-01-25T22:54:00Z"
+        },
+        {
+          "start": "2024-01-25T22:54:00Z",
+          "end": "2024-01-25T22:55:00Z"
+        },
+        {
+          "start": "2024-01-25T22:55:00Z",
+          "end": "2024-01-25T22:56:00Z"
+        },
+        {
+          "start": "2024-01-25T22:56:00Z",
+          "end": "2024-01-25T22:57:00Z"
+        },
+        {
+          "start": "2024-01-25T22:57:00Z",
+          "end": "2024-01-25T22:58:00Z"
+        },
+        {
+          "start": "2024-01-25T22:58:00Z",
+          "end": "2024-01-25T22:59:00Z"
+        },
+        {
+          "start": "2024-01-25T22:59:00Z",
+          "end": "2024-01-25T23:00:00Z"
+        },
+        {
+          "start": "2024-01-25T23:00:00Z",
+          "end": "2024-01-25T23:01:00Z"
+        }
+      ],
+      "zero_record_chunk_count": 9,
+      "timeouts": 0,
+      "chunks_without_reject": 0,
+      "records_after_reject": 2966
+    },
+    "control_repeat": {
+      "raw_rows": 18256,
+      "dedup_rows": 18256,
+      "exact_duplicate_rows_dropped": 0,
+      "duplicate_timestamp_count": 1,
+      "duplicate_timestamps": [
+        "20240315-12:06:00.000"
+      ],
+      "zero_record_chunks": [],
+      "zero_record_chunk_count": 0,
+      "timeouts": 0,
+      "chunks_without_reject": 0,
+      "records_after_reject": 16670,
+      "market_duplicate_rows_dropped_by_timestamp_bid_ask": 1,
+      "dedup_rows_by_timestamp_bid_ask": 18255
+    }
+  },
+  "stderr": {
+    "connection_refused_line_count": 5715,
+    "communication_exception_count": 1905,
+    "handler_error_count": 0
+  },
+  "campaign_scale_estimate": {
+    "defined_window_count": 22,
+    "one_minute_chunk_count": 5647,
+    "longest_windows": [
+      [
+        1496,
+        "2024-12-26_warning_p99_broad"
+      ],
+      [
+        1492,
+        "2024-12-30_warning_p99_broad"
+      ],
+      [
+        1381,
+        "2024-05-22_warning_p99_broad"
+      ],
+      [
+        166,
+        "2024-12-11_ge2_03"
+      ],
+      [
+        68,
+        "2024-02-18_ge2_01"
+      ]
+    ],
+    "estimated_runtime_hours_at_3_seconds_per_chunk": 4.71
+  },
+  "control_duplicate_details": [
+    [
+      {
+        "timestamp": "20240315-12:06:00.000",
+        "bid_close": "2163.71",
+        "ask_close": "2164.01",
+        "chunk_start_utc": "2024-03-15T12:05:00Z",
+        "chunk_end_utc": "2024-03-15T12:06:00Z"
+      },
+      {
+        "timestamp": "20240315-12:06:00.000",
+        "bid_close": "2163.71",
+        "ask_close": "2164.01",
+        "chunk_start_utc": "2024-03-15T12:06:00Z",
+        "chunk_end_utc": "2024-03-15T12:07:00Z"
+      }
+    ]
+  ],
+  "boundary_duplicate_interpretation": "The control duplicate is the same timestamp/BID/ASK at a chunk boundary with different FXCM continuous_flag values; assembled market-data analysis should retain raw rows but use a predeclared timestamp+BID+ASK boundary de-duplication view for completeness statistics."
+}

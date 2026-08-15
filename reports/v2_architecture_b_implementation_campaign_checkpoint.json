@@ -1,0 +1,91 @@
+{
+  "artifact": "v2_architecture_b_implementation_campaign_checkpoint",
+  "campaign_status": "COMPLETE_AWAITING_DIRECTOR_PROTOCOL_DECISION",
+  "current_phase": "ready_for_director_v2_evaluation_protocol_decision",
+  "last_completed_phase": "phase_3_independent_critic_rereview_passed",
+  "current_gate": "READY_FOR_DIRECTOR_V2_EVALUATION_PROTOCOL_DECISION",
+  "exact_next_operation": "Await the Director decision on the V2 evaluation protocol.",
+  "implementation_files_changed": [
+    "execution_cost_model.py",
+    "tests/test_execution_cost_model.py"
+  ],
+  "tests_completed": [
+    {
+      "command": "python3 -m unittest tests.test_execution_cost_model",
+      "result": "23 passed, 0 failures/errors"
+    },
+    {
+      "command": "python3 -m unittest discover -s tests",
+      "result": "241 passed, 3 skipped, 0 failures/errors"
+    },
+    {
+      "command": "git diff --check -- execution_cost_model.py tests/test_execution_cost_model.py",
+      "result": "passed"
+    },
+    {
+      "command": "python3 -m unittest tests.test_execution_cost_model (post-repair)",
+      "result": "26 passed, 0 failures/errors"
+    },
+    {
+      "command": "python3 -m unittest discover -s tests (post-repair)",
+      "result": "244 passed, 3 skipped, 0 failures/errors"
+    },
+    {
+      "command": "direct synthetic forbidden-spread/zero probe",
+      "result": "passed"
+    },
+    {
+      "command": "git diff --check -- execution_cost_model.py tests/test_execution_cost_model.py reports/v2_architecture_b_implementation_critic.md",
+      "result": "passed"
+    }
+  ],
+  "critic_status": "PASS_READY_FOR_DIRECTOR_PROTOCOL_DECISION",
+  "critic_findings": "No remaining contract ambiguity, material test gap, future leakage, population leakage, or unstated implementation choice.",
+  "known_failures": [
+    "Engineering worker attempt 1 failed before execution because the requested model identifier was unavailable. No worker output or implementation change occurred; this is not a research or test failure.",
+    "Engineering worker attempt 2 was rejected before execution because OpenClaw sessions_spawn permits only the main agentId in this runtime. No worker output or implementation change occurred."
+    ,
+    "Independent critic found that Architecture B did not independently reject negative/invalid spread values; such a mislabeled strict row could count toward 1000 and enter quantile estimation. This is an ordinary direct-conformance code defect."
+  ],
+  "do_not_repeat": [
+    "Do not rerun or retune V1 clean validation on 2011-2014.",
+    "Do not calculate or inspect V2 empirical performance or coverage on historical years.",
+    "Do not resume 2015-2019 acquisition or acquire 2020+ data.",
+    "Do not access or release 2023 or 2025 final holdouts.",
+    "Do not change the frozen Architecture B specification or partition assignments.",
+    "Do not begin strategy research.",
+    "Do not repeat Architecture B implementation or implementation testing unless a later defect requires it."
+  ],
+  "active_worker_expected": false,
+  "stop_reason": "READY_FOR_DIRECTOR_V2_EVALUATION_PROTOCOL_DECISION",
+  "retry_state": {
+    "attempt": 3,
+    "last_worker_status": "independent_critic_rereview_passed",
+    "resume_after_worker_loss": "No worker is active or expected. Await the Director decision on the V2 evaluation protocol; do not repeat implementation or implementation testing unless a later defect requires it."
+  },
+  "Codex_usage_status": "NATIVE_CODEX_ENGINEERING_AND_CONFORMANCE_REPAIR_COMPLETE",
+  "holdout_status": {
+    "2023": "FINAL_UNTOUCHED_HOLDOUT",
+    "2025": "FINAL_UNTOUCHED_HOLDOUT",
+    "access_during_campaign": false
+  },
+  "starting_state_verified": {
+    "v1_clean_validation_2011_2014": "COMPLETED_FAILED_RETIRED_PRESERVED_DO_NOT_RERUN",
+    "v2_architecture_b_specification": "FROZEN",
+    "independent_specification_critic": "PASSED_NO_BLOCKING_DEFECT",
+    "2011_2014_for_v2": "BURNED_NON_PRISTINE",
+    "2015_2019_acquisition": "INCOMPLETE_PAUSED",
+    "authoritative_windows_repository_modified": false,
+    "experimental_repository": "/workspace/XAUUSD_Lab"
+  },
+  "performance_firewall": "ACTIVE_SYNTHETIC_AND_MECHANICAL_TESTS_ONLY",
+  "v2_performance_evaluation_authorized": false,
+  "resume_instructions": [
+    "Read XAUUSD_LAB_CONSTITUTION.md, reports/ATLAS_RECOVERY_INDEX.md, the frozen Architecture B JSON/Markdown and critic, then this checkpoint.",
+    "Treat specification freeze, implementation, implementation verification, and independent critic rereview as complete.",
+    "Await the Director decision on the V2 evaluation protocol.",
+    "Do not repeat implementation or implementation testing unless a later defect requires it.",
+    "Never cross the performance firewall or protected-holdout boundary."
+  ],
+  "last_update_timestamp": "2026-08-14T04:02:00Z"
+}

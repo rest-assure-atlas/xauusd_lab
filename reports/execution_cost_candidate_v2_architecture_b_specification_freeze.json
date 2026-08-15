@@ -1,0 +1,164 @@
+{
+  "artifact": "execution_cost_candidate_v2_architecture_b_specification_freeze",
+  "created_utc": "2026-08-12T15:48:28Z",
+  "mission_scope": "specification_design_only",
+  "architecture": {
+    "candidate_family": "execution_cost_candidate_v2",
+    "architecture_id": "B_multi_horizon_strict_tail_maximum",
+    "source_proposal": "reports/execution_cost_candidate_v2_architecture_proposal.md",
+    "source_proposal_critic": "reports/execution_cost_candidate_v2_architecture_proposal_critic.md"
+  },
+  "prohibitions_observed": {
+    "acquired_or_inspected_2015_plus_data": false,
+    "accessed_2023_or_2025_final_holdouts": false,
+    "candidate_performance_calculated": false,
+    "backtests_run": false,
+    "optimized_against_historical_outcomes": false,
+    "strategy_research_run": false,
+    "compared_alternative_parameter_values_on_2011_2014": false
+  },
+  "source_evidence_used": [
+    "reports/execution_cost_model_implementation.md",
+    "reports/execution_cost_prospective_tail_hardening.md",
+    "reports/execution_cost_tail_rule_v1_candidate_clean_validation_2011_2014.json",
+    "reports/execution_cost_tail_rule_v1_candidate_failure_diagnostics_2011_2014.json",
+    "reports/execution_cost_tail_rule_v1_candidate_eligible_coverage_stability_diagnostic_2011_2014.json",
+    "reports/execution_cost_candidate_v2_architecture_proposal.md",
+    "reports/execution_cost_candidate_v2_architecture_proposal.json",
+    "reports/execution_cost_candidate_v2_architecture_proposal_critic.md"
+  ],
+  "gate": "READY_TO_FREEZE_V2_ARCHITECTURE_B_CONTRACT",
+  "structural_design_choices_frozen": [
+    {
+      "field": "multi_horizon_design",
+      "value": "use more than one predeclared historical lookback horizon",
+      "justification": "addresses v1 sparse 30-day availability failure while retaining recent-tail responsiveness"
+    },
+    {
+      "field": "primary_population",
+      "value": "active strict_valid_pair only",
+      "justification": "preserves strict primary baseline policy and prevents warning/placeholder leakage"
+    },
+    {
+      "field": "horizon_specific_availability",
+      "value": "each horizon is independently checked against its frozen minimum prior-observation requirement",
+      "justification": "prevents one sparse horizon from invalidating all available history"
+    },
+    {
+      "field": "unavailable_horizon_behavior",
+      "value": "skip unavailable horizon and record diagnostic",
+      "justification": "handles sparse recent history without future backfill or non-strict fallback"
+    },
+    {
+      "field": "horizon_combination_rule",
+      "value": "maximum numeric threshold among available horizon-specific thresholds",
+      "justification": "conservative, deterministic Architecture B aggregation"
+    },
+    {
+      "field": "all_horizons_unavailable_behavior",
+      "value": "return unavailable_or_error",
+      "justification": "avoids silent fallback or future leakage"
+    },
+    {
+      "field": "threshold_carry_forward",
+      "value": "prohibited_in_this_blocked_contract_unless_director_reopens",
+      "justification": "carry-forward is a meaningful policy choice and can become a hidden stale-threshold mechanism"
+    },
+    {
+      "field": "prospective_only_rule",
+      "value": "only rows with timestamp_utc earlier than update_boundary_utc may be used",
+      "justification": "prevents look-ahead leakage"
+    },
+    {
+      "field": "horizon_interval_convention",
+      "value": "left_closed_right_open_[T_minus_horizon,T)",
+      "justification": "reproducible timestamp semantics"
+    },
+    {
+      "field": "future_backfill",
+      "value": "prohibited",
+      "justification": "past thresholds must reproduce original information sets"
+    }
+  ],
+  "frozen_constants": {
+    "candidate_family": "execution_cost_candidate_v2",
+    "architecture": "B_multi_horizon_strict_tail_maximum",
+    "primary_population": "active strict_valid_pair only",
+    "placeholder_use": "PROHIBITED",
+    "warning_review_baseline_use": "PROHIBITED",
+    "excluded_population_use": "PROHIBITED",
+    "synthetic_rows_use": "PROHIBITED",
+    "horizon_combination_rule": "max_available_horizon_threshold",
+    "unavailable_horizon_behavior": "skip_and_record_diagnostic",
+    "all_horizons_unavailable_behavior": "return_unavailable_or_error",
+    "future_backfill": "PROHIBITED",
+    "threshold_carry_forward": "PROHIBITED",
+    "row_timestamp_rule": "timestamp_utc < update_boundary_utc",
+    "horizon_interval": "[T - horizon, T)",
+    "final_holdouts": {
+      "2023": "FINAL_UNTOUCHED_HOLDOUT",
+      "2025": "FINAL_UNTOUCHED_HOLDOUT"
+    },
+    "horizon_set_calendar_days": [
+      30,
+      90,
+      365
+    ],
+    "horizon_minimum_prior_strict_valid_counts": {
+      "30_calendar_days": 1000,
+      "90_calendar_days": 1000,
+      "365_calendar_days": 1000
+    },
+    "tail_percentile_per_horizon": {
+      "30_calendar_days": "p99.5",
+      "90_calendar_days": "p99.5",
+      "365_calendar_days": "p99.5"
+    },
+    "tail_percentile_fraction": 0.995,
+    "percentile_interpolation_method": "V1 percentile semantics: sort ascending, rank = q * (n - 1), linear interpolation between floor(rank) and ceil(rank)",
+    "update_cadence": "monthly",
+    "eligible_threshold_combination": "maximum numeric threshold among eligible horizons",
+    "maximum_eligible_horizon_rule": "use max over all horizons meeting their horizon-specific minimum at T",
+    "threshold_numeric_precision_rounding": "full_precision_no_operational_rounding",
+    "threshold_application_comparison_convention": "covered iff observed_spread <= threshold",
+    "warmup_operational_start_boundary": "unavailable until any horizon is eligible; once at least one horizon meets its minimum, compute from eligible horizons only",
+    "partition_contract": "partitions unchanged from accepted Architecture B proposal; 2011-2014 is burned/not pristine for V2; 2023 and 2025 remain final untouched holdouts",
+    "validation_partition_status": {
+      "2011_2014": "BURNED_NOT_PRISTINE_FOR_V2",
+      "2023": "FINAL_UNTOUCHED_HOLDOUT",
+      "2025": "FINAL_UNTOUCHED_HOLDOUT"
+    }
+  },
+  "implementation_rule_skeleton": {
+    "per_update_boundary": [
+      "At each monthly UTC update boundary T, evaluate horizons of 30, 90, and 365 calendar days using left-closed/right-open intervals [T - h, T).",
+      "For each frozen horizon h, select active strict_valid_pair rows with timestamp_utc in [T - h, T).",
+      "Exclude warning-review, excluded, placeholder, calendar-only, invalid, synthetic, and descriptive-only rows.",
+      "Require at least 1000 prior strict-valid rows independently for each horizon; otherwise mark that horizon unavailable.",
+      "For each available horizon, compute p99.5 over strict-valid spread values using V1 quantile semantics: rank = q * (n - 1) with linear interpolation.",
+      "If one or more horizons are available, return the maximum numeric threshold among all available horizon thresholds at full precision with no operational rounding.",
+      "If no horizons are available, return unavailable/error; warmup remains unavailable until any horizon is eligible.",
+      "Apply coverage later as covered iff observed_spread <= threshold.",
+      "Do not carry forward, future-backfill, or use non-strict fallback rows."
+    ]
+  },
+  "unresolved_constants": [],
+  "leakage_protections": [
+    "No rows with timestamp_utc >= update_boundary_utc.",
+    "No warning-review, placeholder, excluded, invalid, synthetic, or descriptive-only rows in primary baseline.",
+    "No full-period or future-period descriptive statistics as threshold inputs.",
+    "No 2023 or 2025 final holdout access before explicit final release.",
+    "No 2015+ data acquisition or inspection under this mission.",
+    "No parameter selection by comparing candidate outcomes on 2011-2014.",
+    "Every output must record source artifacts, policy version, horizon availability diagnostics, and update boundary timestamp."
+  ],
+  "director_decision_needed": "None for this freeze artifact: Director has provided the Architecture B contract constants. Implementation/testing and independent critic review remain later separate steps.",
+  "independent_critic_review": {
+    "status": "pending_later_independent_critic",
+    "verdict": "subject_to_later_independent_critic",
+    "recommended_gate": "READY_TO_FREEZE_V2_ARCHITECTURE_B_CONTRACT",
+    "critic_artifact": "reports/execution_cost_candidate_v2_architecture_b_specification_freeze_critic.md",
+    "note": "Existing critic file was not edited; this Director-provided contract freeze is subject to later independent critic review."
+  },
+  "director_freeze_source": "Director-provided Architecture B contract from parent request"
+}

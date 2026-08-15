@@ -1,0 +1,141 @@
+{
+  "active_recent_task_or_session_identifiers": [
+    "corrected_fxcm_pilot_critic:completed",
+    "fxcm_scaling_validation_critic:completed"
+  ],
+  "campaign_id": "overnight_fxcm_xauusd_research_2026-08-10",
+  "completed_phases": [
+    "pre_start_fxcm_retrieval_technical_validation",
+    "phase_1_corrected_runner_implemented_compiled",
+    "phase_1_corrected_two_window_pilot_rerun_complete",
+    "phase_1_corrected_two_window_pilot_report_updated",
+    "phase_1_corrected_pilot_independent_critic_complete",
+    "phase_1b_corrected_pilot_hardening_analysis_complete",
+    "phase_1b_corrected_pilot_report_updated",
+    "phase_2_scaling_subset_predeclared",
+    "phase_2_scaling_runner_implemented_compiled",
+    "phase_2_recovery_partial_stop_after_5_complete",
+    "phase_2_dec11_target_recovery_resume_complete",
+    "phase_2_dec11_target_repeat_reproducible_complete",
+    "scaling_selection_predeclared",
+    "dec11_recovery_partial",
+    "dec11_resume_complete",
+    "dec11_exact_repeat_complete",
+    "may22_long_control_complete",
+    "phase_2_scaling_report_complete",
+    "phase_2_scaling_independent_critic_complete",
+    "phase_2_scaling_recovery_status_consolidated"
+  ],
+  "current_gate_result": "READY_FOR_FULL_BOUNDED_FXCM_CORROBORATION_CAMPAIGN",
+  "current_phase": "phase_2_scaling_validation_complete_awaiting_human_approval",
+  "durable_artifacts": [
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/fxcm_historical_retrieval_technical_validation.md",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/fxcm_tiny_window_corroboration_pilot.md",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/overnight_research_checkpoint.json",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/.fxcm_compat_runtime/FxcmTwoWindowPilotCorrected.java",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/external_corroboration/fxcm_tiny_window_pilot_corrected",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/fxcm_corrected_tiny_window_pilot_comparison.csv",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/fxcm_corrected_pilot_hardening_analysis.json",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/fxcm_scaling_operational_validation.md",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/.fxcm_compat_runtime/FxcmScalingValidationRunner.java",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/external_corroboration/fxcm_scaling_operational_validation",
+    "/home/openclaw/.openclaw/workspace/XAUUSD_Lab/reports/fxcm_scaling_operational_validation_summary.json"
+  ],
+  "exact_next_phase": "Stop for human approval before beginning the full bounded FXCM corroboration campaign.",
+  "failed_attempt_count": 0,
+  "human_approval_required": true,
+  "last_successful_checkpoint": "2026-08-10T18:55:10+01:00",
+  "objective": "Advance XAUUSD_Lab FXCM corroboration research from FXCM_RETRIEVAL_FIX_NEEDS_SMALL_FOLLOWUP as far as scientifically justified within approved overnight bounds.",
+  "status": "AWAITING_HUMAN_APPROVAL",
+  "unresolved_issue": "No rerun required. Full bounded FXCM corroboration campaign must not begin without explicit human approval.",
+  "validation_results": {
+    "corrected_pilot_critic": {
+      "material_findings": [
+        "boundary duplicate in control at 20240315-12:06:00.000",
+        "extreme zero-record chunks need explicit interpretation",
+        "FXCM stderr very noisy with connection refused/communication exceptions",
+        "longer predefined windows not yet validated for scaling",
+        "control is directional normal-regime support, not close confirmation"
+      ],
+      "recommended_gate": "PILOT_SUPPORTIVE_BUT_MORE_TECHNICAL_VALIDATION_REQUIRED"
+    },
+    "corrected_pilot_hardening": {
+      "boundary_duplicate": "control duplicate at 20240315-12:06:00.000 is same timestamp/BID/ASK at chunk boundary with different continuous flags",
+      "campaign_scale": "22 windows would require about 5647 one-minute chunks; longest p99 controls are 1496, 1492, and 1381 chunks",
+      "recommended_gate": "PILOT_SUPPORTIVE_BUT_MORE_TECHNICAL_VALIDATION_REQUIRED",
+      "stderr_noise": "5715 Connection refused lines and 1905 CommunicationException occurrences in corrected pilot stderr",
+      "zero_record_chunks": "extreme opening nine zero-record chunks are exactly reproducible with terminal markers and no timeouts"
+    },
+    "corrected_runner_compile": "passed",
+    "corrected_two_window_pilot": {
+      "comparison": "extreme directional stressed-regime support; control directional normal-regime support",
+      "control": "60 chunks, 18256 ticks, exact repeat equal, 0 timeouts, 1 duplicate timestamp",
+      "extreme": "67 chunks, 3544 ticks, exact repeat equal, 0 timeouts, 0 duplicate timestamps",
+      "unsupported_scope": "terminal marker observed for every chunk; quiet-period handling captured late records"
+    },
+    "dec11_target_recovery_resume": {
+      "chunks_without_reject": 0,
+      "logout": "done",
+      "partial_completed_chunks": 5,
+      "raw_ticks": 58459,
+      "resume_new_chunks": 161,
+      "resume_skipped_chunks": 5,
+      "timeouts": 0,
+      "total_chunks": 166,
+      "zero_record_chunks": 0
+    },
+    "dec11_target_repeat": {
+      "chunks": 166,
+      "chunks_without_reject": 0,
+      "duplicates": 0,
+      "raw_ticks": 58459,
+      "repeat_equal": true,
+      "sha": "ca29c5dfb728299f0d889b29ec6f7d32f584cca64175811488077e7914f732be",
+      "timeouts": 0,
+      "zero_chunks": 0
+    },
+    "may22_p99_control": {
+      "assembled_after_exact_dedup": 435295,
+      "chunks": 1381,
+      "chunks_without_terminal_reject": 0,
+      "exact_duplicate_instances": 6,
+      "logout": "done",
+      "nonidentical_same_timestamp_count": 0,
+      "raw_ticks": 435301,
+      "timeouts": 0,
+      "zero_record_chunks": 64
+    },
+    "scaling_validation_critic": {
+      "material_findings": [
+        "boundary/de-duplication semantics valid when raw rows are preserved and assembled views remove only exact timestamp/BID/ASK duplicates",
+        "completeness is request-level technical completeness, not proof FXCM had every possible market update",
+        "May 22 zero-record chunks are terminal/no-timeout but require session/no-update caveat",
+        "Dec 11 primary/resumed and repeat normalized market-data sequences are identical",
+        "May 22 long control was not independently repeated",
+        "stderr remains noisy and must stay separated with bounded structured summaries",
+        "recovery/resume behavior adequately demonstrated by partial stop, skip of completed chunks, and exact Dec 11 repeat match"
+      ],
+      "recommended_gate": "READY_FOR_FULL_BOUNDED_FXCM_CORROBORATION_CAMPAIGN"
+    },
+    "recovery_partial": {
+      "chunk_summary_file": "dec11_target_chunk_summary.csv",
+      "completed_chunks": 5,
+      "logout": "done",
+      "raw_rows_file": "dec11_target_raw_ticks.csv",
+      "window": "dec11_target"
+    },
+    "root_cause": "Previous FXCM Java pilot runner closed asynchronous request state immediately on Unsupported Scope while late matching MarketDataSnapshot records could still arrive.",
+    "scaling_runner_compile": "passed",
+    "scaling_validation_selection": {
+      "longer_control_style": "2024-05-22_warning_p99_broad 2024-05-21 23:30:00 to 2024-05-22 22:31:00 UTC, 1381 minutes",
+      "longer_warning_target": "2024-12-11_ge2_03 2024-12-11 04:20:00 to 07:06:00 UTC, 166 minutes",
+      "repeat_window": "2024-12-11_ge2_03",
+      "status": "predeclared_before_acquisition"
+    },
+    "starting_gate": "FXCM_RETRIEVAL_FIX_NEEDS_SMALL_FOLLOWUP",
+    "validated_tiny_repeats": {
+      "control_2024-03-15_12:29_12:30": "380 identical ticks across 3 repeats",
+      "extreme_2024-01-25_23:22_23:23": "93 identical ticks across 3 repeats"
+    }
+  }
+}

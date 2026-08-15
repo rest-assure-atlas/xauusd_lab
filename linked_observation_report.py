@@ -34,6 +34,11 @@ from data_quality import (
     parse_failed_assessment,
 )
 from session_tools import SessionDefinition, load_session_definitions
+from source_contracts import (
+    DEFAULT_SOURCE_CONTRACT,
+    SourceContract,
+    build_report_filename,
+)
 
 
 PROJECT_DIR = Path(__file__).resolve().parent
@@ -267,11 +272,20 @@ def each_day(start_day: date, end_day: date):
         current_day += timedelta(days=1)
 
 
-def build_linked_report_path(start_day: date, end_day: date) -> Path:
+def build_linked_report_path(
+    start_day: date,
+    end_day: date,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+    *,
+    legacy_side_omitted: bool = True,
+) -> Path:
     """Build the deterministic output path for a linked report date range."""
-    filename = (
-        f"linked_observation_report_{start_day:%Y-%m-%d}"
-        f"_to_{end_day:%Y-%m-%d}.csv"
+    filename = build_report_filename(
+        "linked_observation_report",
+        start_day,
+        end_day,
+        source_contract,
+        legacy_side_omitted=legacy_side_omitted,
     )
     return REPORTS_DIR / filename
 
@@ -295,9 +309,10 @@ def source_identity_from_bytes(source_filename: str, raw_bytes: bytes) -> Source
 def build_manifest_row_from_assessment(
     day: date,
     assessment_fields: dict[str, str],
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
 ) -> dict[str, str]:
     """Combine manifest base metadata with already-created assessment fields."""
-    row = data_manifest.base_manifest_row(day)
+    row = data_manifest.base_manifest_row(day, source_contract)
     row.update(assessment_fields)
     return row
 
@@ -453,18 +468,19 @@ def add_source_contract_reasons(
     reasons: set[str],
     manifest_row: dict[str, str],
     expected_filename: str,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
 ) -> None:
     """Compare manifest source-contract fields with the linked expectation."""
-    if manifest_row.get("provider") != PROVIDER:
+    if manifest_row.get("provider") != source_contract.provider:
         reasons.add(PROVIDER_MISMATCH)
 
-    if manifest_row.get("instrument") != INSTRUMENT:
+    if manifest_row.get("instrument") != source_contract.instrument:
         reasons.add(INSTRUMENT_MISMATCH)
 
-    if manifest_row.get("quote_side") != QUOTE_SIDE:
+    if manifest_row.get("quote_side") != source_contract.quote_side:
         reasons.add(QUOTE_SIDE_MISMATCH)
 
-    if manifest_row.get("timeframe") != TIMEFRAME:
+    if manifest_row.get("timeframe") != source_contract.timeframe:
         reasons.add(TIMEFRAME_MISMATCH)
 
     if manifest_row.get("source_filename") != expected_filename:
@@ -556,6 +572,7 @@ def collect_linkage_reasons(
     source_identity: SourceIdentity | None,
     source_read_failed: bool,
     source_changed: bool,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
 ) -> set[str]:
     """Collect deterministic linkage and reconciliation reason codes."""
     reasons: set[str] = set()
@@ -570,7 +587,12 @@ def collect_linkage_reasons(
     ):
         reasons.add(DATE_COVERAGE_MISMATCH)
 
-    add_source_contract_reasons(reasons, manifest_row, expected_filename)
+    add_source_contract_reasons(
+        reasons,
+        manifest_row,
+        expected_filename,
+        source_contract,
+    )
     add_source_identity_reasons(
         reasons,
         manifest_row,
@@ -656,9 +678,10 @@ def build_linked_row(
     source_changed: bool,
     session_definition_checksum: str,
     software_revision: str,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
 ) -> dict[str, str]:
     """Build one linked report row from same-run manifest and session rows."""
-    expected_filename = data_manifest.build_source_filename(day)
+    expected_filename = data_manifest.build_source_filename(day, source_contract)
     reasons = collect_linkage_reasons(
         day,
         expected_filename,
@@ -667,6 +690,7 @@ def build_linked_row(
         source_identity,
         source_read_failed,
         source_changed,
+        source_contract,
     )
     session_status = session_row.get("status", "")
     manifest_file_status = manifest_row.get("file_status", "")
@@ -725,14 +749,16 @@ def process_linked_day(
     session_columns: list[str],
     session_definition_checksum: str,
     software_revision: str,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
 ) -> dict[str, str]:
     """Process one requested date through both existing producers from one source."""
-    source_path = data_manifest.build_source_path(data_dir, day)
+    source_path = data_manifest.build_source_path(data_dir, day, source_contract)
 
     if not source_path.exists():
         manifest_row = build_manifest_row_from_assessment(
             day,
             missing_file_assessment().fields,
+            source_contract,
         )
         session_result = build_session_missing_row(day, session_columns)
         source_changed = source_path.exists()
@@ -745,6 +771,7 @@ def process_linked_day(
             source_changed=source_changed,
             session_definition_checksum=session_definition_checksum,
             software_revision=software_revision,
+            source_contract=source_contract,
         )
 
     try:
@@ -753,6 +780,7 @@ def process_linked_day(
         manifest_row = build_manifest_row_from_assessment(
             day,
             parse_failed_assessment(None, READ_ERROR).fields,
+            source_contract,
         )
         session_result = build_session_failed_row(day, session_columns)
         return build_linked_row(
@@ -764,13 +792,15 @@ def process_linked_day(
             source_changed=False,
             session_definition_checksum=session_definition_checksum,
             software_revision=software_revision,
+            source_contract=source_contract,
         )
 
-    expected_filename = data_manifest.build_source_filename(day)
+    expected_filename = data_manifest.build_source_filename(day, source_contract)
     source_identity = source_identity_from_bytes(expected_filename, raw_bytes)
     manifest_row = build_manifest_row_from_assessment(
         day,
         assess_raw_csv_bytes(raw_bytes, day).fields,
+        source_contract,
     )
     session_result = session_report.process_raw_bytes_for_day(
         day,
@@ -795,6 +825,7 @@ def process_linked_day(
         source_changed=source_changed,
         session_definition_checksum=session_definition_checksum,
         software_revision=software_revision,
+        source_contract=source_contract,
     )
 
 
@@ -880,8 +911,17 @@ def create_linked_observation_report(
     start_day: date,
     end_day: date,
     data_dir: Path = DATA_RAW_DIR,
+    source_contract: SourceContract = DEFAULT_SOURCE_CONTRACT,
+    *,
+    legacy_side_omitted: bool = True,
 ) -> LinkedReportSummary:
     """Create the linked daily/session observation report for a date range."""
+    output_path = build_linked_report_path(
+        start_day,
+        end_day,
+        source_contract,
+        legacy_side_omitted=legacy_side_omitted,
+    )
     requested_days = list(each_day(start_day, end_day))
     session_columns = validate_session_configuration(start_day)
     session_definition_checksum = calculate_session_definition_checksum()
@@ -894,12 +934,12 @@ def create_linked_observation_report(
             session_columns,
             session_definition_checksum,
             software_revision,
+            source_contract,
         )
         for day in requested_days
     ]
     validate_linked_rows_cover_requested_dates(rows, requested_days)
 
-    output_path = build_linked_report_path(start_day, end_day)
     write_linked_report(rows, output_path)
     return summarize_linked_report(rows, output_path)
 

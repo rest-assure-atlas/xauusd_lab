@@ -1,0 +1,170 @@
+{
+  "artifact": "post_corroboration_execution_cost_evidence_policy",
+  "baseline_population": {
+    "baseline_report_adjacent_stress_scenario": "CONDITIONAL_FOR_ELIGIBLE_CLOSELY_CORROBORATED_TARGET_CLUSTER_ROWS_ONLY",
+    "decision": "strict_valid_pair remains the primary/default baseline population",
+    "primary_default": "active strict_valid_pair",
+    "warning_review_broad_pooling": "PROHIBITED",
+    "warning_review_primary_baseline": "PROHIBITED"
+  },
+  "corroboration_gate_preserved": "CORROBORATION_PARTIALLY_SUPPORTIVE_MORE_REVIEW_REQUIRED",
+  "critic_materially_changed_policy": true,
+  "date": "2026-08-10",
+  "evidence_classes": {
+    "active_stress_event_clusters": {
+      "baseline_execution_cost_model": "CONDITIONAL",
+      "descriptive_spread_analysis": "ALLOWED",
+      "final_research_conclusion": "CONDITIONAL",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "ALLOWED",
+      "sensitivity_model": "ALLOWED",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "ALLOWED"
+    },
+    "confirmed_artifact_invalid_rows": {
+      "baseline_execution_cost_model": "PROHIBITED",
+      "descriptive_spread_analysis": "CONDITIONAL_AUDIT_CONTEXT_ONLY",
+      "final_research_conclusion": "PROHIBITED",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "PROHIBITED",
+      "sensitivity_model": "PROHIBITED",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "PROHIBITED"
+    },
+    "placeholder_market_closed_rows": {
+      "baseline_execution_cost_model": "PROHIBITED",
+      "descriptive_spread_analysis": "CONDITIONAL_EXCLUDED_COUNTS_ONLY",
+      "final_research_conclusion": "PROHIBITED",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "PROHIBITED",
+      "sensitivity_model": "PROHIBITED",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "PROHIBITED"
+    },
+    "strict_valid_pair": {
+      "baseline_execution_cost_model": "ALLOWED",
+      "descriptive_spread_analysis": "ALLOWED",
+      "final_research_conclusion": "ALLOWED",
+      "headline_strategy_result": "ALLOWED",
+      "robustness_analysis": "ALLOWED",
+      "sensitivity_model": "ALLOWED",
+      "strategy_ranking": "ALLOWED",
+      "stress_event_model": "CONDITIONAL"
+    },
+    "warning_review_pair_confirmed_closely": {
+      "baseline_execution_cost_model": "PROHIBITED",
+      "baseline_report_adjacent_stress_scenario": "CONDITIONAL_SEPARATE_NON_POOLED_TARGET_CLUSTER_ONLY",
+      "descriptive_spread_analysis": "ALLOWED",
+      "final_research_conclusion": "CONDITIONAL",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "ALLOWED",
+      "sensitivity_model": "ALLOWED",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "CONDITIONAL"
+    },
+    "warning_review_pair_confirmed_directionally": {
+      "baseline_execution_cost_model": "PROHIBITED",
+      "descriptive_spread_analysis": "ALLOWED",
+      "final_research_conclusion": "CONDITIONAL",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "CONDITIONAL_ADVERSE_OR_WIDENED_UNCERTAINTY_ONLY",
+      "sensitivity_model": "CONDITIONAL_ADVERSE_OR_WIDENED_UNCERTAINTY_ONLY",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "CONDITIONAL_SECONDARY_OR_WIDENED_UNCERTAINTY_ONLY"
+    },
+    "warning_review_pair_disagrees": {
+      "baseline_execution_cost_model": "PROHIBITED",
+      "descriptive_spread_analysis": "ALLOWED",
+      "final_research_conclusion": "CONDITIONAL_CAVEAT_ONLY",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "CONDITIONAL_ADVERSE_ONLY",
+      "sensitivity_model": "CONDITIONAL_ADVERSE_ONLY",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "CONDITIONAL_ADVERSE_OR_CAVEAT_ONLY"
+    },
+    "warning_review_pair_inconclusive": {
+      "baseline_execution_cost_model": "PROHIBITED",
+      "descriptive_spread_analysis": "ALLOWED",
+      "final_research_conclusion": "CONDITIONAL_CAVEAT_ONLY",
+      "headline_strategy_result": "PROHIBITED",
+      "robustness_analysis": "CONDITIONAL_ADVERSE_OR_UNRESOLVED_ONLY",
+      "sensitivity_model": "CONDITIONAL_ADVERSE_OR_UNRESOLVED_ONLY",
+      "strategy_ranking": "PROHIBITED",
+      "stress_event_model": "CONDITIONAL_ADVERSE_OR_UNRESOLVED_ONLY"
+    }
+  },
+  "exact_next_approval_required": "Approve a bounded execution-cost modelling implementation that builds strict-only baseline first and enforces this policy; do not begin strategy ranking or optimization.",
+  "final_gate": "READY_FOR_EXECUTION_COST_MODELLING_WITH_CONDITIONS",
+  "independent_critic": {
+    "final_gate_after_amendments": "READY_FOR_EXECUTION_COST_MODELLING_WITH_CONDITIONS",
+    "material_findings": [
+      "row-level vs window-level use remained enforceability risk",
+      "stress-regime rule was too hindsight-shaped",
+      "baseline-adjacent Class B allowance was too permissive",
+      "directional corroboration had too many positive uses",
+      "heterogeneous regimes needed mandatory separation",
+      "untested warning-review rows outside target/control windows needed explicit non-corroborated status"
+    ],
+    "materially_changed_policy": true,
+    "recommended_initial_gate": "BLOCKED_PENDING_POLICY_DECISION",
+    "resolved_by_amendments": true,
+    "status": "completed_read_only"
+  },
+  "mandatory_reporting": [
+    "baseline population statement",
+    "evidence-class counts",
+    "strict-only baseline result",
+    "warning/corroborated result where applicable",
+    "stress-regime result where applicable",
+    "sensitivity result",
+    "robustness result",
+    "disagreement and inconclusive treatment",
+    "provider/corroboration status",
+    "exclusions with evidence citation",
+    "policy artifact path and version/date",
+    "explicit statement that strategy outcomes were not used to choose or amend evidence policy",
+    "row/window eligibility counts by corroboration_scope and allowed_use",
+    "regime-stratified counts and calibration summaries before combined costs"
+  ],
+  "no_retrospective_optimization_rule": "evidence/model policy must not be changed because a strategy performs better or worse under a particular treatment",
+  "row_window_eligibility": {
+    "close_support_scope": "eligible target-cluster rows only unless future row-level evidence broadens eligibility",
+    "directional_scope": "adverse, widened-uncertainty, or secondary sensitivity only unless future artifact upgrades it",
+    "required_fields": [
+      "timestamp_utc",
+      "pair_quality_status",
+      "pair_quality_reasons",
+      "active_placeholder_flag",
+      "corroboration_window_id",
+      "corroboration_scope",
+      "corroboration_class",
+      "allowed_use",
+      "policy_version"
+    ],
+    "scopes": [
+      "target_cluster",
+      "bounded_window_context",
+      "same_date_context",
+      "not_externally_tested"
+    ],
+    "untested_warning_rows": "warning-review rows outside FXCM target/control windows are not externally corroborated by this campaign"
+  },
+  "special_cases": {
+    "2024-02-18_ge2_02": "warning target unresolved; excluded from favorable baseline/stress calibration and retained in unresolved reporting",
+    "2024-04-05_strict_ge2_01": "unresolved strict-valid extreme control; separately reported in future model evidence summaries",
+    "2024-12-11_ge2_04": "warning target disagreement; excluded from favorable baseline/stress calibration and retained in adverse sensitivity"
+  },
+  "status": "final_after_independent_critic_amendments",
+  "stress_regime_decision": {
+    "closely_corrob_warning": "may calibrate core warning-review stress behaviour",
+    "directionally_corrob_warning": "may calibrate lower-confidence or widened-uncertainty variants",
+    "disagreed_inconclusive": "excluded from favorable calibration and retained in adverse sensitivity/reporting",
+    "hard_coded_dates": "allowed only as labelled calibration/evaluation sets, not live membership predicates",
+    "membership_rule": "must be prospective, rule-based, and observable before strategy results",
+    "model_created": false,
+    "predicate_requirement": "auditable functions written before model runs",
+    "quantile_requirement": "lookback window and calibration population must be predeclared and exclude future information",
+    "regime_stratified_reporting_required": true,
+    "supports_future_design": true
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "artifact": "execution_cost_v2_data_readiness_2015_2019_checkpoint",
+  "completed_years": [],
+  "created_utc": "2026-08-12T15:59:03Z",
+  "current_year": 2015,
+  "exact_next_operation": "acquire_2015_bid",
+  "last_successful_checkpoint": "acquire_2015_bid",
+  "mission_id": "EXECUTION_COST_V2_DATA_READINESS_2015_2019",
+  "scope_controls": {
+    "architecture_b_performance_calculated": false,
+    "candidate_parameters_selected_or_optimized": false,
+    "data_years": [
+      2015,
+      2016,
+      2017,
+      2018,
+      2019
+    ],
+    "final_holdouts_2023_2025_accessed": false,
+    "no_2020_2022_inspection_or_acquisition": true,
+    "strategy_research_run": false
+  },
+  "updated_utc": "2026-08-12T15:59:03Z",
+  "years": {
+    "2015": {
+      "role": "DEVELOPMENT_CALIBRATION_SANDBOX",
+      "started_utc": "2026-08-12T15:59:03Z",
+      "year": 2015
+    }
+  }
+}
